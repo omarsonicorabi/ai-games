@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Neon Highway 3D</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#070b19;color:#fff;font-family:system-ui,Arial;text-align:center}header{padding:12px 8px 4px}h1{margin:0;font-size:clamp(25px,6vw,36px);color:#58f3ff;text-shadow:0 0 18px #00aaff}p{margin:5px;color:#bac9e4}.hud{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:7px}.pill{background:#182440;border:1px solid #30466f;border-radius:12px;padding:8px 12px;font-weight:800}canvas{display:block;width:min(100vw,520px);height:auto;margin:auto;border:2px solid #31517d;border-radius:14px;touch-action:none;background:#10182a}.message{min-height:30px;padding:8px;color:#ffe68a;font-weight:800}.controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;padding:5px 8px 10px}button{border:1px solid #47648f;border-radius:13px;padding:13px 17px;font-size:16px;font-weight:800;background:#1a2a49;color:white;touch-action:manipulation}button.primary{background:#52edff;color:#071322;border-color:#9bfbff}button:active{transform:scale(.96)}.note{font-size:12px;color:#aebbd4;padding:0 12px 18px}
+</style>
+</head>
+<body>
+<header><h1>⚡ NEON HIGHWAY</h1><p>3D-style street racing • You vs. the CPU</p></header>
+<div class="hud"><span class="pill">YOU <b id="you">0</b>%</span><span class="pill">RIVAL <b id="cpu">0</b>%</span><span class="pill">⚡ NITRO <b id="nitro">3</b></span></div>
+<canvas id="game" width="480" height="640" aria-label="Neon 3D-style racing game"></canvas>
+<div class="message" id="message">Ready? Start your engines!</div>
+<div class="controls"><button id="left">⬅ LEFT</button><button id="nitroBtn" class="primary">⚡ NITRO</button><button id="right">RIGHT ➡</button></div>
+<div class="controls"><button id="start" class="primary">🏁 START RACE</button></div>
+<div class="note">Tilt your view down the highway! Steer with touch buttons or keyboard arrows / A and D. Dodge traffic, use nitro, and beat the computer.</div>
+<script>
+(()=>{
+const cv=document.getElementById('game'),g=cv.getContext('2d'),$=id=>document.getElementById(id),W=480,H=640;
+let running=false,finished=false,p=0,c=0,nitro=3,steer=0,offset=0,boostEnd=0,last=0,traffic=[],playerX=0,damage=0;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function roadAt(y){let t=y/H;return {center:W/2+Math.sin(offset*.003+t*1.5)*t*38,half:55+t*165}}
+function polygon(points,fill){g.fillStyle=fill;g.beginPath();g.moveTo(points[0][0],points[0][1]);for(let i=1;i<points.length;i++)g.lineTo(points[i][0],points[i][1]);g.closePath();g.fill()}
+function drawCar(x,y,w,h,color,player=false){
+ // pseudo-3D perspective car, with body, glass, lights and shadow
+ g.fillStyle='rgba(0,0,0,.38)';g.beginPath();g.ellipse(x+w/2,y+h*.88,w*.72,h*.17,0,0,Math.PI*2);g.fill();
+ polygon([[x+w*.18,y+h*.25],[x+w*.29,y+h*.04],[x+w*.72,y+h*.04],[x+w*.85,y+h*.25],[x+w,y+h*.82],[x+w*.86,y+h],[x+w*.12,y+h],[x,y+h*.82]],color);
+ polygon([[x+w*.28,y+h*.28],[x+w*.36,y+h*.11],[x+w*.66,y+h*.11],[x+w*.75,y+h*.28]],'#a5eaff');
+ polygon([[x+w*.24,y+h*.37],[x+w*.76,y+h*.37],[x+w*.83,y+h*.68],[x+w*.17,y+h*.68]],player?'#168aa6':'#9d233f');
+ g.fillStyle='#111827';g.fillRect(x-w*.04,y+h*.33,w*.12,h*.25);g.fillRect(x+w*.92,y+h*.33,w*.12,h*.25);g.fillRect(x-w*.04,y+h*.72,w*.12,h*.2);g.fillRect(x+w*.92,y+h*.72,w*.12,h*.2);
+ g.fillStyle=player?'#aaffff':'#fff0ba';g.fillRect(x+w*.13,y+h*.77,w*.19,h*.08);g.fillRect(x+w*.68,y+h*.77,w*.19,h*.08);
+ if(player&&performance.now()<boostEnd){polygon([[x+w*.25,y+h*.92],[x+w*.4,y+h*1.35],[x+w*.5,y+h*.92]],'#4efaff');polygon([[x+w*.55,y+h*.92],[x+w*.7,y+h*1.25],[x+w*.75,y+h*.92]],'#ffb847')}
+}
+function render(){
+ g.clearRect(0,0,W,H);
+ let sky=g.createLinearGradient(0,0,0,H*.55);sky.addColorStop(0,'#071126');sky.addColorStop(1,'#49366d');g.fillStyle=sky;g.fillRect(0,0,W,H);
+ // glowing skyline and distant horizon
+ for(let i=0;i<20;i++){let x=i*27-5,h=22+((i*47)%74);g.fillStyle=i%2?'#101e3c':'#172342';g.fillRect(x,H*.43-h,21,h);g.fillStyle=i%3?'#43d9ff':'#ff4fba';for(let yy=H*.43-h+7;yy<H*.43-5;yy+=12)g.fillRect(x+5,yy,3,4)}
+ g.fillStyle='#10192c';g.fillRect(0,H*.43,W,H*.57);
+ // road trapezoid creates strong 3D perspective
+ let top=roadAt(H*.36),bottom=roadAt(H);
+ polygon([[top.center-top.half,H*.36],[top.center+top.half,H*.36],[bottom.center+bottom.half,H],[bottom.center-bottom.half,H]],'#252b3c');
+ // road shoulders and neon rails
+ polygon([[top.center-top.half-7,H*.36],[top.center-top.half,H*.36],[bottom.center-bottom.half,H],[bottom.center-bottom.half-13,H]],'#f12b9d');
+ polygon([[top.center+top.half,H*.36],[top.center+top.half+7,H*.36],[bottom.center+bottom.half+13,H],[bottom.center+bottom.half,H]],'#27eaff');
+ // perspective lane markers
+ for(let i=0;i<12;i++){let t=((i/12+offset*.0007)%1),y=H*.36+t*t*H*.64;let r=roadAt(y),w=2+t*5;g.fillStyle='#e5e9ff';g.fillRect(r.center-w/2,y,w,8+t*17);g.fillRect(r.center-r.half/3-w/2,y,w,5+t*10);g.fillRect(r.center+r.half/3-w/2,y,w,5+t*10)}
+ // roadside lamps streaking past
+ for(let i=0;i<10;i++){let t=((i/10+offset*.00045)%1),y=H*.37+t*t*H*.63,r=roadAt(y),side=r.half+20+t*13;for(let sign of [-1,1]){let x=r.center+sign*side;g.strokeStyle='#3deaff';g.lineWidth=1+t*3;g.beginPath();g.moveTo(x,y);g.lineTo(x,y-(18+t*30));g.stroke();g.fillStyle='#9ffaff';g.beginPath();g.arc(x,y-(18+t*30),2+t*3,0,Math.PI*2);g.fill()}}
+ // traffic vehicles at different depths
+ traffic.forEach(o=>{let t=o.y/H,r=roadAt(o.y),x=r.center+o.lane*r.half*.55,w=17+t*35,h=28+t*54;drawCar(x-w/2,o.y-h,w,h,o.color,false)});
+ let r=roadAt(H*.86),pw=56,ph=100,px=r.center+playerX*r.half*.72-pw/2;
+ drawCar(px,H*.76,pw,ph,'#23dfff',true);
+ // HUD overlay
+ g.fillStyle='rgba(3,9,24,.55)';g.fillRect(12,12,125,43);g.fillStyle='#aefaff';g.font='bold 14px system-ui';g.fillText('SPEED '+(running?Math.floor(170+(performance.now()<boostEnd?90:0)-damage*2):0)+' KM/H',22,39);
+}
+function updateHud(){$('you').textContent=Math.floor(p);$('cpu').textContent=Math.floor(c);$('nitro').textContent=nitro}
+function reset(){running=true;finished=false;p=0;c=0;nitro=3;steer=0;offset=0;traffic=[];playerX=0;damage=0;boostEnd=0;$('message').textContent='GO! GO! GO! 🏁';$('start').textContent='↻ RESTART';updateHud()}
+function end(){running=false;finished=true;$('message').textContent=p>=100&&p>=c?'🏆 YOU WIN THE NEON CUP!':p>=100?'🏆 PHOTO FINISH — YOU WIN!':'🏎️ RIVAL WINS! Try again!';$('start').textContent='↻ RACE AGAIN'}
+function frame(t){let dt=Math.min(((t-last)||16.67)/16.67,2);last=t;
+ if(running){let boosted=t<boostEnd;offset+=boosted?13*dt:7*dt;p+=(boosted?.32:.19)*dt;c+=(.2+(Math.random()<.018?.11:0))*dt;playerX=clamp(playerX+steer*.018*dt,-.83,.83);
+ if(Math.random()<.012)traffic.push({y:H*.38,lane:(Math.floor(Math.random()*3)-1),color:['#ff4f72','#ffbb42','#a678ff','#e8edf9'][Math.floor(Math.random()*4)]});
+ traffic.forEach(o=>o.y+=(4+o.y/H*10)*dt);traffic=traffic.filter(o=>o.y<H+80);
+ let pr=roadAt(H*.82),px=pr.center+playerX*pr.half*.72;
+ for(let o of traffic){let t=o.y/H,w=17+t*35,h=28+t*54,ox=roadAt(o.y).center+o.lane*roadAt(o.y).half*.55;if(Math.abs(o.y-H*.82)<45&&Math.abs(ox-px)<(w+48)/2){o.y=H+100;damage=clamp(damage+2,0,40);p=Math.max(0,p-.7);$('message').textContent='💥 Traffic! Dodge cars to keep your speed!'}}
+ updateHud();if(p>=100||c>=100){p=Math.min(p,100);c=Math.min(c,100);updateHud();end()}}
+ render();requestAnimationFrame(frame)}
+$('start').addEventListener('click',reset);
+function down(d,e){e.preventDefault();steer=d}$('left').addEventListener('pointerdown',e=>down(-1,e));$('right').addEventListener('pointerdown',e=>down(1,e));function stop(){steer=0}['left','right'].forEach(id=>['pointerup','pointercancel','pointerleave'].forEach(ev=>$(id).addEventListener(ev,stop)));
+function boost(e){if(e)e.preventDefault();if(running&&nitro>0){nitro--;boostEnd=performance.now()+1500;$('message').textContent='⚡ NITRO ON!';updateHud()}}$('nitroBtn').addEventListener('pointerdown',boost);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')steer=-1;if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')steer=1;if(e.key===' '&&!e.repeat)boost()});document.addEventListener('keyup',e=>{if(['arrowleft','arrowright','a','d'].includes(e.key.toLowerCase()))steer=0});
+render();requestAnimationFrame(frame);
+})();
+</script>
+</body></html>
