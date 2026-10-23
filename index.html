@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1224">
+<title>Omar's Game Arcade</title>
+<style>
+:root{color-scheme:dark;--bg:#080f20;--panel:#121d35;--line:#263858;--text:#f4f7ff;--muted:#a9b8d3;--accent:#64d8ff}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#182b50 0,#080f20 58%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:52px 20px 32px;text-align:center}header .eyebrow{color:var(--accent);font-weight:800;letter-spacing:.18em;text-transform:uppercase;font-size:.78rem}h1{font-size:clamp(2.1rem,7vw,4rem);margin:12px 0}header p{max-width:640px;margin:0 auto;color:var(--muted);line-height:1.6}
+main{width:min(1100px,calc(100% - 32px));margin:0 auto 54px}.toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:0 0 18px;flex-wrap:wrap}.toolbar h2{font-size:1.1rem;margin:0}.count{color:var(--muted);font-size:.9rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px}.card{display:flex;flex-direction:column;min-height:218px;padding:22px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,#172541,#10192d);box-shadow:0 12px 35px #0002;transition:transform .18s,border-color .18s}.card:hover{transform:translateY(-4px);border-color:var(--accent)}.emoji{font-size:2.3rem}.card h3{margin:14px 0 8px;font-size:1.2rem}.card p{margin:0 0 20px;color:var(--muted);line-height:1.5;flex:1}.play{display:inline-flex;justify-content:center;align-items:center;padding:12px 16px;border-radius:12px;background:var(--accent);color:#07111f;font-weight:850;text-decoration:none}.play:focus-visible{outline:3px solid white;outline-offset:3px}.message{color:var(--muted);padding:24px;border:1px dashed var(--line);border-radius:16px}footer{text-align:center;color:#8192b0;padding:0 16px 30px;font-size:.85rem}
+</style>
+</head>
+<body>
+<header><div class="eyebrow">Independent mini-games</div><h1>🎮 Omar's Game Arcade</h1><p>Pick a game and jump straight into its own page. Each game lives in its own folder, so future updates can be made independently.</p></header>
+<main><div class="toolbar"><h2>Choose your game</h2><div id="count" class="count">Loading games…</div></div><section id="games" class="grid" aria-live="polite"><div class="message">Loading the game library…</div></section></main>
+<footer>More games can be added by creating a new folder under <code>games/</code> and adding one entry to <code>games.json</code>.</footer>
+<script>
+(async function(){
+ const root=document.getElementById('games'),count=document.getElementById('count');
+ const icons={'pyramid-jumper':'🏜️','cloud-hopper':'☁️','mountain-climber':'🧗','elemental-fighters':'🛡️','the-high-sky':'✈️','sky-panic-money-rush':'🌩️'};
+ try{
+  const response=await fetch('./games.json',{cache:'no-store'});
+  if(!response.ok)throw new Error('Could not load games.json');
+  const games=await response.json();
+  root.replaceChildren();count.textContent=games.length+' games';
+  for(const game of games){
+   const card=document.createElement('article');card.className='card';
+   const icon=document.createElement('div');icon.className='emoji';icon.setAttribute('aria-hidden','true');icon.textContent=icons[game.slug]||'🎮';
+   const title=document.createElement('h3');title.textContent=game.title;
+   const desc=document.createElement('p');desc.textContent=game.description;
+   const link=document.createElement('a');link.className='play';link.href=game.path;link.textContent='Play game →';link.setAttribute('aria-label','Play '+game.title);
+   card.append(icon,title,desc,link);root.append(card);
+  }
+  if(!games.length)root.innerHTML='<div class="message">No games have been added yet.</div>';
+ }catch(error){count.textContent='Library unavailable';root.innerHTML='<div class="message">The game list could not load. Run this website through GitHub Pages or another web server so games.json can be fetched.</div>';}
+})();
+</script>
+</body></html>
