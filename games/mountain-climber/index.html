@@ -52,7 +52,7 @@ function setKey(k,v){keys[k]=v}
 document.getElementById('jump').addEventListener('pointerdown',e=>{e.preventDefault();jump()});
 addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp',' ','a','d','w'].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a')keys.left=true;if(e.key==='ArrowRight'||e.key==='d')keys.right=true;if(e.key==='ArrowUp'||e.key===' '||e.key==='w')jump();if(gameOver&&e.key==='Enter')start()});
 addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a')keys.left=false;if(e.key==='ArrowRight'||e.key==='d')keys.right=false});
-function jump(){if(running&&player&&player.ground){player.vy=-12.5;player.ground=false;}}
+function jump(){if(running&&player&&player.ground){player.vy=-16.5;player.ground=false;}}
 function cloud(x,y,s){ctx.fillStyle='#ffffffb8';ctx.beginPath();ctx.arc(x,y,18*s,0,Math.PI*2);ctx.arc(x+22*s,y-9*s,24*s,0,Math.PI*2);ctx.arc(x+48*s,y,17*s,0,Math.PI*2);ctx.fill()}
 function drawMountain(){
  let grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,'#80d7ff');grad.addColorStop(1,'#e4f8ff');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
@@ -85,7 +85,7 @@ function drawPlayer(){let x=player.x,y=player.y+camera;ctx.save();ctx.translate(
 function update(){
  if(!running)return;
  player.vx=keys.left?-4.2:keys.right?4.2:player.vx*.82;player.x+=player.vx;player.x=Math.max(12,Math.min(W-12,player.x));
- let oldY=player.y;player.vy+=.48;player.y+=player.vy;player.ground=false;
+ let oldY=player.y;player.vy+=.46;player.y+=player.vy;player.ground=false;
  for(const p of platforms){let py=p.y+camera;if(player.vy>0&&oldY+player.h/2<=py&&player.y+player.h/2>=py&&player.x>p.x-12&&player.x<p.x+p.w+12){player.y=py-player.h/2;player.vy=0;player.ground=true;}}
  if(player.y< H*.42){let d=H*.42-player.y;player.y+=d;camera+=d;highest=Math.max(highest,Math.floor(camera/10));}
  for(const c of pickups){if(!c.taken&&Math.hypot(player.x-c.x,player.y+camera-c.y)<28){c.taken=true;coins++;for(let i=0;i<8;i++)particles.push({x:c.x,y:c.y-camera,vx:(Math.random()-.5)*4,vy:-Math.random()*4,life:25});}}
