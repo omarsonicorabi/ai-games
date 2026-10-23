@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Turbo Racing 2D</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#101827;color:#fff;font-family:system-ui,Arial,sans-serif;text-align:center}header{padding:12px 8px 6px}h1{margin:0;color:#ffd34e;font-size:clamp(24px,6vw,34px)}p{margin:4px 0 10px;color:#bdc9d9}.hud{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px}.pill{background:#263449;border-radius:12px;padding:8px 13px;font-weight:800}canvas{display:block;width:min(100vw,480px);height:auto;margin:auto;border:2px solid #53647a;border-radius:12px;touch-action:none;background:#38864c}.message{min-height:28px;padding:8px;color:#ffdf72;font-weight:800}.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:4px 10px 12px}button{border:0;border-radius:12px;padding:13px 17px;font-size:16px;font-weight:800;background:#e7edf6;color:#142033;touch-action:manipulation}button.primary{background:#ffd34e}button:active{transform:scale(.97)}.note{font-size:13px;color:#bdc9d9;padding:0 14px 16px}
+</style>
+</head>
+<body>
+<header><h1>🏁 TURBO RACING</h1><p>Race against the computer!</p></header>
+<div class="hud"><span class="pill">YOU <b id="you">0</b>%</span><span class="pill">CPU <b id="cpu">0</b>%</span><span class="pill">⚡ BOOST <b id="nitro">3</b></span></div>
+<canvas id="track" width="480" height="640" aria-label="2D racing game"></canvas>
+<div class="message" id="message">Tap START RACE to begin.</div>
+<div class="actions"><button id="left">⬅ LEFT</button><button id="boost" class="primary">⚡ BOOST</button><button id="right">RIGHT ➡</button></div>
+<div class="actions"><button id="start" class="primary">▶ START RACE</button></div>
+<div class="note">Steer with the buttons or keyboard ← → / A D. Avoid cones, use your boosts, and beat the computer to the finish!</div>
+<script>
+(()=>{
+const canvas=document.getElementById('track'),ctx=canvas.getContext('2d');
+const $=id=>document.getElementById(id),W=480,H=640;
+let active=false,done=false,player={x:166,y:492},cpuCar={x:270,y:178},p=0,c=0,nitro=3,offset=0,steer=0,boostUntil=0,last=0,cones=[],flash=0;
+function roundedRect(x,y,w,h,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}
+function drawCar(x,y,color,accent){
+ roundedRect(x+4,y+6,42,70,10,'#20242b');
+ roundedRect(x,y,42,72,9,color);
+ roundedRect(x+7,y+12,28,19,'#a9e6f7');
+ roundedRect(x+8,y+39,26,17,5,accent);
+ roundedRect(x+5,y+3,8,5,2,'#fff1b0');roundedRect(x+29,y+3,8,5,2,'#fff1b0');
+ roundedRect(x-4,y+13,6,17,2,'#171a20');roundedRect(x+40,y+13,6,17,2,'#171a20');
+ roundedRect(x-4,y+48,6,17,2,'#171a20');roundedRect(x+40,y+48,6,17,2,'#171a20');
+}
+function render(){
+ ctx.clearRect(0,0,W,H);ctx.fillStyle='#38864c';ctx.fillRect(0,0,W,H);
+ for(let y=-80;y<H+80;y+=80){let yy=((y+offset*1.7)%(H+80));ctx.fillStyle='#54a85d';ctx.fillRect(0,yy,50,35);ctx.fillRect(430,yy+30,50,35)}
+ ctx.fillStyle='#d8dce1';ctx.fillRect(57,0,13,H);ctx.fillRect(410,0,13,H);
+ for(let y=-64;y<H+64;y+=64){let yy=(y+offset*1.7)%(H+64);ctx.fillStyle='#d74444';ctx.fillRect(57,yy,13,32);ctx.fillRect(410,yy+32,13,32)}
+ ctx.fillStyle='#343941';ctx.fillRect(70,0,340,H);
+ for(let y=-100;y<H+100;y+=110){let yy=(y+offset*1.7)%(H+110);ctx.fillStyle='#f4f4f4';ctx.fillRect(157,yy,6,57);ctx.fillRect(317,yy+20,6,57)}
+ // Distant checkerboard finish banner
+ for(let x=70;x<410;x+=20){ctx.fillStyle=(Math.floor(x/20)%2===0)?'#fff':'#111';ctx.fillRect(x,18,20,12)}
+ ctx.fillStyle='#fff';ctx.font='bold 12px system-ui';ctx.fillText('FINISH',211,12);
+ cones.forEach(o=>{ctx.fillStyle='#ffb52e';ctx.beginPath();ctx.moveTo(o.x+17,o.y);ctx.lineTo(o.x+34,o.y+32);ctx.lineTo(o.x,o.y+32);ctx.closePath();ctx.fill();ctx.fillStyle='#fff';ctx.fillRect(o.x+8,o.y+19,18,4)});
+ drawCar(cpuCar.x,cpuCar.y,'#e84747','#9b2020');drawCar(player.x,player.y,performance.now()<boostUntil?'#31e8ff':'#2585ff','#174bba');
+ if(performance.now()<boostUntil){ctx.fillStyle='#74f5ff';ctx.beginPath();ctx.moveTo(player.x+9,player.y+70);ctx.lineTo(player.x+15,player.y+91+Math.random()*8);ctx.lineTo(player.x+21,player.y+70);ctx.fill();ctx.beginPath();ctx.moveTo(player.x+23,player.y+70);ctx.lineTo(player.x+29,player.y+89);ctx.lineTo(player.x+34,player.y+70);ctx.fill()}
+}
+function hud(){$('you').textContent=Math.floor(p);$('cpu').textContent=Math.floor(c);$('nitro').textContent=nitro}
+function reset(){active=true;done=false;p=0;c=0;nitro=3;offset=0;steer=0;cones=[];player.x=166;cpuCar.x=270;boostUntil=0;$('message').textContent='GO! GO! GO! 🏁';$('start').textContent='↻ RESTART';hud()}
+function finish(){active=false;done=true;const win=p>=100&&p>=c;$('message').textContent=win?'🏆 YOU WIN! Great driving!':p>=100?'🏁 PHOTO FINISH! YOU WIN!':'🚙 COMPUTER WINS! Try again!';$('start').textContent='↻ RACE AGAIN'}
+function frame(t){const dt=Math.min(((t-last)||16.67)/16.67,2);last=t;
+ if(active){offset+=5*dt;p+=.16*dt+(t<boostUntil?.23*dt:0);c+=.19*dt+(Math.random()<.025?.12:0);
+ cpuCar.x=Math.max(82,Math.min(356,cpuCar.x+Math.sin(t/720)*1.4*dt));
+ player.x=Math.max(82,Math.min(356,player.x+steer*4.8*dt));
+ if(Math.random()<.009)cones.push({x:92+Math.random()*280,y:-35});
+ cones.forEach(o=>o.y+=5*dt);cones=cones.filter(o=>o.y<H+40);
+ for(const o of cones){if(o.y+30>player.y&&o.y<player.y+72&&o.x<player.x+42&&o.x+34>player.x){p=Math.max(0,p-.18*dt);$('message').textContent='⚠️ Cone! Steer around it!'}}
+ hud();if(p>=100||c>=100){p=Math.min(100,p);c=Math.min(100,c);hud();finish()}
+ }
+ render();requestAnimationFrame(frame)}
+function steerDown(dir,e){e.preventDefault();steer=dir}
+$('left').addEventListener('pointerdown',e=>steerDown(-1,e));$('right').addEventListener('pointerdown',e=>steerDown(1,e));
+function stop(){steer=0}['left','right'].forEach(id=>{[ 'pointerup','pointercancel','pointerleave' ].forEach(ev=>$(id).addEventListener(ev,stop))});
+function boost(e){if(e)e.preventDefault();if(active&&nitro>0){nitro--;boostUntil=performance.now()+1200;$('message').textContent='⚡ TURBO BOOST!';hud()}}
+$('boost').addEventListener('pointerdown',boost);$('start').addEventListener('click',reset);
+document.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key.toLowerCase()==='a')steer=-1;if(e.key==='ArrowRight'||e.key.toLowerCase()==='d')steer=1;if(e.key===' '&&!e.repeat)boost()});
+document.addEventListener('keyup',e=>{if(['ArrowLeft','ArrowRight','a','d'].includes(e.key.toLowerCase()))steer=0});
+render();requestAnimationFrame(frame);
+})();
+</script>
+</body></html>
