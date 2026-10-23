@@ -1,0 +1,38 @@
+[
+  {
+    "slug": "pyramid-jumper",
+    "title": "Pyramid Jumper",
+    "description": "Jump through ancient Egypt, customize your character, and collect coins.",
+    "path": "games/pyramid-jumper/"
+  },
+  {
+    "slug": "cloud-hopper",
+    "title": "Cloud Hopper: The Sky Is Falling",
+    "description": "Hop across clouds, collect coins, and dodge lightning.",
+    "path": "games/cloud-hopper/"
+  },
+  {
+    "slug": "mountain-climber",
+    "title": "Mountain Climber",
+    "description": "Climb higher, time your jumps, and keep your adventure going.",
+    "path": "games/mountain-climber/"
+  },
+  {
+    "slug": "elemental-fighters",
+    "title": "Elemental Fighters",
+    "description": "A two-fighter arena with elemental effects and a fire-shield intro.",
+    "path": "games/elemental-fighters/"
+  },
+  {
+    "slug": "the-high-sky",
+    "title": "The High Sky",
+    "description": "Fly through the sky, collect coins, and explore airplane choices.",
+    "path": "games/the-high-sky/"
+  },
+  {
+    "slug": "sky-panic-money-rush",
+    "title": "Sky Panic: Money Rush",
+    "description": "Dodge storm clouds and collect rewards in a fast sky challenge.",
+    "path": "games/sky-panic-money-rush/"
+  }
+]
