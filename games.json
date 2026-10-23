@@ -28,11 +28,5 @@
     "title": "The High Sky",
     "description": "Fly through the sky, collect coins, and explore airplane choices.",
     "path": "games/the-high-sky/"
-  },
-  {
-    "slug": "sky-panic-money-rush",
-    "title": "Sky Panic: Money Rush",
-    "description": "Dodge storm clouds and collect rewards in a fast sky challenge.",
-    "path": "games/sky-panic-money-rush/"
   }
 ]
