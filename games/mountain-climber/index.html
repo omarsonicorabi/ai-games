@@ -66,7 +66,7 @@ function drawMountain(){
  ctx.strokeStyle='#4c6878';ctx.lineWidth=3;
  for(let i=0;i<20;i++){let y=((i*137+camera*.45)%(H+150))-60;let x=(i*83)%W;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+18,y+13);ctx.lineTo(x+32,y+8);ctx.stroke()}
 }
-function drawPlatform(p){let y=p.y+camera;if(y<-40||y>H+30)return;ctx.fillStyle=p.kind==='ice'?'#b9f1ff':'#435d6b';ctx.beginPath();ctx.roundRect(p.x,y,p.w,p.h,7);ctx.fill();ctx.fillStyle=p.kind==='ice'?'#f2fdff':'#8ca2ad';ctx.beginPath();ctx.roundRect(p.x+3,y+2,p.w-6,5,4);ctx.fill();ctx.fillStyle='#314b59';ctx.fillRect(p.x+10,y+10,Math.max(8,p.w*.18),3)}
+function drawPlatform(p){let y=p.y-camera;if(y<-40||y>H+30)return;ctx.fillStyle=p.kind==='ice'?'#b9f1ff':'#435d6b';ctx.beginPath();ctx.roundRect(p.x,y,p.w,p.h,7);ctx.fill();ctx.fillStyle=p.kind==='ice'?'#f2fdff':'#8ca2ad';ctx.beginPath();ctx.roundRect(p.x+3,y+2,p.w-6,5,4);ctx.fill();ctx.fillStyle='#314b59';ctx.fillRect(p.x+10,y+10,Math.max(8,p.w*.18),3)}
 function drawPlayer(){let x=player.x,y=player.y;ctx.save();ctx.translate(x,y);
  // backpack
  ctx.fillStyle='#e77832';ctx.beginPath();ctx.roundRect(-16,-1,10,21,4);ctx.fill();
@@ -88,12 +88,12 @@ function update(){
  let oldY=player.y;player.vy+=.42;player.y+=player.vy;player.ground=false;
  // Land only when descending onto a real platform. The air itself never allows a jump.
  const feetOffset=38;
- for(const p of platforms){let py=p.y+camera;if(player.vy>=0&&oldY+feetOffset<=py+5&&player.y+feetOffset>=py&&player.x>p.x-16&&player.x<p.x+p.w+16){player.y=py-feetOffset;player.vy=0;player.ground=true;}}
+ for(const p of platforms){let py=p.y-camera;if(player.vy>=0&&oldY+feetOffset<=py+5&&player.y+feetOffset>=py&&player.x>p.x-16&&player.x<p.x+p.w+16){player.y=py-feetOffset;player.vy=0;player.ground=true;}}
  if(player.y< H*.42){let d=H*.42-player.y;player.y+=d;camera+=d;highest=Math.max(highest,Math.floor(camera/10));}
- for(const c of pickups){if(!c.taken&&Math.hypot(player.x-c.x,player.y+camera-c.y)<28){c.taken=true;coins++;for(let i=0;i<8;i++)particles.push({x:c.x,y:c.y-camera,vx:(Math.random()-.5)*4,vy:-Math.random()*4,life:25});}}
+ for(const c of pickups){if(!c.taken&&Math.hypot(player.x-c.x,player.y-(c.y-camera))<28){c.taken=true;coins++;for(let i=0;i<8;i++)particles.push({x:c.x,y:c.y-camera,vx:(Math.random()-.5)*4,vy:-Math.random()*4,life:25});}}
  particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.15;p.life--});particles=particles.filter(p=>p.life>0);
  if(player.y>H+60){lives--;livesEl.textContent=lives;if(lives<=0){endGame()}else{player.x=W/2;player.y=H*.35;player.vy=0;camera=Math.max(0,camera-120);player.invuln=60;}}
- platforms=platforms.filter(p=>p.y+camera<H+100);pickups=pickups.filter(c=>!c.taken&&c.y-camera<H+80);addMore();
+ platforms=platforms.filter(p=>p.y-camera<H+100);pickups=pickups.filter(c=>!c.taken&&c.y-camera<H+80);addMore();
  coinEl.textContent=coins;heightEl.textContent=highest;
 }
 function endGame(){running=false;gameOver=true;overlay.style.display='flex';overlay.querySelector('h1').innerHTML='Climb Over!';overlay.querySelector('p').innerHTML=`You climbed ${highest} meters and collected ${coins} coins. Try again and climb even higher!`;overlay.querySelector('.small').textContent='Tip: jump from ledge to ledge and keep moving.';startBtn.textContent='TRY AGAIN';}
