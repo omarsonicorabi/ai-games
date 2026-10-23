@@ -6,12 +6,6 @@
     "path": "games/pyramid-jumper/"
   },
   {
-    "slug": "cloud-hopper",
-    "title": "Cloud Hopper: The Sky Is Falling",
-    "description": "Hop across clouds, collect coins, and dodge lightning.",
-    "path": "games/cloud-hopper/"
-  },
-  {
     "slug": "mountain-climber",
     "title": "Mountain Climber",
     "description": "Climb higher, time your jumps, and keep your adventure going.",
