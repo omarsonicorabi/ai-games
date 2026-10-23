@@ -6,21 +6,27 @@
 <style>
 *{box-sizing:border-box}
 html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden!important;overscroll-behavior:none;touch-action:none}
-body{position:fixed;inset:0;background:#101820;color:#fff;font-family:system-ui,Arial;display:block;height:100dvh;min-height:0;overflow:hidden}
-#wrap{position:relative;width:100vw;max-width:none;height:100dvh;max-height:100dvh;overflow:hidden;padding:5px;display:flex;flex-direction:column;gap:4px;min-height:0}
-h1{font-size:clamp(17px,4.5vw,26px);line-height:1.1;margin:1px 0;color:#ffd166;text-align:center;flex:0 0 auto}
-#hud{display:flex;justify-content:space-between;gap:4px;font-weight:800;background:#1c2b36;padding:6px 7px;border-radius:10px;flex:0 0 auto;font-size:clamp(10px,2.7vw,15px)}
+body{position:fixed;inset:0;background:#101820;color:#fff;font-family:system-ui,Arial;height:100dvh;overflow:hidden}
+#wrap{position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;max-height:none;overflow:hidden;padding:5px;display:flex;flex-direction:column;gap:4px;min-height:0}
+h1{font-size:clamp(16px,4.3vw,26px);line-height:1.05;margin:1px 0;color:#ffd166;text-align:center;flex:0 0 auto}
+#hud{display:flex;justify-content:space-between;gap:3px;font-weight:800;background:#1c2b36;padding:6px 5px;border-radius:10px;flex:0 0 auto;font-size:clamp(9px,2.7vw,15px)}
 canvas{display:block;flex:1 1 0;width:100%;height:0;min-height:0;max-height:none;aspect-ratio:auto;background:#d8a65e;border-radius:12px;border:2px solid #52616b;touch-action:none}
-#overlay{position:absolute;top:clamp(72px,15dvh,120px);bottom:clamp(76px,14dvh,100px);left:5px;right:5px;margin:0;height:auto;display:flex;align-items:center;justify-content:center;pointer-events:none}
-#panel{pointer-events:auto;text-align:center;background:#111dedee;border:1px solid #ffd166;border-radius:14px;padding:clamp(6px,1.8vh,13px);width:min(96%,680px);max-height:100%;overflow:hidden;box-shadow:0 8px 30px #0008}
-#panel h2{margin:0 0 4px;color:#ffd166;font-size:clamp(17px,3.8vw,24px);line-height:1.1}
-#panel p{margin:4px 0 7px;font-size:clamp(10px,2.6vw,14px);line-height:1.2}
+#overlay{position:absolute;top:clamp(64px,13dvh,110px);bottom:clamp(78px,14dvh,102px);left:5px;right:5px;margin:0;height:auto;display:flex;align-items:center;justify-content:center;pointer-events:none}
+#panel{pointer-events:auto;text-align:center;background:rgba(12,25,38,.96);border:2px solid #ffd166;border-radius:18px;padding:clamp(7px,1.6dvh,14px);width:min(96%,720px);max-height:100%;overflow:hidden;box-shadow:0 8px 30px #0009}
+#panel h2{margin:0 0 5px;color:#ffd166;font-size:clamp(19px,4.4vw,30px);line-height:1.1}
+#panel p{margin:5px 0 8px;font-size:clamp(11px,2.7vw,15px);line-height:1.2}
 #scoreGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;margin:5px 0 7px}
-#scoreGrid div{background:#263744;border-radius:5px;padding:3px 1px;font-size:clamp(9px,2.1vw,12px);white-space:nowrap}
-button{border:0;border-radius:9px;background:#ffd166;color:#202a30;font-weight:900;font-size:clamp(12px,3.2vw,17px);padding:8px 10px;cursor:pointer}
-#controls{display:flex;justify-content:space-between;gap:6px;flex:0 0 auto;width:100%}
-#controls button{flex:1;min-width:0;padding:10px 2px;font-size:clamp(12px,3.5vw,20px);white-space:nowrap;touch-action:none}
-small{flex:0 0 auto;color:#d3dde2;text-align:center;font-size:clamp(8px,2.2vw,10px);line-height:1.05}
+#scoreGrid div{background:#263744;border:1px solid #40515e;border-radius:6px;padding:3px 1px;font-size:clamp(9px,2.1vw,12px);white-space:nowrap}
+button{border:2px solid #fff0b2;border-radius:14px;background:linear-gradient(180deg,#ffe28a,#ffb52e);color:#202a30;font-weight:1000;font-size:clamp(14px,3.5vw,19px);padding:10px 14px;cursor:pointer;box-shadow:0 4px 0 #9b651c,0 5px 12px #0005;text-shadow:0 1px #fff7}
+#panel button{min-width:36%;margin:3px}
+#controls{display:flex;justify-content:space-between;gap:7px;flex:0 0 auto;width:100%;padding-bottom:1px}
+#controls button{flex:1;min-width:0;min-height:clamp(44px,7.5dvh,62px);padding:9px 2px;font-size:clamp(13px,3.8vw,21px);white-space:nowrap;touch-action:none}
+#controls #left{background:linear-gradient(180deg,#7ed6ff,#2185e8);color:#071d32;border-color:#c9f2ff;box-shadow:0 4px 0 #14559b,0 5px 12px #0005}
+#controls #boost{background:linear-gradient(180deg,#fff28a,#ff8a25);color:#3b1d00;border-color:#fff5bd;box-shadow:0 4px 0 #b34a0c,0 5px 12px #0005}
+#controls #right{background:linear-gradient(180deg,#92f5bb,#20b96b);color:#062b1b;border-color:#d4ffe3;box-shadow:0 4px 0 #087943,0 5px 12px #0005}
+button:active{transform:translateY(3px);box-shadow:0 1px 0 #604014}
+small{flex:0 0 auto;color:#d3dde2;text-align:center;font-size:clamp(8px,2vw,10px);line-height:1.05}
+@media (max-height:620px){#wrap{gap:2px;padding:3px}h1{font-size:16px}#hud{padding:3px 5px}#controls button{min-height:38px;padding:5px 1px}small{font-size:8px}#overlay{top:48px;bottom:58px}#panel{padding:5px}#panel p{margin:3px 0 5px}#panel h2{font-size:18px}button{padding:6px 9px}}
 </style>
 </head>
 <body><main id="wrap"><h1>🏜️ DESERT DRIFT RALLY</h1><div id="hud"><span>🏁 Distance: <b id="dist">0</b> m</span><span>⭐ Score: <b id="score">0</b></span><span>❤️ <b id="lives">1</b></span></div><canvas id="game" width="420" height="560"></canvas><div id="overlay"><div id="panel"><h2>Desert Rally!</h2><p>Dodge rocks and rival cars. Collect gold coins and survive the desert road.</p><button id="start">START RACE</button> <button id="scoresBtn">SCORES</button></div></div><div id="controls"><button id="left">◀ LEFT</button><button id="boost">⚡ BOOST</button><button id="right">RIGHT ▶</button></div><small>Keyboard: ← → or A / D · Space for boost · Works on phones too</small></main>
