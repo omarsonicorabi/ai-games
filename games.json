@@ -16,5 +16,11 @@
     "title": "The High Sky",
     "description": "Fly through the sky, collect coins, and explore airplane choices.",
     "path": "games/the-high-sky/"
+  },
+  {
+    "slug": "turbo-racing",
+    "title": "Turbo Racing 2D",
+    "description": "Race your car against a computer opponent, dodge cones, and use turbo boosts.",
+    "path": "games/turbo-racing/"
   }
 ]
