@@ -22,5 +22,11 @@
     "title": "Turbo Racing 2D",
     "description": "Race your car against a computer opponent, dodge cones, and use turbo boosts.",
     "path": "games/turbo-racing/"
+  },
+  {
+    "slug": "neon-highway-3d",
+    "title": "Neon Highway 3D",
+    "description": "A neon 3D-style highway racer with computer rival, traffic, steering, and nitro boosts.",
+    "path": "games/neon-highway-3d/"
   }
 ]
