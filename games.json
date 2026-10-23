@@ -31,8 +31,8 @@
   },
   {
     "slug": "desert-drift-rally",
-    "title": "Desert Drift Rally",
-    "description": "A desert highway racing game with rival cars, rocks, coins, steering, and boost.",
+    "title": "City Speed Rally",
+    "description": "Race through a colorful city skyline, dodge traffic and rocks, collect coins, and use boost.",
     "path": "games/desert-drift-rally/"
   }
 ]
