@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Pyramid Jumper</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:#7bd4ff;font-family:system-ui,Arial;touch-action:none}canvas{width:100vw;height:100dvh;display:block}
+#hud{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;gap:6px;font-weight:900;color:#51351d;pointer-events:none}.pill{background:#fff2d9e8;border:2px solid #fff;border-radius:16px;padding:8px 11px;box-shadow:0 3px 0 #9a632744}
+#overlay{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:20px;background:#173c5155;pointer-events:auto}.panel{position:relative;z-index:11}#start{position:relative;z-index:12;cursor:pointer;touch-action:manipulation;pointer-events:auto}.panel{width:min(420px,100%);background:#fff4dc;border:4px solid white;border-radius:28px;padding:23px 20px;text-align:center;color:#593a1c;box-shadow:0 10px 0 #764d2e66}h1{font-size:clamp(34px,9vw,48px);line-height:1;margin:8px 0 12px}p{line-height:1.45}.small{font-size:13px;opacity:.8}button{border:0;border-radius:17px;padding:13px 20px;background:#ffb52e;color:#573500;font-size:19px;font-weight:900;box-shadow:0 5px 0 #c97916}button:active{transform:translateY(3px);box-shadow:0 2px 0 #c97916}
+#shopbar{position:fixed;top:62px;left:8px;right:8px;display:flex;gap:6px;justify-content:center;z-index:20;pointer-events:auto}#shopbar button{font-size:13px;padding:8px 10px;border-radius:12px;box-shadow:0 3px 0 #c97916}#shopPanel{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;padding:14px;background:#173c51bb}#shopCard{width:min(560px,100%);max-height:85dvh;overflow:auto;background:#fff4dc;border:4px solid white;border-radius:24px;padding:18px;color:#593a1c;text-align:center}#shopItems{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:12px 0}.pick{padding:8px 2px;font-size:12px;min-height:64px;border:2px solid #fff;border-radius:12px;background:#ffe7b4;box-shadow:0 3px 0 #c97916;overflow-wrap:anywhere}.pick.selected{outline:3px solid #179b5b;background:#d8ffd9}.swatch{display:block;width:25px;height:25px;border-radius:50%;margin:0 auto 4px;border:2px solid #fff;box-shadow:0 0 0 1px #805a30}.shieldIcon{font-size:24px;display:block;margin-bottom:2px}.boyThumb{display:block;height:45px;line-height:0;margin:0 auto 3px}.boyThumb svg{filter:drop-shadow(0 2px 1px #4c3a2a55)}#controls{position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:space-between;padding:0 16px;pointer-events:none}.control{pointer-events:auto;width:68px;height:64px;border:3px solid white;border-radius:21px;background:#fff0d9e8;color:#583819;font-size:25px;box-shadow:0 5px 0 #764d2e55}#jump{width:100px;background:#ffce51}
+</style></head><body><canvas id="c"></canvas>
+<div id="hud"><div class="pill">🪙 <span id="coins">0</span></div><div class="pill">🏜️ <span id="score">0</span> m</div><div class="pill">⚡ <span id="speed">1</span>x</div></div>
+<div id="shopbar"><button id="boysBtn">BOYS</button><button id="colorsBtn">COLORS</button><button id="shieldsBtn">SHIELDS 🔒 25 COINS</button></div>
+<div id="shopPanel"><div id="shopCard"><h2 id="shopTitle">Choose</h2><p id="shopNote">Choose an option.</p><div id="shopItems"></div><button id="closeShop">DONE</button></div></div>
+<div id="controls"><button class="control" id="left">◀</button><button class="control" id="jump">⬆ JUMP</button><button class="control" id="right">▶</button></div>
+<div id="overlay"><div class="panel"><div style="font-size:58px">🏜️</div><h1>PYRAMID<br>JUMPER</h1><p>Help the boy run through ancient Egypt! Jump over pyramids rising from below and duck under upside-down pyramids coming from above. Collect coins and don't touch the pyramid tips!</p><p class="small">Tap JUMP or press Space. Use ◀ ▶ to move.</p><button id="start">START ADVENTURE</button></div></div>
+<script>
+(()=>{const c=document.querySelector('#c'),x=c.getContext('2d');let W,H,D,player,obs,coins,parts,run=false,over=false,score=0,money=Number(localStorage.getItem('pyramidCoins')||0),runCoins=0,speed=4,frame=0,keys={l:false,r:false},spawn=0,shieldUntil=0,shieldUsed=false,shopType='colors',selectedBoy=32,selectedColor=0,selectedShield=0;
+const $=id=>document.getElementById(id);
+function resize(){D=devicePixelRatio||1;W=innerWidth;H=innerHeight;c.width=W*D;c.height=H*D;x.setTransform(D,0,0,D,0,0)}addEventListener('resize',resize);resize();
+function reset(){player={x:W*.23,y:H*.68,vy:0,w:31,h:46,ground:true,jumpsLeft:2};obs=[];coins=[];parts=[];score=0;runCoins=0;speed=4;frame=0;spawn=45;shieldUntil=0;shieldUsed=false;hud()}
+const boyIcons=['🧭', '🥷', '🤴', '🛡️', '🤖', '👨\u200d🚀', '🏴\u200d☠️', '🧙', '🏹', '🧑\u200d✈️', '🧟', '👑', '🥋', '🦸', '🛹', '🧑\u200d🔬', '🎒', '🏜️', '🌿', '❄️', '🔥', '⚡', '✨', '🌑', '🪽', '⚽', '🏀', '🎾', '🏎️', '🚲', '🏂', '🏄', '🕵️', '🚒', '👮', '🩺', '👨\u200d🍳', '🎨', '🎸', '🥁', '🎩', '🐉', '🗡️', '💎', '🪨', '🧗', '🌊', '🤿', '🦁', '🚀', '🌙', '👽', '⏳', '💨', '🌩️', '🌪️', '🌍', '💧', '🌳', '🏜️', '🧊', '🔥', '⛈️', '⚔️', '👑', '🪓', '🏟️', '🏹', '🎯', '🥷', '🥋', '🥊', '🤼', '🤸', '🛹', '⛷️', '🌴', '☠️', '🛩️', '🚂', '🧱', '⚙️', '🔧', '💡', '💻', '📷', '🦺', '🐾', '🐝', '🚜', '🗼', '⛵', '⚔️', '🛡️', '💠', '🌈', '🌌', '🏜️', '🏅', '🪄'];
+const boyNames=['Explorer', 'Ninja', 'Prince', 'Knight', 'Robot', 'Astronaut', 'Pirate', 'Wizard', 'Ranger', 'Pilot', 'Mummy', 'Pharaoh', 'Samurai', 'Superhero', 'Skater', 'Scientist', 'Adventurer', 'Desert Guard', 'Jungle Scout', 'Ice Hero', 'Fire Hero', 'Lightning Hero', 'Golden Boy', 'Shadow Runner', 'Sky Jumper', 'Footballer', 'Basketballer', 'Tennis Player', 'Racer', 'BMX Rider', 'Snowboarder', 'Surfer', 'Detective', 'Firefighter', 'Police Hero', 'Doctor', 'Chef', 'Artist', 'Musician', 'Drummer', 'Guitarist', 'Magician', 'Dragon Rider', 'Monster Hunter', 'Treasure Hunter', 'Cave Explorer', 'Mountain Climber', 'Ocean Explorer', 'Deep-Sea Diver', 'Safari Scout', 'Space Ranger', 'Moon Walker', 'Alien Friend', 'Time Traveler', 'Super Speedster', 'Thunder Hero', 'Wind Hero', 'Earth Hero', 'Water Hero', 'Forest Guardian', 'Desert Racer', 'Ice Wizard', 'Fire Wizard', 'Storm Wizard', 'Royal Guard', 'King', 'Young Viking', 'Gladiator', 'Archer', 'Crossbow Ranger', 'Ninja Master', 'Karate Champion', 'Boxer', 'Wrestler', 'Parkour Runner', 'Skateboard Pro', 'Snow Hero', 'Jungle Warrior', 'Pirate Captain', 'Airship Pilot', 'Train Driver', 'Builder', 'Engineer', 'Mechanic', 'Inventor', 'Computer Genius', 'Camera Explorer', 'Wildlife Rescuer', 'Animal Friend', 'Bee Keeper', 'Farm Hero', 'Lighthouse Keeper', 'Sailor', 'Swordsman', 'Shield Guardian', 'Crystal Knight', 'Rainbow Hero', 'Cosmic Hero', 'Pyramid Jumper', 'Desert Champion'];
+const favoriteBoyNumbers=[33,22,13,95,66,57,19,58,24,49];
+const colors=['Red','Blue','Green','Yellow','Purple','Pink','Orange','White','Black','Cyan','Lime','Gold','Silver','Coral','Navy','Teal','Violet','Magenta','Brown','Mint','Peach','Lavender','Turquoise','Crimson','Rainbow'];
+const colorHex=['#e83f35','#287be0','#2fa85a','#ffd52e','#8754d6','#f27bbd','#f18b32','#ffffff','#222831','#35c7d9','#9bdd31','#f6bd20','#bfc7d5','#ff7968','#263c80','#218c87','#9b59b6','#d94cb7','#8d593a','#9ee6c0','#ffc6a5','#c9b6f2','#40d9c5','#c62838','#ff7b42'];
+const shields=['🛡️','🔥🛡️','⚡🛡️','💎🛡️','🌟🛡️','🌈🛡️','❄️🛡️','🌊🛡️','🍃🛡️','☀️🛡️','🌙🛡️','🐉🛡️','🦅🛡️','👑🛡️','🧿🛡️','💜🛡️','💚🛡️','💙🛡️','❤️🛡️','🧡🛡️','🖤🛡️','🤍🛡️','✨🛡️','☄️🛡️','🏆🛡️'];
+function boyThumbSvg(index){
+ const q=boyLooks[index%boyLooks.length];
+ const skin=q.skin,hair=q.hair,shirt=q.shirt,pants=q.pants,style=index%10;
+ let hat='';
+ if([1,3,6,9].includes(style)) hat=`<path d="M13 19 Q24 5 35 19 L35 23 L13 23Z" fill="${style===1?'#f7f7f7':style===3?'#ed302b':style===6?'#f4bb25':'#a56832'}" stroke="#493a35" stroke-width="1.5"/><path d="M11 23 Q24 19 37 23" stroke="#493a35" stroke-width="2"/>`;
+ if([2,5].includes(style)) hat=`<path d="M10 20 L24 6 L38 20Z" fill="${style===2?'#2f7545':'#c62828'}" stroke="#302b42" stroke-width="1.5"/>`;
+ if(style===4) hat=`<path d="M11 15 Q24 1 37 15 L37 24 L11 24Z" fill="#f0f5ff" stroke="#7aa6d9" stroke-width="2"/><rect x="11" y="21" width="26" height="4" fill="#7aa6d9"/>`;
+ if(style===7) hat=`<path d="M12 19 L16 5 L32 5 L36 19Z" fill="#292a35" stroke="#6a9cd4" stroke-width="2"/>`;
+ let accessory='';
+ if([0,8].includes(style)) accessory=`<path d="M17 31 L24 37 L31 31" fill="none" stroke="#fff" stroke-width="2"/>`;
+ if([1,7].includes(style)) accessory=`<rect x="14" y="18" width="20" height="6" rx="2" fill="#5cccf8" opacity=".95"/>`;
+ if(style===3) accessory=`<path d="M17 29 L24 38 L31 29" fill="#ffe36e" stroke="#fff" stroke-width="1"/>`;
+ if(style===5) accessory=`<path d="M17 27 L31 27 L28 36 L20 36Z" fill="#25384d" stroke="#dbefff" stroke-width="1"/>`;
+ return `<svg viewBox="0 0 48 58" width="36" height="43" xmlns="http://www.w3.org/2000/svg"><ellipse cx="24" cy="54" rx="15" ry="3" fill="#081b48" opacity=".35"/><path d="M17 39 L14 51 L21 51 L24 41 L27 51 L34 51 L31 39" fill="${pants}" stroke="#1c2945" stroke-width="1.5"/><path d="M15 27 Q24 23 33 27 L36 41 L12 41Z" fill="${shirt}" stroke="#243653" stroke-width="1.5"/><path d="M15 29 L9 39 L13 42 L19 34 M33 29 L39 38 L35 41 L29 34" fill="${skin}" stroke="#8b5c45" stroke-width="1.3"/><circle cx="24" cy="18" r="11" fill="${skin}" stroke="#9b6c52" stroke-width="1"/><path d="M13 17 Q12 5 24 6 Q36 5 35 18 L31 13 L26 10 L21 13 L16 18Z" fill="${hair}"/>${hat}<circle cx="20" cy="19" r="1.5" fill="#18233b"/><circle cx="28" cy="19" r="1.5" fill="#18233b"/><path d="M21 24 Q24 27 27 24" fill="none" stroke="#8d4c43" stroke-width="1.3"/>${accessory}</svg>`;
+}
+function openShop(type){shopType=type;const panel=$('shopPanel'),items=$('shopItems');items.innerHTML='';$('shopTitle').textContent=type==='boys'?'Choose Your Boy (10 favorites from 100)':type==='colors'?'Choose Your Color (25 choices)':'Choose Your Shield (25 shields)';$('shopNote').textContent=type==='boys'?'Only your chosen boys are in this store. The game includes all 100 boys.':type==='shields'?'The game pauses while you choose. Pick a shield to spend 25 coins, protect the boy for 5 seconds, then continue playing.': 'Tap any option to select it for your adventure.';
+const list=type==='boys'?favoriteBoyNumbers.map(n=>({number:n,name:boyNames[n-1],icon:boyIcons[n-1],index:n-1})):type==='colors'?colors:shields;
+list.forEach((item,i)=>{const name=type==='boys'?item.name:item;const originalIndex=type==='boys'?item.index:i;const b=document.createElement('button');b.className='pick'+((type==='boys'?originalIndex===selectedBoy:type==='colors'?i===selectedColor:i===selectedShield)?' selected':'');if(type==='colors')b.innerHTML='<span class="swatch" style="background:'+colorHex[i]+'"></span>'+name;else if(type==='shields')b.innerHTML='<span class="shieldIcon">'+name+'</span>Shield '+(i+1);else b.innerHTML='<span class="boyThumb">'+boyThumbSvg(item.index)+'</span><b>#'+item.number+'</b><br>'+name;b.onclick=()=>{if(type==='boys'){selectedBoy=originalIndex;openShop(type);return;}if(type==='colors'){selectedColor=i;openShop(type);return;}selectedShield=i;if(!run){$('shopNote').textContent='Shield '+(i+1)+' selected! Start your adventure, then tap SHIELDS during play to activate it for 5 seconds.';openShop(type);return;}if(money<25){$('shopNote').textContent='You need 25 coins. You have '+money+'. Collect coins during the adventure!';return;}money-=25;localStorage.setItem('pyramidCoins',String(money));shieldUntil=Date.now()+5000;shieldUsed=true;hud();$('shopPanel').style.display='none';};items.appendChild(b)});panel.style.display='flex';}
+$('boysBtn').onclick=()=>openShop('boys');$('colorsBtn').onclick=()=>openShop('colors');$('shieldsBtn').onclick=()=>openShop('shields');$('closeShop').onclick=()=>$('shopPanel').style.display='none';
+function start(){
+  reset(); run=true; over=false;
+  $('overlay').style.display='none';
+  $('overlay').setAttribute('aria-hidden','true');
+  $('overlay').querySelector('h1').innerHTML='PYRAMID<br>JUMPER';
+  $('overlay').querySelectorAll('p')[0].textContent="Help the boy run through ancient Egypt! Jump over pyramids rising from below and duck under upside-down pyramids coming from above. Collect coins and don't touch the pyramid tips!";
+  $('overlay').querySelectorAll('p')[1].textContent='Double jump! Tap JUMP twice in the air to leap higher. Use COLORS to customize. Collect 25 coins to use a shield for 5 seconds.';
+  $('start').textContent='START ADVENTURE';
+}
+const startButton=$('start');
+startButton.addEventListener('click', e=>{e.preventDefault();e.stopPropagation();if(!run)start();});
+startButton.addEventListener('pointerup', e=>{e.preventDefault();e.stopPropagation();if(!run)start();});
+function key(k,v){keys[k]=v}for(const [id,k] of [['left','l'],['right','r']]){let b=$(id);b.onpointerdown=e=>{e.preventDefault();key(k,true)};['pointerup','pointercancel','pointerleave'].forEach(ev=>b.addEventListener(ev,()=>key(k,false)))}
+function jump(){if(run&&player.jumpsLeft>0){player.vy=player.jumpsLeft===2?-16.8:-15.2;player.ground=false;player.jumpsLeft--;}}$('jump').onpointerdown=e=>{e.preventDefault();jump()};
+addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight',' ','ArrowUp','a','d'].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a')keys.l=true;if(e.key==='ArrowRight'||e.key==='d')keys.r=true;if(e.key===' '||e.key==='ArrowUp')jump();if(over&&e.key==='Enter')start()});addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a')keys.l=false;if(e.key==='ArrowRight'||e.key==='d')keys.r=false});
+function pyramid(cx,baseY,w,h,up){x.beginPath();if(up){x.moveTo(cx-w/2,baseY);x.lineTo(cx,baseY-h);x.lineTo(cx+w/2,baseY)}else{x.moveTo(cx-w/2,baseY);x.lineTo(cx,baseY+h);x.lineTo(cx+w/2,baseY)}x.closePath();let g=x.createLinearGradient(cx-w/2,baseY,cx+w/2,baseY);g.addColorStop(0,'#c77b31');g.addColorStop(.5,'#f7c56c');g.addColorStop(1,'#d9943e');x.fillStyle=g;x.fill();x.strokeStyle='#9a5c27';x.lineWidth=2;x.stroke();x.beginPath();if(up){x.moveTo(cx,baseY-h);x.lineTo(cx,baseY);x.lineTo(cx-w/2,baseY)}else{x.moveTo(cx,baseY+h);x.lineTo(cx,baseY);x.lineTo(cx-w/2,baseY)}x.closePath();x.fillStyle='#ffdf91';x.fill();x.strokeStyle='#b97835';x.stroke()}
+function background(){let g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'#70d5ff');g.addColorStop(.68,'#c8f0ff');g.addColorStop(1,'#ffe0a0');x.fillStyle=g;x.fillRect(0,0,W,H);
+ // distant dunes
+ x.fillStyle='#efc77c';x.beginPath();x.moveTo(0,H*.72);x.quadraticCurveTo(W*.22,H*.55,W*.45,H*.72);x.quadraticCurveTo(W*.75,H*.55,W,H*.7);x.lineTo(W,H);x.lineTo(0,H);x.fill();
+ pyramid(W*.68,H*.76,W*.72,H*.62,true);pyramid(W*.96,H*.76,W*.48,H*.43,true);
+ // ground
+ x.fillStyle='#e8b763';x.fillRect(0,H*.76,W,H*.24);x.fillStyle='#d79a47';for(let i=0;i<15;i++){let xx=(i*91-frame*speed*.45)%(W+30);x.fillRect(xx,H*.81+(i%3)*22,18,3)}
+ // clouds
+ x.fillStyle='#ffffffcc';for(let j=0;j<3;j++){let xx=(j*W*.42+frame*.25)%(W+100)-40,yy=85+j*57;x.beginPath();x.arc(xx,yy,17,0,7);x.arc(xx+22,yy-8,22,0,7);x.arc(xx+45,yy,15,0,7);x.fill()}
+}
+const boyLooks=[
+ {skin:'#f4c69a',hair:'#6b3824',shirt:'#e83f35',pants:'#254e68',style:0},{skin:'#d99b6c',hair:'#24202a',shirt:'#287be0',pants:'#293c75',style:1},{skin:'#f0c7a0',hair:'#9b5a2d',shirt:'#2fa85a',pants:'#553b2a',style:2},{skin:'#8e5839',hair:'#171717',shirt:'#ffd52e',pants:'#263c80',style:3},{skin:'#f2c7a4',hair:'#a6a6a6',shirt:'#8754d6',pants:'#444b58',style:4},{skin:'#c78a5c',hair:'#2c2019',shirt:'#f27bbd',pants:'#1e4267',style:5},{skin:'#edbd91',hair:'#5b2b1d',shirt:'#f18b32',pants:'#3b3030',style:6},{skin:'#e5b48b',hair:'#3b261a',shirt:'#ffffff',pants:'#2c477b',style:7},{skin:'#70452f',hair:'#111111',shirt:'#222831',pants:'#4c5965',style:8},{skin:'#f4c69a',hair:'#6d4a31',shirt:'#35c7d9',pants:'#27364b',style:9},
+ {skin:'#c88c60',hair:'#26211e',shirt:'#9bdd31',pants:'#38512e',style:10},{skin:'#edbd91',hair:'#6b3b20',shirt:'#f6bd20',pants:'#7a4a21',style:11},{skin:'#f1c6a1',hair:'#191919',shirt:'#263c80',pants:'#333333',style:12},{skin:'#9b6848',hair:'#25170f',shirt:'#d94cb7',pants:'#282f3d',style:13},{skin:'#f0c7a0',hair:'#c28a42',shirt:'#218c87',pants:'#49362a',style:14},{skin:'#d7a078',hair:'#33251c',shirt:'#9b59b6',pants:'#344c61',style:15},{skin:'#efc29b',hair:'#7c4b2a',shirt:'#8d593a',pants:'#263c80',style:16},{skin:'#a96f4b',hair:'#201713',shirt:'#40d9c5',pants:'#3b3b3b',style:17},{skin:'#f4c69a',hair:'#6b3824',shirt:'#ff7968',pants:'#315c4a',style:18},{skin:'#edbd91',hair:'#38251c',shirt:'#c9b6f2',pants:'#2d3e66',style:19},{skin:'#bc8058',hair:'#161616',shirt:'#c62838',pants:'#202a39',style:20},{skin:'#f1c6a1',hair:'#a86a2d',shirt:'#263c80',pants:'#bfc7d5',style:21},{skin:'#dfaa7e',hair:'#30221b',shirt:'#f6bd20',pants:'#563c7b',style:22},{skin:'#8b5538',hair:'#171311',shirt:'#222831',pants:'#c62838',style:23},{skin:'#f4c69a',hair:'#6b3824',shirt:'#40d9c5',pants:'#263c80',style:24}
+];
+// Generate 75 additional outfit/skin/hair combinations so all 100 boys look different.
+const extraSkins=['#f4c69a','#d99b6c','#f0c7a0','#8e5839','#f2c7a4','#c78a5c','#edbd91','#e5b48b','#70452f','#c88c60','#a96f4b','#dfaa7e'];
+const extraHair=['#6b3824','#24202a','#9b5a2d','#171717','#a6a6a6','#2c2019','#5b2b1d','#3b261a','#111111','#c28a42','#33251c','#a86a2d','#d7b16b','#49352b'];
+const extraClothes=['#e83f35','#287be0','#2fa85a','#ffd52e','#8754d6','#f27bbd','#f18b32','#ffffff','#222831','#35c7d9','#9bdd31','#f6bd20','#263c80','#d94cb7','#218c87','#9b59b6','#40d9c5','#ff7968','#c9b6f2','#c62838'];
+while(boyLooks.length<100){const i=boyLooks.length;boyLooks.push({skin:extraSkins[(i*5)%extraSkins.length],hair:extraHair[(i*3)%extraHair.length],shirt:extraClothes[(i*7)%extraClothes.length],pants:extraClothes[(i*11+4)%extraClothes.length],style:i});}
+function boy(){let px=player.x,py=player.y,look=boyLooks[selectedBoy%boyLooks.length]; x.save();x.translate(px,py);let bob=player.ground?Math.sin(frame*.3)*2:0;x.translate(0,bob);
+ // character-specific backpack, legs and outfit
+ x.fillStyle=look.pants;x.strokeStyle=look.pants;x.lineWidth=6;x.lineCap='round';x.beginPath();x.moveTo(-5,22);x.lineTo(-10,39);x.moveTo(6,22);x.lineTo(12,39);x.stroke();
+ x.fillStyle=look.shirt;x.beginPath();x.roundRect(-10,-4,20,30,6);x.fill();
+ x.strokeStyle=look.skin;x.lineWidth=5;x.beginPath();x.moveTo(-8,3);x.lineTo(-15,14);x.moveTo(8,3);x.lineTo(15,11);x.stroke();
+ x.fillStyle=look.skin;x.beginPath();x.arc(0,-14,12,0,7);x.fill();
+ // different hair/headwear for each boy
+ x.fillStyle=look.hair;x.beginPath();if(look.style%5===0){x.arc(0,-18,13,Math.PI,Math.PI*2);x.lineTo(13,-12);x.lineTo(-13,-12);}else if(look.style%5===1){x.arc(0,-17,13,Math.PI,Math.PI*2);x.lineTo(9,-18);x.lineTo(4,-24);x.lineTo(-1,-18);x.lineTo(-7,-23);x.lineTo(-13,-12);}else if(look.style%5===2){x.arc(0,-19,13,Math.PI,Math.PI*2);x.lineTo(13,-10);x.lineTo(-13,-10);}else if(look.style%5===3){x.roundRect(-13,-27,26,10,3);x.rect(-10,-31,20,6);}else{x.arc(0,-17,13,Math.PI,Math.PI*2);x.lineTo(13,-11);x.lineTo(-13,-11);}x.fill();
+ if(look.style%5===3){x.fillStyle='#ffffff';x.fillRect(-14,-19,28,3);}if(look.style%5===4){x.fillStyle='#ffcf35';x.beginPath();x.moveTo(-7,-27);x.lineTo(-3,-36);x.lineTo(1,-27);x.lineTo(7,-34);x.lineTo(8,-25);x.closePath();x.fill();}
+ x.fillStyle='#2b3d50';x.beginPath();x.arc(4,-14,2,0,7);x.fill();
+ if(look.style%3===1){x.strokeStyle='#5a3020';x.lineWidth=2;x.beginPath();x.moveTo(-2,-7);x.lineTo(4,-7);x.stroke();}
+ // Extra costume details make each numbered boy recognizable at a glance.
+ const outfit=look.style%10;
+ if(outfit===1||outfit===7){x.strokeStyle='#d8f5ff';x.lineWidth=2;x.beginPath();x.moveTo(-7,-3);x.lineTo(7,-3);x.stroke();x.fillStyle='#63dfff';x.fillRect(-9,-1,18,5)}
+ if(outfit===2||outfit===5){x.fillStyle=outfit===2?'#2e8c4c':'#e5b22d';x.beginPath();x.moveTo(-10,-5);x.lineTo(0,4);x.lineTo(10,-5);x.closePath();x.fill()}
+ if(outfit===3){x.fillStyle='#e8d7a0';x.fillRect(-3,-2,6,15);x.fillStyle='#9b2630';x.fillRect(-2,1,4,9)}
+ if(outfit===4){x.strokeStyle='#f3f8ff';x.lineWidth=2;x.strokeRect(-9,-2,18,6);x.fillStyle='#5ec9ff';x.fillRect(-3,-1,6,4)}
+ if(outfit===6){x.fillStyle='#ffcf35';x.beginPath();x.moveTo(-7,-26);x.lineTo(-4,-34);x.lineTo(0,-27);x.lineTo(5,-35);x.lineTo(8,-25);x.closePath();x.fill()}
+ if(outfit===8){x.fillStyle='#ffdc51';x.beginPath();x.arc(0,-14,13,Math.PI,Math.PI*2);x.fill();x.fillStyle=look.hair;x.beginPath();x.arc(0,-18,10,Math.PI,Math.PI*2);x.fill()}
+ if(Date.now()<shieldUntil){x.font='20px system-ui';x.textAlign='center';x.fillText(shields[selectedShield],0,-42)}
+ x.restore()}
+function spawnObs(){let up=Math.random()<.56;let w=82+Math.random()*38,h=82+Math.random()*48;let y=up?H*.76:H*.1;obs.push({x:W+60,y,w,h,up,passed:false});if(Math.random()<.85)coins.push({x:W+60+w+25,y:up?y-h-20:y+h+24,t:false})}
+function intersects(o){
+ // Check the triangle's actual sloping sides, not its whole rectangular bounding box.
+ // A little extra clearance around the boy makes grazing pyramid corners fairer.
+ const px=player.x, py=player.y, halfW=9, halfH=15;
+ const left=o.x-o.w/2, right=o.x+o.w/2;
+ const top=Math.min(o.y,o.up?o.y-o.h:o.y+o.h);
+ const bottom=Math.max(o.y,o.up?o.y-o.h:o.y+o.h);
+ const samples=[px-halfW,px,px+halfW];
+ for(const sx of samples){
+   if(sx<left||sx>right) continue;
+   const ratio=(sx-left)/o.w;
+   const edgeY=o.up ? o.y-o.h*(1-Math.abs(2*ratio-1)) : o.y+o.h*(1-Math.abs(2*ratio-1));
+   const triMin=o.up?edgeY:o.y, triMax=o.up?o.y:edgeY;
+   if(py+halfH>triMin+5 && py-halfH<triMax-5) return true;
+ }
+ return false;
+}
+function hud(){$('coins').textContent=money;$('shieldsBtn').textContent=money>=25?'SHIELDS 🛡️ 25 COINS':'SHIELDS 🔒 25 COINS';$('score').textContent=score;$('speed').textContent=(speed/4).toFixed(1)}
+function end(){run=false;over=true;$('overlay').style.display='flex';$('overlay').querySelector('h1').innerHTML='ADVENTURE<br>OVER!';$('overlay').querySelectorAll('p')[0].textContent=`You traveled ${score} meters and collected ${runCoins} coins this run. You have ${money} total coins saved. Try again!`;$('overlay').querySelector('.small').textContent='Time your jumps carefully. Avoid both upward and upside-down pyramid tips.';$('start').textContent='PLAY AGAIN'}
+function update(){if(!run || $('shopPanel').style.display==='flex')return;frame++;score=Math.floor(frame/7);speed=Math.min(8,4+score/180);player.x+=(keys.r?4.4:0)-(keys.l?4.4:0);player.x=Math.max(22,Math.min(W*.68,player.x));player.vy+=.48;player.y+=player.vy;if(player.y+player.h/2>=H*.76){player.y=H*.76-player.h/2;player.vy=0;player.ground=true;player.jumpsLeft=2}
+ spawn--;if(spawn<=0){spawn=Math.max(38,86-score*.08)+Math.random()*35;spawnObs()}
+ for(let o of obs){o.x-=speed;if(intersects(o)){if(Date.now()<shieldUntil){o.x=-999;continue;}end();return}}
+ obs=obs.filter(o=>o.x+o.w> -80);
+ for(let c of coins){c.x-=speed;if(!c.t&&Math.hypot(player.x-c.x,player.y-c.y)<31){c.t=true;money++;runCoins++;localStorage.setItem('pyramidCoins',String(money));for(let i=0;i<7;i++)parts.push({x:c.x,y:c.y,vx:(Math.random()-.5)*3,vy:-Math.random()*3,life:20})}}
+ coins=coins.filter(c=>c.x>-30&&!c.t);parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.13;p.life--});parts=parts.filter(p=>p.life>0);hud()}
+function draw(){background();for(let o of obs)pyramid(o.x,o.y,o.w,o.h,o.up);
+ for(let c of coins){x.fillStyle='#ffc629';x.strokeStyle='#fff1a0';x.lineWidth=3;x.beginPath();x.arc(c.x,c.y,10,0,7);x.fill();x.stroke();x.fillStyle='#fff6bf';x.fillRect(c.x-2,c.y-6,4,12)}
+ parts.forEach(p=>{x.fillStyle='#ffd342';x.beginPath();x.arc(p.x,p.y,3,0,7);x.fill()});if(player)boy();if(Date.now()<shieldUntil){x.save();x.strokeStyle='#5ee7ff';x.lineWidth=5;x.beginPath();x.arc(player.x,player.y,35,0,Math.PI*2);x.stroke();x.restore()}requestAnimationFrame(loop)}
+function loop(){update();draw()}reset();loop();
+})();
+</script></body></html>
