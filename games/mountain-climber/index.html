@@ -67,7 +67,7 @@ function drawMountain(){
  for(let i=0;i<20;i++){let y=((i*137+camera*.45)%(H+150))-60;let x=(i*83)%W;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+18,y+13);ctx.lineTo(x+32,y+8);ctx.stroke()}
 }
 function drawPlatform(p){let y=p.y+camera;if(y<-40||y>H+30)return;ctx.fillStyle=p.kind==='ice'?'#b9f1ff':'#435d6b';ctx.beginPath();ctx.roundRect(p.x,y,p.w,p.h,7);ctx.fill();ctx.fillStyle=p.kind==='ice'?'#f2fdff':'#8ca2ad';ctx.beginPath();ctx.roundRect(p.x+3,y+2,p.w-6,5,4);ctx.fill();ctx.fillStyle='#314b59';ctx.fillRect(p.x+10,y+10,Math.max(8,p.w*.18),3)}
-function drawPlayer(){let x=player.x,y=player.y+camera;ctx.save();ctx.translate(x,y);
+function drawPlayer(){let x=player.x,y=player.y;ctx.save();ctx.translate(x,y);
  // backpack
  ctx.fillStyle='#e77832';ctx.beginPath();ctx.roundRect(-16,-1,10,21,4);ctx.fill();
  // legs
