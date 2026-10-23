@@ -28,5 +28,11 @@
     "title": "Neon Highway 3D",
     "description": "A neon 3D-style highway racer with computer rival, traffic, steering, and nitro boosts.",
     "path": "games/neon-highway-3d/"
+  },
+  {
+    "slug": "desert-drift-rally",
+    "title": "Desert Drift Rally",
+    "description": "A desert highway racing game with rival cars, rocks, coins, steering, and boost.",
+    "path": "games/desert-drift-rally/"
   }
 ]
