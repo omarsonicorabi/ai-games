@@ -6,12 +6,6 @@
     "path": "games/pyramid-jumper/"
   },
   {
-    "slug": "mountain-climber",
-    "title": "Mountain Climber",
-    "description": "Climb higher, time your jumps, and keep your adventure going.",
-    "path": "games/mountain-climber/"
-  },
-  {
     "slug": "elemental-fighters",
     "title": "Elemental Fighters",
     "description": "A two-fighter arena with elemental effects and a fire-shield intro.",
