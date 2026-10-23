@@ -20,7 +20,7 @@ main{width:min(1100px,calc(100% - 32px));margin:0 auto 54px}.toolbar{display:fle
 <script>
 (async function(){
  const root=document.getElementById('games'),count=document.getElementById('count');
- const icons={'pyramid-jumper':'🏜️','cloud-hopper':'☁️','mountain-climber':'🧗','elemental-fighters':'🛡️','the-high-sky':'✈️','sky-panic-money-rush':'🌩️'};
+ const icons={'pyramid-jumper':'🏜️','mountain-climber':'🧗','elemental-fighters':'🛡️','the-high-sky':'✈️','sky-panic-money-rush':'🌩️'};
  try{
   const response=await fetch('./games.json',{cache:'no-store'});
   if(!response.ok)throw new Error('Could not load games.json');
