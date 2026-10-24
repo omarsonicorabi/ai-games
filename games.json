@@ -28,5 +28,11 @@
     "title": "Monkey Tree Swing",
     "description": "Choose from 14 monkeys, swing between jungle trees, collect coins and magic rings, and try not to fall!",
     "path": "games/monkey-tree-swing/"
+  },
+  {
+    "slug": "bike-rush",
+    "title": "Bike Rush: Road Sprint",
+    "description": "Race across three lanes, dodge obstacles, collect coins, and unlock a five-second boost every 10 coins.",
+    "path": "games/bike-rush/"
   }
 ]
