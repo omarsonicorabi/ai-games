@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#123b2c">
+<title>Monkey Tree Swing</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:none;font-family:system-ui,Arial,sans-serif;background:#123b2c;color:#fff}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;padding:7px;gap:6px;background:linear-gradient(#79d7f2,#d7f7d5 58%,#398b46)}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 8px;border-radius:13px;background:#174b35e8;font-weight:900;flex-shrink:0}
+h1{font-size:clamp(16px,4.5vw,23px);margin:0;color:#ffe66d}#stats{font-size:clamp(11px,3vw,14px);white-space:nowrap}
+#stage{position:relative;flex:1;min-height:0;border:3px solid #20563b;border-radius:16px;overflow:hidden;box-shadow:0 7px 0 #17452f66;background:#8be0f3}
+canvas{width:100%;height:100%;display:block}
+#message{position:absolute;left:50%;top:13%;transform:translateX(-50%);width:min(90%,360px);padding:13px 14px;text-align:center;border:2px solid #fff9;border-radius:17px;background:#164b37ed;box-shadow:0 8px 24px #123b2c44}
+#message h2{margin:0 0 6px;color:#ffe66d;font-size:clamp(20px,5vw,29px)}#message p{margin:5px 0 12px;font-size:14px;line-height:1.4}
+button{border:0;border-radius:13px;font-weight:900;cursor:pointer;touch-action:none;user-select:none}
+#start{background:#ffe66d;color:#17452f;padding:12px 22px;font-size:16px}
+#controls{display:flex;gap:8px;flex-shrink:0;height:clamp(56px,10vh,76px)}
+.ctrl{flex:1;color:white;font-size:clamp(14px,4vw,19px);box-shadow:0 4px 0 #0002}
+#left{background:#2876d2}#jump{background:#e68b22;flex:1.25}#right{background:#25a35a}
+.ctrl:active,#start:active{transform:translateY(2px);filter:brightness(1.12)}
+#hint{text-align:center;font-size:11px;font-weight:800;color:#123b2c;flex-shrink:0}
+</style>
+</head>
+<body>
+<div id="app">
+<header><h1>🐒 Monkey Tree Swing</h1><div id="stats">🪙 0 &nbsp; 💍 0</div></header>
+<div id="stage"><canvas id="game"></canvas><div id="message"><h2>Monkey Tree Swing!</h2><p>Help the monkey swing from tree to tree! Collect shiny coins 🪙 and magic rings 💍. Don't fall!</p><p><b>← →</b> move and swing · <b>SPACE</b> jump/release the rope</p><button id="start">START CLIMBING!</button></div></div>
+<div id="controls"><button class="ctrl" id="left">◀ LEFT</button><button class="ctrl" id="jump">⬆ JUMP / ROPE</button><button class="ctrl" id="right">RIGHT ▶</button></div>
+<div id="hint">Tip: jump near a tree to grab its rope, then swing toward the next tree!</div>
+</div>
+<script>
+(()=> {
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),stats=document.getElementById('stats'),message=document.getElementById('message'),startBtn=document.getElementById('start');
+let W=800,H=500,dpr=1,playing=false,gameOver=false,coins=0,rings=0,score=0,camera=0,last=0,keys={left:false,right:false},jumpQueued=false;
+let monkey,trees,collectibles,particles,worldEnd=6000;
+function resize(){const r=canvas.getBoundingClientRect();dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.max(1,Math.floor(r.width*dpr));canvas.height=Math.max(1,Math.floor(r.height*dpr));W=r.width;H=r.height;ctx.setTransform(dpr,0,0,dpr,0,0);if(!playing)draw();}
+window.addEventListener('resize',resize);
+function makeWorld(){trees=[];for(let i=0;i<15;i++){const x=120+i*390;trees.push({x,y:H*.48-(i%3)*20,height:H*.43+(i%2)*15,rope:110+(i%3)*18});}
+collectibles=[];for(let i=0;i<55;i++){const x=210+i*105;collectibles.push({x,y:H*.35+Math.sin(i*1.8)*H*.12,type:i%7===3?'ring':'coin',taken:false});}}
+function reset(){coins=0;rings=0;score=0;camera=0;gameOver=false;makeWorld();const t=trees[0];monkey={x:t.x+20,y:t.y-35,vx:0,vy:0,r:17,rope:-1,angle:0,angularV:0,climbing:true};particles=[];playing=true;message.style.display='none';last=performance.now();requestAnimationFrame(loop);}
+function roundRect(x,y,w,h,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();}
+function drawTree(t){const x=t.x-camera,ground=H+40;ctx.fillStyle='#7b4927';ctx.fillRect(x-17,t.y,34,ground-t.y);ctx.fillStyle='#996033';ctx.fillRect(x-10,t.y,7,ground-t.y);ctx.strokeStyle='#70401f';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x,t.y+25);ctx.lineTo(x-32,t.y+7);ctx.moveTo(x+2,t.y+48);ctx.lineTo(x+31,t.y+30);ctx.stroke();ctx.fillStyle='#167943';ctx.beginPath();ctx.arc(x,t.y-25,48,0,Math.PI*2);ctx.arc(x-30,t.y-7,31,0,Math.PI*2);ctx.arc(x+33,t.y-3,33,0,Math.PI*2);ctx.fill();ctx.fillStyle='#2eaa56';ctx.beginPath();ctx.arc(x-9,t.y-37,28,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffe66d';ctx.beginPath();ctx.arc(x+7,t.y-54,5,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#d9b37b';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x+3,t.y-25);ctx.lineTo(x+3,t.y-25+t.rope);ctx.stroke();ctx.strokeStyle='#f1d6a0';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+6,t.y-25);ctx.lineTo(x+6,t.y-25+t.rope);ctx.stroke();}
+function drawMonkey(x,y,ang=0){ctx.save();ctx.translate(x,y);ctx.rotate(ang);ctx.lineCap='round';ctx.strokeStyle='#75401f';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(-7,6);ctx.quadraticCurveTo(-28,15,-21,-2);ctx.stroke();ctx.strokeStyle='#9c5b2e';ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(-5,9);ctx.lineTo(-11,22);ctx.moveTo(6,9);ctx.lineTo(13,21);ctx.moveTo(-8,-2);ctx.lineTo(-18,5);ctx.moveTo(8,-2);ctx.lineTo(17,2);ctx.stroke();ctx.fillStyle='#9c5b2e';ctx.beginPath();ctx.ellipse(0,2,14,18,0,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(0,-15,16,0,Math.PI*2);ctx.fill();ctx.fillStyle='#d9a06c';ctx.beginPath();ctx.ellipse(0,-10,11,8,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(-5,-18,4.5,0,Math.PI*2);ctx.arc(5,-18,4.5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#182b20';ctx.beginPath();ctx.arc(-4,-18,2,0,Math.PI*2);ctx.arc(6,-18,2,0,Math.PI*2);ctx.fill();ctx.fillStyle='#4c2919';ctx.beginPath();ctx.arc(0,-11,2.5,0,Math.PI*2);ctx.fill();ctx.restore();}
+function drawCoin(c){const x=c.x-camera,y=c.y;if(c.type==='coin'){ctx.fillStyle='#ffbd28';ctx.beginPath();ctx.arc(x,y,10,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff18a';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x,y,6,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#b66a08';ctx.font='bold 11px sans-serif';ctx.textAlign='center';ctx.fillText('$',x,y+4);}else{ctx.strokeStyle='#f64ed0';ctx.lineWidth=6;ctx.beginPath();ctx.ellipse(x,y,10,13,0,0,Math.PI*2);ctx.stroke();ctx.strokeStyle='#ffd5f5';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(x,y,5,8,0,0,Math.PI*2);ctx.stroke();}}
+function draw(){if(!W||!H)return;ctx.clearRect(0,0,W,H);let sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#73d4f2');sky.addColorStop(.72,'#d9f8d5');sky.addColorStop(1,'#65bb61');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+ctx.fillStyle='#fff8';for(let i=0;i<4;i++){let x=((i*230-camera*.12)%(W+120)+W+120)%(W+120);ctx.beginPath();ctx.arc(x,65+i%2*34,20,0,7);ctx.arc(x+24,60+i%2*34,27,0,7);ctx.arc(x+49,68+i%2*34,18,0,7);ctx.fill();}
+ctx.fillStyle='#6dbd7d';ctx.beginPath();ctx.moveTo(0,H*.64);for(let x=0;x<=W;x+=30)ctx.lineTo(x,H*.59+Math.sin((x+camera*.2)/65)*18);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.fill();
+for(const t of trees)if(t.x-camera>-100&&t.x-camera<W+100)drawTree(t);
+for(const c of collectibles)if(!c.taken&&c.x-camera>-30&&c.x-camera<W+30)drawCoin(c);
+if(monkey){const mx=monkey.x-camera,my=monkey.y;if(monkey.rope>=0){const t=trees[monkey.rope];ctx.strokeStyle='#e6d4a0';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(t.x-camera+3,t.y-25);ctx.lineTo(mx,my-6);ctx.stroke();}drawMonkey(mx,my,monkey.rope>=0?Math.sin(monkey.angle)*.35:0);}
+ctx.fillStyle='#174b35';ctx.font='bold 12px system-ui';ctx.textAlign='left';ctx.fillText('SWING THROUGH THE JUNGLE!',12,H-14);}
+function loop(now){if(!playing)return;const dt=Math.min((now-last)/16.67,2);last=now;update(dt);draw();stats.textContent='🪙 '+coins+'   💍 '+rings+'   ⭐ '+score;if(playing)requestAnimationFrame(loop);}
+function update(dt){if(monkey.climbing){monkey.y-=1.4*dt;if(monkey.y<trees[0].y-55){monkey.climbing=false;monkey.rope=0;monkey.angle=-.65;monkey.angularV=.025;}}else if(monkey.rope>=0){const t=trees[monkey.rope],anchorX=t.x+3,anchorY=t.y-25;monkey.angularV+=((keys.right?-.0018:0)+(keys.left?.0018:0)-Math.sin(monkey.angle)*.0013)*dt;monkey.angularV*=Math.pow(.995,dt);monkey.angle+=monkey.angularV*dt;const len=t.rope;monkey.x=anchorX+Math.sin(monkey.angle)*len;monkey.y=anchorY+Math.cos(monkey.angle)*len;monkey.vx=Math.cos(monkey.angle)*monkey.angularV*len;monkey.vy=-Math.sin(monkey.angle)*monkey.angularV*len;if(jumpQueued){monkey.rope=-1;monkey.vx+=Math.sin(monkey.angle)*7+1;monkey.vy=-Math.cos(monkey.angle)*8-1;jumpQueued=false;}}
+else{monkey.vy+=.34*dt;monkey.x+=(monkey.vx+(keys.right?2.4:0)-(keys.left?2.4:0))*dt;monkey.y+=monkey.vy*dt;monkey.vx*=Math.pow(.995,dt);if(jumpQueued){const near=trees.findIndex((t,i)=>i>0&&Math.abs(t.x-monkey.x)<100&&Math.abs((t.y-25+t.rope*.7)-monkey.y)<130);if(near>=0){monkey.rope=near;monkey.angle=Math.asin(Math.max(-.9,Math.min(.9,(monkey.x-(trees[near].x+3))/trees[near].rope)));monkey.angularV=.035;monkey.vx=0;monkey.vy=0;}jumpQueued=false;}if(monkey.y>H+30||monkey.x-camera>worldEnd||monkey.y<-80){fall();return;}}
+// catch ropes when jumping close to a new tree
+if(monkey.rope<0&&!monkey.climbing&&!jumpQueued){for(let i=0;i<trees.length;i++){const t=trees[i],ax=t.x+3,ay=t.y-25;if(Math.abs(monkey.x-ax)<35&&Math.abs(monkey.y-ay)<t.rope+35&&monkey.vy>0){monkey.rope=i;monkey.angle=Math.asin(Math.max(-.95,Math.min(.95,(monkey.x-ax)/t.rope)));monkey.angularV=.018;monkey.vx=0;monkey.vy=0;break;}}}
+for(const c of collectibles){if(!c.taken&&Math.hypot(c.x-monkey.x,c.y-monkey.y)<30){c.taken=true;if(c.type==='coin'){coins++;score+=10;}else{rings++;score+=50;}for(let i=0;i<6;i++)particles.push({x:c.x,y:c.y,vx:(Math.random()-.5)*3,vy:-Math.random()*3,life:22});}}
+particles=particles.filter(p=>p.life-->0);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.12;ctx.fillStyle='#ffe66d';ctx.fillRect(p.x-camera,p.y,4,4);});
+camera=Math.max(0,monkey.x-W*.34);}
+function fall(){playing=false;gameOver=true;draw();message.style.display='block';message.innerHTML='<h2>😱 AAAAH!</h2><p>The monkey fell! You collected <b>'+coins+' coins</b> and <b>'+rings+' rings</b>.</p><p>Try again and swing to the next tree!</p><button id="start">CLIMB AGAIN!</button>';document.getElementById('start').onclick=reset;}
+function jump(){if(!playing){if(gameOver)reset();return;}jumpQueued=true;}
+function bindHold(id,key){const el=document.getElementById(id);const on=e=>{e.preventDefault();keys[key]=true;};const off=e=>{e.preventDefault();keys[key]=false;};el.addEventListener('pointerdown',on);el.addEventListener('pointerup',off);el.addEventListener('pointercancel',off);el.addEventListener('pointerleave',off);}
+bindHold('left','left');bindHold('right','right');document.getElementById('jump').addEventListener('pointerdown',e=>{e.preventDefault();jump();});
+window.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight',' ','Spacebar'].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a')keys.left=true;if(e.key==='ArrowRight'||e.key==='d')keys.right=true;if(e.code==='Space'&&!e.repeat)jump();if((e.key==='Enter')&&!playing)reset();});
+window.addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a')keys.left=false;if(e.key==='ArrowRight'||e.key==='d')keys.right=false;});
+startBtn.onclick=reset;resize();makeWorld();monkey={x:trees[0].x+20,y:trees[0].y-35,vx:0,vy:0,r:17,rope:-1,angle:0,angularV:0,climbing:true};draw();
+})();
+</script>
+</body>
+</html>
