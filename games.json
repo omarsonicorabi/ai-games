@@ -34,5 +34,11 @@
     "title": "Super Cat Hero Dash",
     "description": "Dash through the city, switch lanes, jump over roadblocks, slide under barriers, and collect coins.",
     "path": "games/super-cat-hero-dash/"
+  },
+  {
+    "slug": "robot-rescue",
+    "title": "Robot Rescue",
+    "description": "Rescue three robots in each factory level, dodge hazards, collect gears, and reach the exit.",
+    "path": "robot-rescue.html"
   }
 ]
