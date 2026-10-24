@@ -28,6 +28,14 @@ button:active{transform:translateY(3px);box-shadow:0 1px 0 #604014}
 small{flex:0 0 auto;color:#d3dde2;text-align:center;font-size:clamp(8px,2vw,10px);line-height:1.05}
 @media (max-height:620px){#wrap{gap:2px;padding:3px}h1{font-size:16px}#hud{padding:3px 5px}#controls button{min-height:38px;padding:5px 1px}small{font-size:8px}#overlay{top:48px;bottom:58px}#panel{padding:5px}#panel p{margin:3px 0 5px}#panel h2{font-size:18px}button{padding:6px 9px}}
 </style>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0FXD7H5Z7D"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0FXD7H5Z7D');
+</script>
 </head>
 <body><main id="wrap"><h1>🌆 CITY SPEED RALLY</h1><div id="hud"><span>🏁 Distance: <b id="dist">0</b> m</span><span>⭐ Score: <b id="score">0</b></span><span>❤️ <b id="lives">1</b></span></div><canvas id="game" width="420" height="560"></canvas><div id="overlay"><div id="panel"><h2>City Race!</h2><p>Race through the city! Dodge traffic and barriers, collect gold coins, and speed past the skyline.</p><button id="start">START RACE</button> <button id="scoresBtn">SCORES</button></div></div><div id="controls"><button id="left">◀ LEFT</button><button id="boost">⚡ BOOST</button><button id="right">RIGHT ▶</button></div><small>Keyboard: ← → or A / D · Space for boost · Works on phones too</small></main>
 <script>
