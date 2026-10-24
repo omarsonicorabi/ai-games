@@ -18,12 +18,6 @@
     "path": "games/the-high-sky/"
   },
   {
-    "slug": "turbo-racing",
-    "title": "Turbo Racing 2D",
-    "description": "Race your car against a computer opponent, dodge cones, and use turbo boosts.",
-    "path": "games/turbo-racing/"
-  },
-  {
     "slug": "desert-drift-rally",
     "title": "City Speed Rally",
     "description": "Race through a colorful city skyline, dodge traffic and rocks, collect coins, and use boost.",
