@@ -28,5 +28,11 @@
     "title": "Bike Rush: Road Sprint",
     "description": "Race across three lanes, dodge obstacles, collect coins, and unlock a five-second boost every 10 coins.",
     "path": "games/bike-rush/"
+  },
+  {
+    "slug": "super-cat-hero-dash",
+    "title": "Super Cat Hero Dash",
+    "description": "Dash through the city, switch lanes, jump over roadblocks, slide under barriers, and collect coins.",
+    "path": "games/super-cat-hero-dash/"
   }
 ]
