@@ -12,12 +12,6 @@
     "path": "games/elemental-fighters/"
   },
   {
-    "slug": "the-high-sky",
-    "title": "The High Sky",
-    "description": "Fly through the sky, collect coins, and explore airplane choices.",
-    "path": "games/the-high-sky/"
-  },
-  {
     "slug": "desert-drift-rally",
     "title": "City Speed Rally",
     "description": "Race through a colorful city skyline, dodge traffic and rocks, collect coins, and use boost.",
