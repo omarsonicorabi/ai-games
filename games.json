@@ -40,5 +40,11 @@
     "title": "Robot Rescue",
     "description": "Rescue three robots in each factory level, dodge hazards, collect gears, and reach the exit.",
     "path": "robot-rescue.html"
+  },
+  {
+    "slug": "bearwood-adventure",
+    "title": "Bearwood Adventure",
+    "description": "Explore a colorful 3D island as Bobo the bear and collect 12 golden berries.",
+    "path": "games/bearwood-adventure/"
   }
 ]
