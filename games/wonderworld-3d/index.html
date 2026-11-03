@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>WonderWorld 3D</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#8edcf4;font-family:system-ui,Arial;color:#fff;touch-action:none}canvas{display:block}
+#hud{position:fixed;inset:0;pointer-events:none}.top{display:flex;justify-content:space-between;gap:8px;padding:12px}.pill{background:#173d36dd;border:2px solid #ffffff55;border-radius:16px;padding:8px 12px;font-size:13px;font-weight:850;text-shadow:0 2px 2px #0006}
+.center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(90%,460px);padding:23px;text-align:center;background:#173d36ed;border:3px solid #ffffff77;border-radius:25px;pointer-events:auto;box-shadow:0 12px 35px #174b3d66}.center h1{font-size:clamp(28px,7vw,46px);margin:0 0 8px}.center p{line-height:1.45}.btn{border:0;border-radius:15px;background:#ffd34f;color:#51350c;font-size:18px;font-weight:900;padding:13px 24px;box-shadow:0 5px 0 #c18a20}.hidden{display:none}
+.controls{position:absolute;bottom:max(15px,env(safe-area-inset-bottom));left:0;right:0;display:flex;justify-content:space-between;align-items:end;padding:0 15px;pointer-events:none}
+.pad{display:grid;grid-template-columns:repeat(3,56px);grid-template-rows:repeat(3,56px);gap:6px;pointer-events:auto}.pad .ctrl[data-key=forward]{grid-column:2;grid-row:1}.pad .ctrl[data-key=left]{grid-column:1;grid-row:2}.pad .ctrl[data-key=back]{grid-column:2;grid-row:3}.pad .ctrl[data-key=right]{grid-column:3;grid-row:2}
+.ctrl{width:56px;height:56px;border-radius:17px;border:2px solid #fff9;background:#174d43e8;color:white;font-size:25px;font-weight:900;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 4px 0 #103a33aa}.ctrl.pressed,.ctrl:active{background:#27866e;transform:translateY(2px)}.jump{width:76px;height:76px;border-radius:50%;background:#e89c2dee;font-size:16px}
+.hint{position:absolute;bottom:145px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#173d36aa;padding:7px 11px;border-radius:12px;font-size:12px}
+@media(max-width:420px){.controls{padding:0 9px}.pad{grid-template-columns:repeat(3,50px);grid-template-rows:repeat(3,50px);gap:5px}.ctrl{width:50px;height:50px}.jump{width:68px;height:68px}.hint{bottom:130px;font-size:11px}}
+</style>
+</head>
+<body>
+<div id="hud">
+ <div class="top"><div class="pill">🌎 WONDERWORLD 3D</div><div class="pill">💎 <span id="count">0</span> / 20</div></div>
+ <div id="menu" class="center"><h1>🌎 WonderWorld 3D</h1><p>Explore a huge open world with green forests, tall mountains, a sunny village, rivers and hidden crystal gems.</p><p>Use the arrow buttons to explore. Tap JUMP to leap over rocks and cross the bridges.</p><button id="start" class="btn">ENTER THE WORLD</button></div>
+ <div id="win" class="center hidden"><h1>✨ World Explorer!</h1><p>You found all 20 hidden crystals. Keep exploring the huge world!</p><button id="again" class="btn">PLAY AGAIN</button></div>
+ <div class="hint">Explore far and wide • Find 20 crystals</div>
+ <div class="controls"><div class="pad"><button class="ctrl" data-key="forward" aria-label="Forward">▲</button><button class="ctrl" data-key="left" aria-label="Left">◀</button><button class="ctrl" data-key="back" aria-label="Backward">▼</button><button class="ctrl" data-key="right" aria-label="Right">▶</button></div><button class="ctrl jump" data-key="jump" aria-label="Jump">JUMP</button></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+(()=> {
+const menu=document.getElementById('menu'),win=document.getElementById('win'),count=document.getElementById('count');
+if(!window.THREE){menu.innerHTML='<h1>World could not load</h1><p>Check your internet connection and reload.</p>';return}
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x8edcf4);scene.fog=new THREE.Fog(0x8edcf4,65,190);
+const camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,350);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;document.body.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xe5f8ff,0x536b42,2));
+const sun=new THREE.DirectionalLight(0xfff1d2,2.1);sun.position.set(-45,75,35);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-100;sun.shadow.camera.right=100;sun.shadow.camera.top=100;sun.shadow.camera.bottom=-100;scene.add(sun);
+const M=(c,r=.9)=>new THREE.MeshStandardMaterial({color:c,roughness:r});
+const grass=M(0x65b957),darkGrass=M(0x398d48),sand=M(0xe5cf91),wood=M(0x80502d),leaf=M(0x26864a),leaf2=M(0x48a957),stone=M(0x858e91),cream=M(0xffe3bd),bearMat=M(0x98603b),gold=M(0x42e6ff,.32),roof=M(0xc95645);
+function add(g,m,x,y,z,sx=1,sy=1,sz=1,parent=scene){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
+const ground=add(new THREE.PlaneGeometry(220,220),grass,0,-.8,0,1,1,1);ground.rotation.x=-Math.PI/2;
+// distant mountain ring and foothills
+for(let i=0;i<18;i++){const a=i*Math.PI*2/18,r=88+(i%3)*7,x=Math.cos(a)*r,z=Math.sin(a)*r;add(new THREE.ConeGeometry(12+(i%4)*3,24+(i%5)*7,7),i%2?stone:M(0x718d80),x,10,z,1,1.3,1)}
+// broad hills, meadow clearings and rocky outcrops
+for(let i=0;i<30;i++){const a=i*2.4,r=22+(i%7)*7,x=Math.cos(a)*r,z=Math.sin(a)*r;add(new THREE.SphereGeometry(1,14,10),i%3?grass:darkGrass,x,-.15,z,5+(i%3),.9,4+(i%4))}
+for(let i=0;i<38;i++){const a=i*2.13,r=18+(i%9)*6,x=Math.cos(a)*r,z=Math.sin(a)*r;if(Math.abs(x)<13&&Math.abs(z)<13)continue;add(new THREE.CylinderGeometry(.3,.5,1.2,7),wood,x,.3,z);add(new THREE.DodecahedronGeometry(1.2,1),stone,x,.95,z,1.1,.9,1.2)}
+// forests in several groves
+for(let i=0;i<145;i++){const a=i*2.399,r=17+(i%17)*3.0,x=Math.cos(a)*r,z=Math.sin(a)*r;if(Math.abs(x)<14&&Math.abs(z)<14)continue;const h=2.3+(i%4)*.3;add(new THREE.CylinderGeometry(.22,.38,h,7),wood,x,h/2-.15,z);add(new THREE.SphereGeometry(1,12,10),i%3?leaf:leaf2,x,h+.35,z,1.05+(i%3)*.12,1.2,1.05+(i%2)*.1);if(i%4===0)add(new THREE.SphereGeometry(.7,10,8),leaf2,x+.55,h+.65,z-.2,1.1,.9,1)}
+// winding blue river and stepping stones
+const riverMat=M(0x39bde0,.25);
+for(let i=0;i<26;i++){let z=-70+i*5.5,x=25+Math.sin(i*.28)*9;add(new THREE.BoxGeometry(8,.12,6),riverMat,x,-.36,z,1,1,1);if(i%3===0)add(new THREE.BoxGeometry(2,.25,1.5),sand,x-4,-.2,z,1,1,1)}
+// bridge across river
+for(let z=-15;z<=15;z+=1.5)add(new THREE.BoxGeometry(8,.35,1.4),wood,25,-.05,z,1,1,1);
+for(let side of [-1,1])for(let z=-15;z<=15;z+=5)add(new THREE.CylinderGeometry(.18,.18,2.1,8),wood,25+side*3.5,.85,z);
+// village houses around central square
+for(let i=0;i<9;i++){const a=i*Math.PI*2/9,r=10,x=Math.cos(a)*r,z=Math.sin(a)*r;const wall=[M(0xffd58b),M(0xf4a66c),M(0xa9d9e8)][i%3];add(new THREE.BoxGeometry(4,3.1,3.5),wall,x,1,z);const rt=add(new THREE.ConeGeometry(3.1,1.8,4),roof,x,3.35,z);rt.rotation.y=Math.PI/4;add(new THREE.BoxGeometry(.85,1.5,.12),wood,x,.75,z+1.8)}
+add(new THREE.CylinderGeometry(2.2,2.2,.22,24),sand,0,.05,0);add(new THREE.CylinderGeometry(.35,.45,2.4,12),M(0x6c9ed6),0,1.3,0);add(new THREE.SphereGeometry(.55,16,12),M(0xffe078),0,2.7,0);
+// waterfall cliff and pool at far end
+add(new THREE.BoxGeometry(14,8,5),stone,-48,3,-58);add(new THREE.BoxGeometry(5,8,.35),M(0x49d1ec,.2),-48,3,-55.3);add(new THREE.CylinderGeometry(7,8,.2,24),riverMat,-48,-.3,-48);
+// scattered flowers
+for(let i=0;i<95;i++){const x=Math.sin(i*17.3)*76,z=Math.cos(i*9.7)*76;if(Math.abs(x)<12&&Math.abs(z)<12)continue;add(new THREE.SphereGeometry(.13,8,6),[M(0xffdf5c),M(0xff8db6),M(0xffffff)][i%3],x,.08,z)}
+// explorer bear
+const bear=new THREE.Group();scene.add(bear);
+function bp(g,m,x,y,z,sx=1,sy=1,sz=1){return add(g,m,x,y,z,sx,sy,sz,bear)}
+bp(new THREE.SphereGeometry(.66,20,16),bearMat,0,1.02,0,1,1.05,.82);bp(new THREE.SphereGeometry(.47,20,16),bearMat,0,1.87,0,1,1,.88);
+bp(new THREE.SphereGeometry(.18,12,10),bearMat,-.37,2.22,0,1,1,.7);bp(new THREE.SphereGeometry(.18,12,10),bearMat,.37,2.22,0,1,1,.7);
+bp(new THREE.SphereGeometry(.09,10,8),cream,-.37,2.22,.1);bp(new THREE.SphereGeometry(.09,10,8),cream,.37,2.22,.1);
+bp(new THREE.SphereGeometry(.09,10,8),M(0x171513),-.18,1.95,.4);bp(new THREE.SphereGeometry(.09,10,8),M(0x171513),.18,1.95,.4);
+bp(new THREE.SphereGeometry(.18,12,10),cream,0,1.73,.46,.9,.65,.55);bp(new THREE.SphereGeometry(.08,10,8),M(0x35251e),0,1.8,.69);
+for(const s of [-1,1]){bp(new THREE.SphereGeometry(.22,12,10),bearMat,s*.5,.55,0,.85,1,.85);bp(new THREE.SphereGeometry(.23,12,10),bearMat,s*.3,.25,.08,1,.65,1)}
+bp(new THREE.TorusGeometry(.4,.08,8,20),M(0x35a9ce),0,1.43,0,1,1,.8).rotation.x=Math.PI/2;
+bear.position.set(0,0,7);
+// crystal locations around the open world
+const crystals=[];for(let i=0;i<20;i++){const a=i*2.399,r=14+(i%5)*10,x=Math.cos(a)*r,z=Math.sin(a)*r;const g=new THREE.Group();g.position.set(x,.85,z);scene.add(g);add(new THREE.OctahedronGeometry(.58),gold,0,0,0,1,1.25,1,g);add(new THREE.CylinderGeometry(.06,.08,.25,6),M(0x277c49),0,-.55,0,1,1,1,g);crystals.push(g)}
+const keys={};let started=false,found=0,vy=0,onGround=true;const speed=10.5,clock=new THREE.Clock();
+function reset(){found=0;count.textContent='0';crystals.forEach(c=>c.visible=true);bear.position.set(0,0,7);vy=0;started=true;menu.classList.add('hidden');win.classList.add('hidden')}
+document.getElementById('start').onclick=reset;document.getElementById('again').onclick=reset;
+addEventListener('keydown',e=>{const k=e.key.toLowerCase();keys[k]=true;if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault()},{passive:false});
+addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+document.querySelectorAll('.ctrl').forEach(b=>{const k=b.dataset.key;const release=()=>{keys[k]=false;b.classList.remove('pressed')};b.addEventListener('contextmenu',e=>e.preventDefault());b.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true;b.classList.add('pressed');try{b.setPointerCapture(e.pointerId)}catch(_){}});b.addEventListener('pointerup',e=>{e.preventDefault();release()});b.addEventListener('pointercancel',release);b.addEventListener('lostpointercapture',release)});
+function clearKeys(){Object.keys(keys).forEach(k=>keys[k]=false);document.querySelectorAll('.ctrl.pressed').forEach(b=>b.classList.remove('pressed'))}addEventListener('blur',clearKeys);document.addEventListener('visibilitychange',()=>{if(document.hidden)clearKeys()});
+function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;
+crystals.forEach((c,i)=>{if(c.visible){c.rotation.y+=dt*1.5;c.position.y=.85+Math.sin(t*2+i)*.15}});
+if(started){const forward=(keys.w||keys.arrowup||keys.forward?1:0)-(keys.s||keys.arrowdown||keys.back?1:0),side=(keys.d||keys.arrowright||keys.right?1:0)-(keys.a||keys.arrowleft||keys.left?1:0);const v=new THREE.Vector3(side,0,-forward);if(v.lengthSq()>0){v.normalize();bear.position.x+=v.x*speed*dt;bear.position.z+=v.z*speed*dt;bear.rotation.y=Math.atan2(v.x,v.z)}
+bear.position.x=THREE.MathUtils.clamp(bear.position.x,-102,102);bear.position.z=THREE.MathUtils.clamp(bear.position.z,-102,102);
+if((keys[' ']||keys.jump)&&onGround){vy=9;onGround=false}vy-=22*dt;bear.position.y+=vy*dt;if(bear.position.y<=0){bear.position.y=0;vy=0;onGround=true}
+for(const c of crystals){if(c.visible&&bear.position.distanceTo(c.position)<1.5){c.visible=false;found++;count.textContent=found;if(found===20){started=false;win.classList.remove('hidden')}}}
+}
+const target=new THREE.Vector3(bear.position.x,1.2+bear.position.y,bear.position.z);const desired=new THREE.Vector3(bear.position.x,8+bear.position.y,bear.position.z+12);camera.position.lerp(desired,.075);camera.lookAt(target);renderer.render(scene,camera)}
+animate();addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+})();
+</script>
+</body></html>
