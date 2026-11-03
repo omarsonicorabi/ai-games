@@ -106,9 +106,10 @@ document.getElementById('diggerBtn').onclick=()=>{vehicleMode=!vehicleMode;shopP
 function dig(){if(digging)return;if(!vehicleMode){document.getElementById('diggerBtn').click();}digging=true;
 const x=digger.position.x+Math.sin(digger.rotation.y)*3.2,z=digger.position.z+Math.cos(digger.rotation.y)*3.2;
 const pitMat=M(0x382719),innerMat=M(0x17130f),soil=M(0x987044);
-const opening=add(new THREE.CircleGeometry(1.35,28),pitMat,x,-.755,z);opening.rotation.x=-Math.PI/2;
-const depth=add(new THREE.CircleGeometry(.78,24),innerMat,x,-.748,z);depth.rotation.x=-Math.PI/2;
-const rim=add(new THREE.TorusGeometry(1.25,.2,8,28),soil,x,-.69,z);rim.rotation.x=Math.PI/2;
+const opening=add(new THREE.CircleGeometry(1.48,32),pitMat,x,-.755,z);opening.rotation.x=-Math.PI/2;
+const depth=add(new THREE.CircleGeometry(.82,28),innerMat,x,-.735,z);depth.rotation.x=-Math.PI/2;
+const walls=add(new THREE.CylinderGeometry(.84,1.25,1.35,28,1,true),soil,x,-.08,z);
+const rim=add(new THREE.TorusGeometry(1.32,.2,8,32),soil,x,-.69,z);rim.rotation.x=Math.PI/2;
 const mound=add(new THREE.SphereGeometry(1,12,8),soil,x+1.55,.02,z,1.15,.38,.9);dirtPiles.push(opening,depth,walls,rim,mound);
 boomPivot.rotation.x=.38;armPivot.rotation.x=-.72;bucketPivot.rotation.x=.95;
 setTimeout(()=>{boomPivot.rotation.x=.12;armPivot.rotation.x=-.35;bucketPivot.rotation.x=.45},320);
