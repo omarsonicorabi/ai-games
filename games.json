@@ -42,9 +42,9 @@
     "path": "robot-rescue.html"
   },
   {
-    "slug": "bearwood-adventure",
-    "title": "Bearwood Adventure",
-    "description": "Explore a colorful 3D island as Bobo the bear and collect 12 golden berries.",
-    "path": "games/bearwood-adventure/"
+    "slug": "wonderworld-3d",
+    "title": "WonderWorld 3D",
+    "description": "Explore a huge 3D open world with forests, mountains, a colorful village, rivers, bridges and 20 hidden crystals.",
+    "path": "games/wonderworld-3d/"
   }
 ]
