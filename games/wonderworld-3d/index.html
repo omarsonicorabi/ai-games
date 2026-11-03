@@ -1,142 +1,52 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>WonderWorld 3D</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#7bd7f2"><title>WonderWorld 3D</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#8edcf4;font-family:system-ui,Arial;color:#fff;touch-action:none}canvas{display:block}
-#hud{position:fixed;inset:0;z-index:5;pointer-events:none}.top{display:flex;justify-content:space-between;gap:8px;padding:12px}.pill{background:#173d36dd;border:2px solid #ffffff55;border-radius:16px;padding:8px 12px;font-size:13px;font-weight:850;text-shadow:0 2px 2px #0006}
-.center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(90%,460px);padding:23px;text-align:center;background:#173d36ed;border:3px solid #ffffff77;border-radius:25px;pointer-events:auto;box-shadow:0 12px 35px #174b3d66}.center h1{font-size:clamp(28px,7vw,46px);margin:0 0 8px}.center p{line-height:1.45}.btn{border:0;border-radius:15px;background:#ffd34f;color:#51350c;font-size:18px;font-weight:900;padding:13px 24px;box-shadow:0 5px 0 #c18a20}.hidden{display:none}
-.controls{position:absolute;bottom:max(15px,env(safe-area-inset-bottom));left:0;right:0;display:flex;justify-content:space-between;align-items:end;padding:0 15px;pointer-events:none}
-.pad{display:grid;grid-template-columns:repeat(3,56px);grid-template-rows:repeat(3,56px);gap:6px;pointer-events:auto}.pad .ctrl[data-key=forward]{grid-column:2;grid-row:1}.pad .ctrl[data-key=left]{grid-column:1;grid-row:2}.pad .ctrl[data-key=back]{grid-column:2;grid-row:3}.pad .ctrl[data-key=right]{grid-column:3;grid-row:2}
-.ctrl{width:56px;height:56px;border-radius:17px;border:2px solid #fff9;background:#174d43e8;color:white;font-size:25px;font-weight:900;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 4px 0 #103a33aa}.ctrl.pressed,.ctrl:active{background:#27866e;transform:translateY(2px)}.jump{width:76px;height:76px;border-radius:50%;background:#e89c2dee;font-size:16px}
-.tools{position:absolute;top:64px;left:12px;display:flex;gap:7px;pointer-events:auto}.tool{border:2px solid #fff9;border-radius:13px;padding:9px 11px;background:#174d43e8;color:#fff;font-weight:900;font-size:12px}.panel{position:absolute;top:112px;left:12px;width:min(330px,calc(100vw - 24px));max-height:58vh;overflow:auto;background:#173d36f2;border:2px solid #ffffff88;border-radius:17px;padding:12px;pointer-events:auto;box-shadow:0 8px 25px #0005}.panelHead{display:flex;justify-content:space-between;align-items:center;font-size:17px}.close{border:0;border-radius:9px;padding:5px 10px;font-weight:900}.animalList{display:grid;grid-template-columns:1fr 1fr;gap:6px}.animalRow{display:flex;justify-content:space-between;align-items:center;gap:5px;background:#ffffff18;border-radius:9px;padding:7px;font-size:12px}.buy{border:0;border-radius:8px;padding:6px 7px;background:#ffd34f;color:#51350c;font-weight:900}.buy:disabled{opacity:.45}.ride{border:0;border-radius:8px;padding:6px 7px;background:#79dbb2;color:#123c2c;font-weight:900}.ride.active{background:#ffbd62}.animalRow{flex-wrap:wrap}.animalRow span{flex:1 1 100%}.blockPalette{display:grid;grid-template-columns:1fr 1fr;gap:5px}.blockPalette .buildChoice{margin:2px 0;text-align:center}.buildChoice{display:block;width:100%;margin:7px 0;padding:10px;border:0;border-radius:10px;background:#ffd34f;color:#51350c;font-weight:900;text-align:left}.hint{position:absolute;bottom:145px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#173d36aa;padding:7px 11px;border-radius:12px;font-size:12px}
-@media(max-width:420px){.controls{padding:0 9px}.pad{grid-template-columns:repeat(3,50px);grid-template-rows:repeat(3,50px);gap:5px}.ctrl{width:50px;height:50px}.jump{width:68px;height:68px}.hint{bottom:130px;font-size:11px}}
-</style>
-</head>
-<body>
-<div id="hud">
- <div class="top"><div class="pill">🌎 WONDERWORLD 3D</div><div style="display:flex;gap:6px"><div class="pill">💎 <span id="count">0</span> / 20</div><div class="pill">💍 <span id="rings">0</span></div></div></div>
- <div id="menu" class="center"><h1>🌎 WonderWorld 3D</h1><p>Explore a huge open world with green forests, tall mountains, a sunny village, rivers and hidden crystal gems.</p><p>Use the arrow buttons to explore. Tap JUMP to leap over rocks and cross the bridges.</p><button id="start" class="btn">ENTER THE WORLD</button></div>
- <div id="win" class="center hidden"><h1>✨ World Explorer!</h1><p>You found all 20 hidden crystals. Keep exploring the huge world!</p><button id="again" class="btn">PLAY AGAIN</button></div>
- <div class="hint">Explore • Collect rings • Build your world</div>
-<div class="tools"><button id="shopBtn" class="tool">🐾 ANIMALS TO RIDE</button><button id="buildBtn" class="tool">🧱 BUILD</button><button id="diggerBtn" class="tool">🚜 DIGGER</button><button id="digNowBtn" class="tool" style="background:#bd7135;color:white">⬇ DIG DOWN</button></div>
-<div id="shopPanel" class="panel hidden"><div class="panelHead"><b>🐾 ANIMALS TO RIDE</b><button class="close" data-close="shopPanel">✕</button></div><p>Buy animals using your 💍 rings!</p><div id="animalList" class="animalList"></div></div>
-<div id="buildPanel" class="panel hidden"><div class="panelHead"><b>🧰 BUILDING BLOCKS & TOOLS</b><button class="close" data-close="buildPanel">✕</button></div><p>Place blocks one by one to make your own house. Move around to choose where each block goes.</p><div class="blockPalette"><button class="buildChoice" data-color="0xffc66b">🟨 Yellow block</button><button class="buildChoice" data-color="0xd87555">🟥 Red block</button><button class="buildChoice" data-color="0x83c9ed">🟦 Blue block</button><button class="buildChoice" data-color="0xe9e3d1">⬜ White block</button></div><button id="placeBlock" class="buildChoice">🧱 PLACE ONE BLOCK — 1 ring</button><button class="buildChoice" data-build="pool">🏊 Build a swimming pool — 15 rings</button><button class="buildChoice" data-build="ball">⚽ Build a ball — 3 rings</button><p id="buildMessage">Choose a block colour, then press PLACE ONE BLOCK. Place more blocks to build upward!</p></div>
- <div class="controls"><div class="pad"><button class="ctrl" data-key="forward" aria-label="Forward">▲</button><button class="ctrl" data-key="left" aria-label="Left">◀</button><button class="ctrl" data-key="back" aria-label="Backward">▼</button><button class="ctrl" data-key="right" aria-label="Right">▶</button></div><div style="display:flex;flex-direction:column;gap:8px;pointer-events:auto"><button class="ctrl jump" data-key="jump" aria-label="Jump">JUMP</button><button class="ctrl" id="digBtn" style="width:76px;height:54px;font-size:12px;background:#bd7135">DIG DOWN</button></div></div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" onerror="this.onerror=null;this.src='https://unpkg.com/three@0.160.0/build/three.min.js'"></script>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#8edcf4;font-family:system-ui,Arial;touch-action:none}canvas{display:block;width:100%;height:100%}#hud{position:fixed;inset:0;pointer-events:none;color:white}.top{position:absolute;top:env(safe-area-inset-top,8px);left:8px;right:8px;display:flex;justify-content:space-between;gap:5px}.pill,.tool,.ctrl{background:#174d43e8;border:2px solid #ffffffaa;border-radius:13px;color:white;font-weight:900;padding:8px;font-size:12px;text-shadow:0 1px 2px #000}.tools{position:absolute;top:52px;left:8px;right:8px;display:flex;gap:5px;pointer-events:auto;flex-wrap:wrap}.tool{background:#174d43ed}.center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(90%,440px);padding:20px;text-align:center;background:#173d36f2;border:3px solid #ffffff88;border-radius:22px;pointer-events:auto;box-shadow:0 10px 30px #174b3d66}.center h1{font-size:clamp(26px,7vw,42px);margin:0 0 8px}.center p{line-height:1.4}.btn{border:0;border-radius:14px;background:#ffd34f;color:#51350c;font-size:17px;font-weight:900;padding:13px 22px}.hidden{display:none!important}.controls{position:absolute;bottom:max(12px,env(safe-area-inset-bottom));left:0;right:0;display:flex;justify-content:space-between;align-items:end;padding:0 12px}.pad{display:grid;grid-template-columns:repeat(3,50px);grid-template-rows:repeat(3,50px);gap:4px;pointer-events:auto}.ctrl{width:50px;height:50px;font-size:22px;touch-action:none;user-select:none}.ctrl[data-key=forward]{grid-column:2;grid-row:1}.ctrl[data-key=left]{grid-column:1;grid-row:2}.ctrl[data-key=back]{grid-column:2;grid-row:3}.ctrl[data-key=right]{grid-column:3;grid-row:2}.jump{width:70px;height:70px;border-radius:50%;background:#dc922c}.pressed{filter:brightness(1.35)}.hint{position:absolute;bottom:125px;left:50%;transform:translateX(-50%);background:#174d43bb;padding:6px 10px;border-radius:10px;font-size:11px;white-space:nowrap}
+</style></head><body>
+<canvas id="game"></canvas><div id="hud"><div class="top"><div class="pill">🌎 WONDERWORLD</div><div class="pill">💎 <span id="gems">0</span>/20　💍 <span id="rings">0</span></div></div>
+<div class="tools"><button class="tool" id="animals">🐾 ANIMALS</button><button class="tool" id="build">🧱 BUILD BLOCK</button><button class="tool" id="digger">🚜 USE DIGGER</button><button class="tool" id="dig">⬇ DIG DOWN</button></div>
+<div class="center" id="menu"><h1>🌎 WonderWorld</h1><p>Explore the sunny forest, collect crystals and golden rings, ride animals, build your house and dig with your yellow excavator!</p><button class="btn" id="start">ENTER THE WORLD</button></div>
+<div class="center hidden" id="panel"><h1 id="panelTitle">Animals</h1><p id="panelText">Find golden rings to unlock animals. Your adventure is waiting!</p><button class="btn" id="panelClose">CLOSE</button></div>
+<div class="center hidden" id="win"><h1>✨ Great explorer!</h1><p>You found all 20 crystals!</p><button class="btn" id="continue">KEEP PLAYING</button></div>
+<div class="hint" id="hint">Move with arrows • Collect 💎 crystals and 💍 rings</div>
+<div class="controls"><div class="pad"><button class="ctrl" data-key="forward">▲</button><button class="ctrl" data-key="left">◀</button><button class="ctrl" data-key="back">▼</button><button class="ctrl" data-key="right">▶</button></div><button class="ctrl jump" data-key="jump">JUMP</button></div></div>
 <script>
-(()=> {
-const menu=document.getElementById('menu'),win=document.getElementById('win'),count=document.getElementById('count');
-if(!window.THREE){menu.innerHTML='<h1>World could not load</h1><p>Check your internet connection and reload.</p>';return}
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x8edcf4);scene.fog=new THREE.Fog(0x8edcf4,65,190);
-const camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,350);camera.position.set(0,8,19);camera.lookAt(0,1.2,7);
-const renderer=new THREE.WebGLRenderer({antialias:false,powerPreference:"high-performance"});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.25));renderer.setSize(innerWidth,innerHeight);renderer.domElement.style.position='fixed';renderer.domElement.style.left='0';renderer.domElement.style.top='0';renderer.domElement.style.zIndex='0';renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;document.body.appendChild(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xe5f8ff,0x536b42,2));
-const sun=new THREE.DirectionalLight(0xfff1d2,2.1);sun.position.set(-45,75,35);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-100;sun.shadow.camera.right=100;sun.shadow.camera.top=100;sun.shadow.camera.bottom=-100;scene.add(sun);
-const M=(c,r=.9)=>new THREE.MeshStandardMaterial({color:c,roughness:r});
-const grass=M(0x65b957),darkGrass=M(0x398d48),sand=M(0xe5cf91),wood=M(0x80502d),leaf=M(0x26864a),leaf2=M(0x48a957),stone=M(0x858e91),cream=M(0xffe3bd),bearMat=M(0x98603b),gold=M(0x42e6ff,.32),roof=M(0xc95645);
-function add(g,m,x,y,z,sx=1,sy=1,sz=1,parent=scene){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
-const ground=add(new THREE.PlaneGeometry(220,220),grass,0,-.8,0,1,1,1);ground.rotation.x=-Math.PI/2;
-// distant mountain ring and foothills
-for(let i=0;i<18;i++){const a=i*Math.PI*2/18,r=88+(i%3)*7,x=Math.cos(a)*r,z=Math.sin(a)*r;add(new THREE.ConeGeometry(12+(i%4)*3,24+(i%5)*7,7),i%2?stone:M(0x718d80),x,10,z,1,1.3,1)}
-// broad hills, meadow clearings and rocky outcrops
-for(let i=0;i<30;i++){const a=i*2.4,r=22+(i%7)*7,x=Math.cos(a)*r,z=Math.sin(a)*r;add(new THREE.SphereGeometry(1,14,10),i%3?grass:darkGrass,x,-.15,z,5+(i%3),.9,4+(i%4))}
-for(let i=0;i<38;i++){const a=i*2.13,r=18+(i%9)*6,x=Math.cos(a)*r,z=Math.sin(a)*r;if(Math.abs(x)<13&&Math.abs(z)<13)continue;add(new THREE.CylinderGeometry(.3,.5,1.2,7),wood,x,.3,z);add(new THREE.DodecahedronGeometry(1.2,1),stone,x,.95,z,1.1,.9,1.2)}
-// forests in several groves
-for(let i=0;i<145;i++){const a=i*2.399,r=17+(i%17)*3.0,x=Math.cos(a)*r,z=Math.sin(a)*r;if(Math.abs(x)<14&&Math.abs(z)<14)continue;const h=2.3+(i%4)*.3;add(new THREE.CylinderGeometry(.22,.38,h,7),wood,x,h/2-.15,z);add(new THREE.SphereGeometry(1,12,10),i%3?leaf:leaf2,x,h+.35,z,1.05+(i%3)*.12,1.2,1.05+(i%2)*.1);if(i%4===0)add(new THREE.SphereGeometry(.7,10,8),leaf2,x+.55,h+.65,z-.2,1.1,.9,1)}
-// winding blue river and stepping stones
-const riverMat=M(0x39bde0,.25);
-for(let i=0;i<26;i++){let z=-70+i*5.5,x=25+Math.sin(i*.28)*9;add(new THREE.BoxGeometry(8,.12,6),riverMat,x,-.36,z,1,1,1);if(i%3===0)add(new THREE.BoxGeometry(2,.25,1.5),sand,x-4,-.2,z,1,1,1)}
-// bridge across river
-for(let z=-15;z<=15;z+=1.5)add(new THREE.BoxGeometry(8,.35,1.4),wood,25,-.05,z,1,1,1);
-for(let side of [-1,1])for(let z=-15;z<=15;z+=5)add(new THREE.CylinderGeometry(.18,.18,2.1,8),wood,25+side*3.5,.85,z);
-// village houses around central square
-for(let i=0;i<9;i++){const a=i*Math.PI*2/9,r=10,x=Math.cos(a)*r,z=Math.sin(a)*r;const wall=[M(0xffd58b),M(0xf4a66c),M(0xa9d9e8)][i%3];add(new THREE.BoxGeometry(4,3.1,3.5),wall,x,1,z);const rt=add(new THREE.ConeGeometry(3.1,1.8,4),roof,x,3.35,z);rt.rotation.y=Math.PI/4;add(new THREE.BoxGeometry(.85,1.5,.12),wood,x,.75,z+1.8)}
-add(new THREE.CylinderGeometry(2.2,2.2,.22,24),sand,0,.05,0);add(new THREE.CylinderGeometry(.35,.45,2.4,12),M(0x6c9ed6),0,1.3,0);add(new THREE.SphereGeometry(.55,16,12),M(0xffe078),0,2.7,0);
-// waterfall cliff and pool at far end
-add(new THREE.BoxGeometry(14,8,5),stone,-48,3,-58);add(new THREE.BoxGeometry(5,8,.35),M(0x49d1ec,.2),-48,3,-55.3);add(new THREE.CylinderGeometry(7,8,.2,24),riverMat,-48,-.3,-48);
-// scattered flowers
-for(let i=0;i<95;i++){const x=Math.sin(i*17.3)*76,z=Math.cos(i*9.7)*76;if(Math.abs(x)<12&&Math.abs(z)<12)continue;add(new THREE.SphereGeometry(.13,8,6),[M(0xffdf5c),M(0xff8db6),M(0xffffff)][i%3],x,.08,z)}
-// explorer bear
-const bear=new THREE.Group();scene.add(bear);
-function bp(g,m,x,y,z,sx=1,sy=1,sz=1){return add(g,m,x,y,z,sx,sy,sz,bear)}
-bp(new THREE.SphereGeometry(.66,20,16),bearMat,0,1.02,0,1,1.05,.82);bp(new THREE.SphereGeometry(.47,20,16),bearMat,0,1.87,0,1,1,.88);
-bp(new THREE.SphereGeometry(.18,12,10),bearMat,-.37,2.22,0,1,1,.7);bp(new THREE.SphereGeometry(.18,12,10),bearMat,.37,2.22,0,1,1,.7);
-bp(new THREE.SphereGeometry(.09,10,8),cream,-.37,2.22,.1);bp(new THREE.SphereGeometry(.09,10,8),cream,.37,2.22,.1);
-bp(new THREE.SphereGeometry(.09,10,8),M(0x171513),-.18,1.95,.4);bp(new THREE.SphereGeometry(.09,10,8),M(0x171513),.18,1.95,.4);
-bp(new THREE.SphereGeometry(.18,12,10),cream,0,1.73,.46,.9,.65,.55);bp(new THREE.SphereGeometry(.08,10,8),M(0x35251e),0,1.8,.69);
-for(const s of [-1,1]){bp(new THREE.SphereGeometry(.22,12,10),bearMat,s*.5,.55,0,.85,1,.85);bp(new THREE.SphereGeometry(.23,12,10),bearMat,s*.3,.25,.08,1,.65,1)}
-bp(new THREE.TorusGeometry(.4,.08,8,20),M(0x35a9ce),0,1.43,0,1,1,.8).rotation.x=Math.PI/2;
-bear.position.set(0,0,7);
-// crystal locations around the open world
-const crystals=[];for(let i=0;i<20;i++){const a=i*2.399,r=14+(i%5)*10,x=Math.cos(a)*r,z=Math.sin(a)*r;const g=new THREE.Group();g.position.set(x,.85,z);scene.add(g);add(new THREE.OctahedronGeometry(.58),gold,0,0,0,1,1.25,1,g);add(new THREE.CylinderGeometry(.06,.08,.25,6),M(0x277c49),0,-.55,0,1,1,1,g);crystals.push(g)}
-
-const ringPickups=[];for(let i=0;i<250;i++){const a=i*2.399,r=8+(i%19)*4.8,x=Math.cos(a)*r,z=Math.sin(a)*r;const rg=new THREE.Group();rg.position.set(x,.95,z);scene.add(rg);const tor=new THREE.Mesh(new THREE.TorusGeometry(.38,.11,10,22),M(0xffd34d,.3));tor.rotation.x=Math.PI/2;tor.castShadow=true;rg.add(tor);ringPickups.push(rg)}
-let ringCount=0;const ringText=document.getElementById('rings');
-const animalNames=['Horse','Camel','Cow','Sheep','Goat','Pig','Donkey','Rabbit','Dog','Cat','Chicken','Duck','Goose','Turkey','Deer','Fox','Wolf','Panda','Elephant','Giraffe','Zebra','Lion','Tiger','Monkey','Llama'];
-const animalPrices=[8,10,7,6,6,7,8,4,5,5,4,4,5,6,9,9,10,14,18,16,14,16,16,10,12];
-const animalColors=[0x9a603b,0xc99a55,0x8d8b7d,0xf0eee0,0xb58b55,0xe6a0a8,0x88745c,0xd7c5a1,0xb17a45,0x777777,0xfff0d4,0xf5f0dc,0xf5f0dc,0xb56b40,0xb87945,0xd87532,0x777777,0xf1f1ed,0x8b8b8b,0xd9a64b,0xf4eee0,0xd3a33e,0xe08b42,0x98603b,0xd2ad70];
-const bought=new Set(),animalEntities=new Map();let builtPool=null,activeMount=null,blockColor=0xffc66b,vehicleMode=false,digging=false;const placedBlocks=new Map();
-const digger=new THREE.Group();scene.add(digger);digger.visible=false;
-const yellow=M(0xf4b52f),rubber=M(0x30383b),glass=M(0x8bd9ed,.25),metal=M(0x59636a);
-function part(g,m,x,y,z,sx=1,sy=1,sz=1,p=digger){return add(g,m,x,y,z,sx,sy,sz,p)}
-part(new THREE.BoxGeometry(3.2,.65,4.1),yellow,0,1,0);
-for(const side of [-1,1]){part(new THREE.BoxGeometry(.62,.8,4.2),rubber,side*1.72,.62,0);for(let z=-1.5;z<=1.6;z+=.75)part(new THREE.CylinderGeometry(.28,.28,.16,12),metal,side*2.05,.62,z,1,1,1);}
-part(new THREE.BoxGeometry(1.8,1.8,1.7),yellow,-.15,2.1,-.65);
-part(new THREE.BoxGeometry(1.45,1.25,1.35),glass,-.15,2.2,-.72);
-const boomPivot=new THREE.Group();boomPivot.position.set(.65,2.65,.25);digger.add(boomPivot);
-add(new THREE.BoxGeometry(.55,.55,2.25),yellow,0,0,-1.0,1,1,1,boomPivot);
-const armPivot=new THREE.Group();armPivot.position.set(0,-.1,-2.05);boomPivot.add(armPivot);
-add(new THREE.BoxGeometry(.4,.4,1.8),yellow,0,-.05,-.85,1,1,1,armPivot);
-const bucketPivot=new THREE.Group();bucketPivot.position.set(0,-.12,-1.72);armPivot.add(bucketPivot);
-add(new THREE.BoxGeometry(.95,.55,.65),metal,0,-.18,-.25,1,1,1,bucketPivot);
-add(new THREE.BoxGeometry(.9,.15,.65),yellow,0,-.48,-.22,1,1,1,bucketPivot);
-const dirtPiles=[];
-const shopPanel=document.getElementById('shopPanel'),buildPanel=document.getElementById('buildPanel');
-function renderShop(){const list=document.getElementById('animalList');list.innerHTML='';animalNames.forEach((name,i)=>{const row=document.createElement('div');row.className='animalRow';const label=document.createElement('span');label.textContent=(i+1)+'. '+name+' · 💍'+animalPrices[i];const btn=document.createElement('button');btn.className='buy';btn.textContent=bought.has(i)?'OWNED':'BUY';btn.disabled=bought.has(i)||ringCount<animalPrices[i];btn.onclick=()=>buyAnimal(i);row.append(label,btn);if(bought.has(i)){const ride=document.createElement('button');ride.className='ride'+(activeMount===i?' active':'');ride.textContent=activeMount===i?'GET OFF':'RIDE';ride.onclick=()=>toggleRide(i);row.append(ride)}list.append(row)})}
-function toggleRide(i){if(!bought.has(i))return;if(activeMount===i){activeMount=null;bear.visible=true;animalEntities.forEach(a=>a.visible=true);animalEntities.get(i).position.set(bear.position.x+2,0,bear.position.z+2)}else{activeMount=i;bear.visible=false;animalEntities.forEach((a,j)=>{a.visible=j===i});const a=animalEntities.get(i);a.position.set(bear.position.x,bear.position.y,bear.position.z);a.rotation.y=bear.rotation.y}renderShop()}
-function animalModel(index){const group=new THREE.Group(),color=M(animalColors[index]),darkM=M(0x30251e);add(new THREE.SphereGeometry(.58,14,12),color,0,.85,0,1.35,.85,.72,group);add(new THREE.SphereGeometry(.34,12,10),color,0,1.38,.48,.85,1,.8,group);for(const s of [-1,1]){add(new THREE.SphereGeometry(.12,8,8),darkM,s*.16,1.45,.75,1,1,1,group);add(new THREE.CylinderGeometry(.09,.11,.55,8),color,s*.35,.3,0,1,1,1,group)}if(index===0){add(new THREE.CylinderGeometry(.19,.24,.8,10),color,0,1.45,.42,1,1,1,group);add(new THREE.SphereGeometry(.25,10,8),color,0,1.92,.66,1,1,1,group);add(new THREE.BoxGeometry(.12,.65,.15),M(0x4a3427),-.3,1.8,-.15);add(new THREE.BoxGeometry(.12,.65,.15),M(0x4a3427),-.3,1.8,-.02)}if(index===1){add(new THREE.SphereGeometry(.42,12,10),color,0,1.55,-.05,1.15,.8,1.1,group);add(new THREE.CylinderGeometry(.18,.23,.75,10),color,0,1.55,.48,1,1,1,group);add(new THREE.SphereGeometry(.25,10,8),color,0,1.98,.7,1,1,1,group);add(new THREE.SphereGeometry(.18,10,8),color,0,.98,-.08,1.4,.9,1.1,group)}if(index===18)add(new THREE.CylinderGeometry(.3,.36,.8,10),color,0,1.2,.35,1,1,1,group);if(index===19)add(new THREE.CylinderGeometry(.09,.1,1.2,8),color,-.16,2.1,.1,1,1,1,group);if(index===23)add(new THREE.SphereGeometry(.27,10,8),color,0,1.85,-.25,1,1.2,1,group);group.position.set(bear.position.x+3+Math.random(),0,bear.position.z+2+Math.random()*2);scene.add(group);animalEntities.set(index,group);return group}
-function buyAnimal(i){if(bought.has(i)||ringCount<animalPrices[i])return;ringCount-=animalPrices[i];ringText.textContent=ringCount;bought.add(i);animalModel(i);renderShop()}
-document.getElementById('shopBtn').onclick=()=>{shopPanel.classList.toggle('hidden');buildPanel.classList.add('hidden');renderShop()};
-document.getElementById('buildBtn').onclick=()=>{buildPanel.classList.toggle('hidden');shopPanel.classList.add('hidden')};
-document.getElementById('diggerBtn').onclick=()=>{vehicleMode=!vehicleMode;shopPanel.classList.add('hidden');buildPanel.classList.add('hidden');if(vehicleMode){digger.position.set(bear.position.x,0,bear.position.z);digger.rotation.y=bear.rotation.y;digger.visible=true;bear.visible=false;document.getElementById('diggerBtn').textContent='🚶 EXIT DIGGER'}else{bear.position.set(digger.position.x,0,digger.position.z);bear.rotation.y=digger.rotation.y;bear.visible=true;digger.visible=false;document.getElementById('diggerBtn').textContent='🚜 DIGGER'}};
-function dig(){if(digging)return;if(!vehicleMode){document.getElementById('diggerBtn').click();}digging=true;
-const x=digger.position.x+Math.sin(digger.rotation.y)*3.2,z=digger.position.z+Math.cos(digger.rotation.y)*3.2;
-const pitMat=M(0x382719),innerMat=M(0x17130f),soil=M(0x987044);
-const opening=add(new THREE.CircleGeometry(1.48,32),pitMat,x,-.755,z);opening.rotation.x=-Math.PI/2;
-const depth=add(new THREE.CircleGeometry(.82,28),innerMat,x,-.735,z);depth.rotation.x=-Math.PI/2;
-const walls=add(new THREE.CylinderGeometry(.84,1.25,1.35,28,1,true),soil,x,-.08,z);
-const rim=add(new THREE.TorusGeometry(1.32,.2,8,32),soil,x,-.69,z);rim.rotation.x=Math.PI/2;
-const mound=add(new THREE.SphereGeometry(1,12,8),soil,x+1.55,.02,z,1.15,.38,.9);dirtPiles.push(opening,depth,walls,rim,mound);
-boomPivot.rotation.x=.38;armPivot.rotation.x=-.72;bucketPivot.rotation.x=.95;
-setTimeout(()=>{boomPivot.rotation.x=.12;armPivot.rotation.x=-.35;bucketPivot.rotation.x=.45},320);
-setTimeout(()=>{boomPivot.rotation.x=0;armPivot.rotation.x=0;bucketPivot.rotation.x=0;digging=false},850)}
-document.getElementById('digBtn').onclick=dig;
-document.getElementById('digNowBtn').onclick=()=>{if(!vehicleMode)document.getElementById('diggerBtn').click();dig()};
-document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.close).classList.add('hidden'));
-function buildThing(type){const cost={house:8,ball:3,pool:15}[type],msg=document.getElementById('buildMessage');if(ringCount<cost){msg.textContent='You need '+cost+' rings. Find more 💍 rings!';return}if(type==='pool'&&builtPool){msg.textContent='You already built your pool!';return}ringCount-=cost;ringText.textContent=ringCount;const x=bear.position.x+5,z=bear.position.z-5;if(type==='house'){add(new THREE.BoxGeometry(5,3.5,5),M(0xffca86),x,1.75,z);const r=add(new THREE.ConeGeometry(4,2.2,4),M(0xc95645),x,4.4,z);r.rotation.y=Math.PI/4;add(new THREE.BoxGeometry(1,2,.15),wood,x,.9,z+2.55);msg.textContent='Your house is built!'}if(type==='ball'){add(new THREE.SphereGeometry(.85,20,16),M(0xff5b55),x,.85,z);msg.textContent='Your ball is ready to play!'}if(type==='pool'){const pool=new THREE.Group();scene.add(pool);pool.position.set(x,0,z);add(new THREE.BoxGeometry(11,.55,9),M(0xe8e7df),0,-.1,0,1,1,1,pool);add(new THREE.BoxGeometry(9,.18,7),M(0x36c7e8,.2),0,.12,0,1,1,1,pool);for(const s of [-1,1]){add(new THREE.BoxGeometry(.7,.65,9),M(0xffffff),s*5.35,.1,0,1,1,1,pool);add(new THREE.BoxGeometry(11,.65,.7),M(0xffffff),0,.1,s*4.35,1,1,1,pool)}builtPool=pool;msg.textContent='Pool built! Walk into the blue water to swim!'}renderShop()}
-document.querySelectorAll('.buildChoice[data-color]').forEach(b=>b.onclick=()=>{blockColor=Number(b.dataset.color);document.getElementById('buildMessage').textContent='Block colour selected! Now press PLACE ONE BLOCK.'});
-document.getElementById('placeBlock').onclick=()=>{const cost=1,msg=document.getElementById('buildMessage');if(ringCount<cost){msg.textContent='Collect a golden ring to place a block.';return}ringCount--;ringText.textContent=ringCount;const distance=5;const gx=Math.round((bear.position.x+Math.sin(bear.rotation.y)*distance)/2)*2,gz=Math.round((bear.position.z+Math.cos(bear.rotation.y)*distance)/2)*2;const key=gx+','+gz,level=placedBlocks.get(key)||0;add(new THREE.BoxGeometry(2,2,2),M(blockColor),gx,1+level*2,gz);placedBlocks.set(key,level+1);msg.textContent='Block placed! You have stacked '+(level+1)+' block(s) here. Move around to build another part of your house.';};
-document.querySelectorAll('.buildChoice[data-build]').forEach(b=>b.onclick=()=>buildThing(b.dataset.build));
-const keys={};let started=false,found=0,vy=0,onGround=true;const speed=10.5,clock=new THREE.Clock();
-function reset(){found=0;count.textContent='0';crystals.forEach(c=>c.visible=true);activeMount=null;bear.visible=true;animalEntities.forEach(a=>a.visible=true);bear.position.set(0,0,7);vy=0;started=true;menu.classList.add('hidden');win.classList.add('hidden')}
-document.getElementById('start').onclick=reset;document.getElementById('again').onclick=reset;
-addEventListener('keydown',e=>{const k=e.key.toLowerCase();keys[k]=true;if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault()},{passive:false});
-addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);addEventListener('keydown',e=>{if(e.key.toLowerCase()==='e'&&!e.repeat)dig()});
-document.querySelectorAll('.ctrl').forEach(b=>{const k=b.dataset.key;const release=()=>{keys[k]=false;b.classList.remove('pressed')};b.addEventListener('contextmenu',e=>e.preventDefault());b.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true;b.classList.add('pressed');try{b.setPointerCapture(e.pointerId)}catch(_){}});b.addEventListener('pointerup',e=>{e.preventDefault();release()});b.addEventListener('pointercancel',release);b.addEventListener('lostpointercapture',release)});
-function clearKeys(){Object.keys(keys).forEach(k=>keys[k]=false);document.querySelectorAll('.ctrl.pressed').forEach(b=>b.classList.remove('pressed'))}addEventListener('blur',clearKeys);document.addEventListener('visibilitychange',()=>{if(document.hidden)clearKeys()});
-function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;
-crystals.forEach((c,i)=>{if(c.visible){c.rotation.y+=dt*1.5;c.position.y=.85+Math.sin(t*2+i)*.15}});ringPickups.forEach((r,i)=>{if(r.visible){r.rotation.y+=dt*1.8;r.position.y=.95+Math.sin(t*2+i)*.12}});
-const actor=vehicleMode?digger:bear;
-if(started){const forward=(keys.w||keys.arrowup||keys.forward?1:0)-(keys.s||keys.arrowdown||keys.back?1:0),side=(keys.d||keys.arrowright||keys.right?1:0)-(keys.a||keys.arrowleft||keys.left?1:0);const v=new THREE.Vector3(side,0,-forward);if(v.lengthSq()>0){v.normalize();actor.position.x+=v.x*speed*(activeMount!==null&&!vehicleMode?1.55:1)*dt;actor.position.z+=v.z*speed*(activeMount!==null&&!vehicleMode?1.55:1)*dt;actor.rotation.y=Math.atan2(v.x,v.z)}
-actor.position.x=THREE.MathUtils.clamp(actor.position.x,-102,102);actor.position.z=THREE.MathUtils.clamp(actor.position.z,-102,102);if(!vehicleMode){if(activeMount!==null){const mount=animalEntities.get(activeMount);mount.position.set(bear.position.x,bear.position.y,bear.position.z);mount.rotation.y=bear.rotation.y;}if((keys[' ']||keys.jump)&&onGround){vy=activeMount!==null?7.5:9;onGround=false}vy-=22*dt;bear.position.y+=vy*dt;if(bear.position.y<=0){bear.position.y=0;vy=0;onGround=true}}
-for(const c of crystals){if(c.visible&&actor.position.distanceTo(c.position)<1.5){c.visible=false;found++;count.textContent=found;if(found===20){started=false;win.classList.remove('hidden')}}}for(const r of ringPickups){if(r.visible&&actor.position.distanceTo(r.position)<1.6){r.visible=false;ringCount++;ringText.textContent=ringCount}}
+(()=>{
+'use strict';
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d',{alpha:false});
+const $=id=>document.getElementById(id);
+let W=innerWidth,H=innerHeight,dpr=1;
+function resize(){W=innerWidth;H=innerHeight;dpr=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
+addEventListener('resize',resize);resize();
+const keys={};let started=false,mode='bear',rings=0,gems=0,builds=[],holes=[],jump=0,jumpV=0,animal=0,animTime=0;
+const bear={x:0,y:0,dir:0};const crystals=[],coins=[];
+for(let i=0;i<20;i++){let a=i*2.399,r=150+(i%5)*95;crystals.push({x:Math.cos(a)*r,y:Math.sin(a)*r,taken:false})}
+for(let i=0;i<90;i++){let a=i*2.399,r=80+(i%15)*48;coins.push({x:Math.cos(a)*r,y:Math.sin(a)*r,taken:false})}
+function project(x,y){return {x:W/2+(x-bear.x)*.72,y:H*.53+(y-bear.y)*.55}}
+function ellipse(x,y,rx,ry,color){ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill()}
+function tree(x,y,s=1){let p=project(x,y);ellipse(p.x,p.y+12*s,16*s,7*s,'#3d7b3b');ctx.fillStyle='#76502e';ctx.fillRect(p.x-4*s,p.y-28*s,8*s,35*s);ellipse(p.x,p.y-34*s,23*s,25*s,'#258346');ellipse(p.x-12*s,p.y-43*s,14*s,16*s,'#3da64e');ellipse(p.x+12*s,p.y-42*s,14*s,16*s,'#48b85a')}
+function drawBear(){let p=project(bear.x,bear.y);let lift=jump;ellipse(p.x,p.y+14-lift,17,7,'#39763a');ellipse(p.x,p.y-lift,15,18,'#98603b');ellipse(p.x,p.y-19-lift,13,13,'#98603b');ellipse(p.x-9,p.y-30-lift,5,6,'#98603b');ellipse(p.x+9,p.y-30-lift,5,6,'#98603b');ellipse(p.x-5,p.y-20-lift,2,2,'#171513');ellipse(p.x+5,p.y-20-lift,2,2,'#171513');ellipse(p.x,p.y-14-lift,6,4,'#f4d5b2');ellipse(p.x,p.y-16-lift,2,2,'#30251e');if(mode==='digger'){ctx.fillStyle='#f2b52f';ctx.fillRect(p.x+17,p.y-5,34,12);ctx.fillStyle='#4a5358';ctx.fillRect(p.x+21,p.y+7,31,7);ctx.strokeStyle='#f2b52f';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(p.x+43,p.y-2);ctx.lineTo(p.x+55,p.y-23);ctx.lineTo(p.x+69,p.y-17);ctx.stroke();ctx.fillStyle='#59636a';ctx.fillRect(p.x+63,p.y-15,13,12)}}
+function world(){ctx.fillStyle='#83d4ef';ctx.fillRect(0,0,W,H);let horizon=H*.46;ctx.fillStyle='#7bc65b';ctx.fillRect(0,horizon,W,H-horizon);
+for(let i=-5;i<8;i++){let p=project(i*170,-400);ctx.fillStyle=i%2?'#849b91':'#718c82';ctx.beginPath();ctx.moveTo(p.x-120,p.y+100);ctx.lineTo(p.x,p.y-125);ctx.lineTo(p.x+140,p.y+100);ctx.fill()}
+ctx.fillStyle='#4bb7df';ctx.beginPath();for(let i=0;i<=12;i++){let x=W*.72+Math.sin(i*.65)*40,y=horizon+i*45;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.lineWidth=35;ctx.strokeStyle='#4bb7df';ctx.stroke();
+for(let i=0;i<45;i++){let x=(i*173)%1500-750,y=(i*239)%1200-600;if(Math.hypot(x-bear.x,y-bear.y)<55)continue;tree(x,y,.7+(i%4)*.12)}
+for(const c of coins){if(c.taken)continue;let p=project(c.x,c.y);if(p.x<-30||p.x>W+30||p.y<-30||p.y>H+30)continue;ellipse(p.x,p.y,7,9,'#ffd34d');ellipse(p.x,p.y,3,6,'#fff0a0')}
+for(const c of crystals){if(c.taken)continue;let p=project(c.x,c.y);if(p.x<-30||p.x>W+30||p.y<-30||p.y>H+30)continue;ctx.fillStyle='#41efff';ctx.beginPath();ctx.moveTo(p.x,p.y-13);ctx.lineTo(p.x+9,p.y);ctx.lineTo(p.x,p.y+13);ctx.lineTo(p.x-9,p.y);ctx.fill();ctx.strokeStyle='#e7ffff';ctx.stroke()}
+for(const b of builds){let p=project(b.x,b.y);ctx.fillStyle=b.color;ctx.fillRect(p.x-10,p.y-20-b.level*18,20,20)}
+for(const h of holes){let p=project(h.x,h.y);ellipse(p.x,p.y,24,13,'#50351f');ellipse(p.x,p.y-2,16,8,'#17130f')}
+drawBear();
 }
-const target=new THREE.Vector3(actor.position.x,1.2+actor.position.y,actor.position.z);const desired=new THREE.Vector3(actor.position.x,8+actor.position.y,actor.position.z+12);camera.position.lerp(desired,.075);camera.lookAt(target);renderer.render(scene,camera)}
-animate();addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+function loop(){if(started){let dx=(keys.right?1:0)-(keys.left?1:0),dy=(keys.back?1:0)-(keys.forward?1:0);let speed=mode==='digger'?3.4:2.8;bear.x+=dx*speed;bear.y+=dy*speed;bear.dir=Math.atan2(dy,dx);if(keys.jump&&jump===0)jumpV=9;keys.jump=false;if(jumpV){jump+=jumpV;jumpV-=.65;if(jump<0){jump=0;jumpV=0}}for(const c of coins)if(!c.taken&&Math.hypot(c.x-bear.x,c.y-bear.y)<23){c.taken=true;rings++;$('rings').textContent=rings}for(const c of crystals)if(!c.taken&&Math.hypot(c.x-bear.x,c.y-bear.y)<25){c.taken=true;gems++;$('gems').textContent=gems;if(gems===20)$('win').classList.remove('hidden')}}
+world();requestAnimationFrame(loop)}
+function panel(title,txt){$('panelTitle').textContent=title;$('panelText').textContent=txt;$('panel').classList.remove('hidden')}
+$('start').onclick=()=>{started=true;$('menu').classList.add('hidden');$('hint').textContent='Explore the forest • Collect rings • Find all crystals'};
+$('panelClose').onclick=()=>$('panel').classList.add('hidden');$('continue').onclick=()=>$('win').classList.add('hidden');
+$('animals').onclick=()=>{if(rings>=8){rings-=8;$('rings').textContent=rings;animal++;panel('🐾 Animal unlocked!','You unlocked a riding animal! Tap ANIMALS again to unlock another.')}else panel('🐾 Animal shop','Collect 8 golden rings to unlock a horse, camel, panda or another animal.')};
+$('build').onclick=()=>{if(rings<1){panel('🧱 Build your house','Collect a golden ring first. Each tap places one block.');return}rings--;$('rings').textContent=rings;builds.push({x:bear.x+Math.cos(bear.dir)*45,y:bear.y+Math.sin(bear.dir)*45,level:builds.length%4,color:['#ffd17a','#d87555','#83c9ed','#eee5d2'][builds.length%4]});$('hint').textContent='Block placed! Keep building'};
+$('digger').onclick=()=>{mode=mode==='bear'?'digger':'bear';$('digger').textContent=mode==='digger'?'🚶 EXIT DIGGER':'🚜 USE DIGGER';$('hint').textContent=mode==='digger'?'You are driving the yellow digger!':'You are exploring as the bear!'};
+$('dig').onclick=()=>{holes.push({x:bear.x+Math.cos(bear.dir)*45,y:bear.y+Math.sin(bear.dir)*45});$('hint').textContent='The digger made a hole!'};
+document.querySelectorAll('.ctrl[data-key]').forEach(b=>{let k=b.dataset.key;let up=()=>{keys[k]=false;b.classList.remove('pressed')};b.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true;b.classList.add('pressed');b.setPointerCapture(e.pointerId)});b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up)});
+addEventListener('keydown',e=>{let map={ArrowUp:'forward',w:'forward',ArrowDown:'back',s:'back',ArrowLeft:'left',a:'left',ArrowRight:'right',d:'right',' ':'jump'};let k=map[e.key];if(k){keys[k]=true;e.preventDefault()}},{passive:false});addEventListener('keyup',e=>{let map={ArrowUp:'forward',w:'forward',ArrowDown:'back',s:'back',ArrowLeft:'left',a:'left',ArrowRight:'right',d:'right',' ':'jump'};let k=map[e.key];if(k)keys[k]=false});
+loop();
 })();
-</script>
-</body></html>
+</script></body></html>
