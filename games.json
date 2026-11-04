@@ -46,5 +46,11 @@
     "title": "WonderWorld",
     "description": "Updated bear adventure: explore the forest, collect crystals and rings, ride animals, build blocks and dig with the yellow digger.",
     "path": "games/wonderworld-3d/"
+  },
+  {
+    "slug": "duel-circuit-3d",
+    "title": "Duel Circuit 3D",
+    "description": "Race two supercars around a detailed 3D circuit. Choose a computer opponent or two-player mode, with day and night races.",
+    "path": "games/duel-circuit-3d/"
   }
 ]
