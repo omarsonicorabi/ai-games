@@ -14,7 +14,7 @@
 (()=>{if(!window.THREE){document.getElementById('card').innerHTML='<h1>3D ENGINE NOT LOADED</h1><p>Please reload the game when the game files have finished publishing.</p>';return}
 const THREE=window.THREE, host=document.getElementById('game'), scene=new THREE.Scene();scene.background=new THREE.Color(0x8bbce8);scene.fog=new THREE.Fog(0x8bbce8,75,190);
 const camera=new THREE.PerspectiveCamera(64,innerWidth/innerHeight,.1,350);camera.position.set(0,27,45);
-const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.65));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;host.appendChild(renderer.domElement);
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.65));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;renderer.outputColorSpace=THREE.SRGBColorSpace;host.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xd8edff,0x354337,2.0));const sun=new THREE.DirectionalLight(0xfff1d7,2.5);sun.position.set(-35,55,25);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
 const mat=(c,r=.55,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
 const asphalt=mat(0x292f36,.94), turf=mat(0x426849), white=mat(0xf2f4f5), red=mat(0xe52a35), rail=mat(0x9aa7b1,.35,.7), dark=mat(0x080c12,.7), glass=mat(0x122b3c,.18,.65);
@@ -22,6 +22,11 @@ const floor=new THREE.Mesh(new THREE.PlaneGeometry(260,260),turf);floor.rotation
 const outer=new THREE.Shape();outer.absellipse(0,0,42,29,0,Math.PI*2,false,0);const hole=new THREE.Path();hole.absellipse(0,0,28,15,0,Math.PI*2,true,0);outer.holes.push(hole);const track=new THREE.Mesh(new THREE.ShapeGeometry(outer,100),asphalt);track.rotation.x=-Math.PI/2;track.position.y=0;track.receiveShadow=true;scene.add(track);
 function lineLoop(rx,rz,y,color,width){const pts=[];for(let i=0;i<180;i++){let a=i/180*Math.PI*2;pts.push(new THREE.Vector3(Math.cos(a)*rx,y,Math.sin(a)*rz))}const geo=new THREE.BufferGeometry().setFromPoints(pts);const mesh=new THREE.LineLoop(geo,new THREE.LineBasicMaterial({color,linewidth:width}));scene.add(mesh)}
 lineLoop(41.5,28.5,.025,0xe8edf2);lineLoop(28.5,15.5,.026,0xe8edf2);
+lineLoop(35,22,.035,0xf5f5ef);
+for(let i=0;i<120;i++){let a=i/120*Math.PI*2;let x=Math.cos(a)*35,z=Math.sin(a)*22;let mark=new THREE.Mesh(new THREE.BoxGeometry(.16,.025,1.05),mat(0xf0f1ed,.9));mark.position.set(x,.04,z);mark.rotation.y=-a;scene.add(mark)}
+for(let i=0;i<100;i++){let a=i/100*Math.PI*2;let x=Math.cos(a)*43.7,z=Math.sin(a)*30.7;let panel=new THREE.Mesh(new THREE.BoxGeometry(2.55,.9,.32),i%2?white:red);panel.position.set(x,.62,z);panel.rotation.y=-a;panel.castShadow=true;scene.add(panel)}
+for(let i=0;i<12;i++){let a=i/12*Math.PI*2;let x=Math.cos(a)*52,z=Math.sin(a)*38;let board=new THREE.Mesh(new THREE.BoxGeometry(8,1.15,.22),mat(i%2?0x123b58:0x172b3d,.38,.4));board.position.set(x,3.6,z);board.lookAt(0,3.6,0);scene.add(board)}
+
 for(let i=0;i<80;i++){let a=i/80*Math.PI*2;let x=Math.cos(a)*43.2,z=Math.sin(a)*30.2;let b=new THREE.Mesh(new THREE.BoxGeometry(2.2,.65,.7),i%2?white:red);b.position.set(x,.32,z);b.rotation.y=-a;b.castShadow=true;scene.add(b)}
 // pit buildings and grandstands
 for(let side of [-1,1]){for(let i=0;i<13;i++){let a=(i/13)*Math.PI*2;let x=Math.cos(a)*51,z=Math.sin(a)*37;let h=2.5+(i%4)*.8;let stand=new THREE.Mesh(new THREE.BoxGeometry(7,h,2.5),mat(i%2?0x596b7d:0x34495c));stand.position.set(x,h/2-.1,z);stand.lookAt(0,h/2,0);scene.add(stand)}}
