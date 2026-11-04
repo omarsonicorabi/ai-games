@@ -48,9 +48,9 @@
     "path": "games/wonderworld-3d/"
   },
   {
-    "slug": "duel-circuit-3d",
-    "title": "Duel Circuit 3D",
-    "description": "Race two supercars around a detailed 3D circuit. Choose a computer opponent or two-player mode, with day and night races.",
-    "path": "games/duel-circuit-3d/"
+    "slug": "tesla-gt-race-3d",
+    "title": "Tesla GT Race 3D",
+    "description": "Race a Tesla-style GT car against five rivals on a 3D road course with hills, bends, braking and steering.",
+    "path": "games/tesla-gt-race-3d/"
   }
 ]
