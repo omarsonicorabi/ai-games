@@ -4,31 +4,31 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#145b45"><title>حصن المسلم – أذكاري</title>
 <style>
-:root{--g:#145b45;--g2:#23765a;--bg:#f0f6f1;--gold:#d7b66b;--ink:#18352b}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#f8faf6,#e5f0e9);font-family:Tahoma,Arial,sans-serif;color:var(--ink)}
-header{background:linear-gradient(135deg,#104b3b,#23765a);color:white;text-align:center;padding:28px 16px 34px;border-radius:0 0 28px 28px}
-header .symbol{font-size:34px}h1{margin:8px 0;font-size:26px}header p{margin:0;color:#e0eee6}
+:root{--g:#176b58;--g2:#36a58a;--bg:#f4fbff;--gold:#ffc94a;--ink:#24445a;--pink:#ffeff5;--blue:#eaf5ff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#fff9e9,#eaf6ff 55%,#f8efff);font-family:Tahoma,Arial,sans-serif;color:var(--ink)}
+header{background:linear-gradient(135deg,#16745e,#38a58b);color:white;text-align:center;padding:25px 16px 30px;border-radius:0 0 34px 34px;box-shadow:0 8px 24px #176b5825}
+header .symbol{font-size:42px}h1{margin:8px 0;font-size:27px}header p{margin:0;color:#eafff6}.kid-welcome{display:inline-block;margin-top:13px;padding:8px 15px;border-radius:20px;background:#ffffff25;font-size:14px}
 main{max-width:760px;margin:18px auto;padding:0 14px 35px}.tabs{display:flex;gap:10px;margin-bottom:16px}
 .tabs button{flex:1;border:0;border-radius:15px;padding:15px 8px;font-size:17px;font-weight:bold;background:#dce9e1;color:var(--g);cursor:pointer}
 .tabs button.active{background:var(--g);color:white;box-shadow:0 5px 14px #145b4530}
 .progress{background:white;border-radius:16px;padding:13px 16px;margin-bottom:15px;box-shadow:0 3px 12px #173b2b0d}
 .progress-top{display:flex;justify-content:space-between;font-size:14px;margin-bottom:9px}
 .track{height:8px;background:#e8eee9;border-radius:10px;overflow:hidden}.bar{height:100%;width:0;background:var(--gold);transition:width .2s}
-.card{background:white;border:1px solid #e5eee7;border-radius:19px;padding:19px;margin:12px 0;box-shadow:0 5px 18px #173b2b0b}
+.card{background:#fff;border:2px solid #e1f0eb;border-radius:24px;padding:18px;margin:14px 0;box-shadow:0 7px 20px #315a4b12}.card:nth-child(3n+2){border-color:#e5eafa}.card:nth-child(3n){border-color:#f7e5ef}
 .card h2{font-size:16px;color:var(--g);margin:0 0 13px}.dhikr{font-size:21px;line-height:2.05;text-align:center;margin:8px 0 17px}
 .note{text-align:center;color:#6a8175;font-size:13px;margin-bottom:14px}.controls{display:flex;align-items:center;justify-content:center;gap:13px}
 .count{min-width:52px;text-align:center;font-size:20px;font-weight:bold;color:var(--g)}
 .counter{border:0;background:var(--g);color:white;border-radius:50px;padding:12px 22px;font-size:16px;cursor:pointer}
-.counter:disabled{background:#aabbb1;cursor:default}.reset-one{border:1px solid #d8e5dc;background:white;color:#547064;border-radius:50px;padding:10px 13px;cursor:pointer}
+.counter:disabled{background:#aabbb1;cursor:default}.reset-one{border:1px solid #d8e5dc;background:white;color:#547064;border-radius:50px;padding:10px 13px;cursor:pointer}.voice-row{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:8px 0 15px}.voice-btn{border:0;border-radius:16px;padding:11px 14px;font-size:14px;font-weight:bold;cursor:pointer;background:#e9f6ff;color:#235b7a}.voice-btn.mic{background:#fff0f5;color:#a43c68}.voice-status{text-align:center;min-height:22px;font-size:13px;color:#39715e;margin:8px 0}.kid-tip{text-align:center;background:#fff7d9;border-radius:15px;padding:10px;color:#72551b;font-size:13px;margin:12px 0}
 .reset-all{display:block;margin:18px auto;border:1px solid #cbdacf;background:white;color:var(--g);border-radius:12px;padding:11px 18px;font-size:14px;cursor:pointer}
 footer{text-align:center;color:#789084;font-size:12px;padding:12px}
 </style></head>
 <body>
-<header><div class="symbol">🌙 📿</div><h1>حِصْنُ المُسْلِم – أَذْكَارِي</h1><p>أذكار الصباح والمساء</p></header>
+<header><div class="symbol">🌙 ⭐ 📿</div><h1>حِصْنُ المُسْلِم – أَذْكَارِي</h1><p>نتعلّم الأذكار معًا بطريقة ممتعة!</p><div class="kid-welcome">🐻 استمع، وردّد، واجمع النجوم! ⭐</div></header>
 <main>
 <div class="tabs"><button id="morning" class="active" onclick="show('morning')">🌅 أذكار الصباح</button><button id="evening" onclick="show('evening')">🌙 أذكار المساء</button></div>
 <div class="progress"><div class="progress-top"><strong id="progressTitle">تقدّم أذكار الصباح</strong><span id="progressText">0 / 0</span></div><div class="track"><div class="bar" id="bar"></div></div></div>
-<section id="list"></section><button class="reset-all" onclick="resetAll()">إعادة جميع العدّادات</button>
+<div class="kid-tip">💡 اضغط «استمع» لسماع الذكر، ثم اضغط «ردّد معي» وقل الذكر بصوتك.</div><section id="list"></section><button class="reset-all" onclick="resetAll()">إعادة جميع العدّادات</button>
 <footer>تقبّل الله منك 🌿 · اضغط على زر التسبيح بعد كل قراءة</footer>
 </main>
 <script>
@@ -64,7 +64,34 @@ let mode="morning",counts={morning:{},evening:{}};
 function items(){return mode==="morning"?morning:evening}
 function show(m){mode=m;document.getElementById("morning").classList.toggle("active",m==="morning");document.getElementById("evening").classList.toggle("active",m==="evening");render()}
 function render(){const a=items();let total=0,done=0;a.forEach((x,i)=>{total+=x.n;done+=Math.min(counts[mode][i]||0,x.n)});document.getElementById("progressTitle").textContent=mode==="morning"?"تقدّم أذكار الصباح":"تقدّم أذكار المساء";document.getElementById("progressText").textContent=done+" / "+total;document.getElementById("bar").style.width=(done/total*100)+"%";
-document.getElementById("list").innerHTML=a.map((x,i)=>{const n=counts[mode][i]||0;return '<article class="card"><h2>'+(i+1)+'. '+x.title+' <span style="float:left;color:#8a9e92;font-size:13px">('+x.n+' '+(x.n===1?'مرة':'مرات')+')</span></h2><div class="dhikr">'+x.t+'</div><div class="note">التكرار: '+n+' من '+x.n+'</div><div class="controls"><button class="reset-one" onclick="resetOne('+i+')">إعادة</button><span class="count">'+n+'/'+x.n+'</span><button class="counter" '+(n>=x.n?'disabled':'')+' onclick="increment('+i+')">'+(n>=x.n?'تم ✓':'سبّح +1')+'</button></div></article>'}).join("")}
+document.getElementById("list").innerHTML=a.map((x,i)=>{const n=counts[mode][i]||0;return '<article class="card"><h2>'+(i+1)+'. '+x.title+' <span style="float:left;color:#8a9e92;font-size:13px">('+x.n+' '+(x.n===1?'مرة':'مرات')+')</span></h2><div class="dhikr">'+x.t+'</div><div class="voice-row"><button class="voice-btn" onclick="speakDhikr('+i+')">🔊 استمع للذكر</button><button class="voice-btn mic" onclick="listenRepeat('+i+')">🎤 ردّد معي</button></div><div class="voice-status" id="voiceStatus'+i+'"></div><div class="note">التكرار: '+n+' من '+x.n+' ⭐</div><div class="controls"><button class="reset-one" onclick="resetOne('+i+')">إعادة</button><span class="count">'+n+'/'+x.n+'</span><button class="counter" '+(n>=x.n?'disabled':'')+' onclick="increment('+i+')">'+(n>=x.n?'أحسنت! ✓':'سبّح +1')+'</button></div></article>'}).join("")}
+
+let activeUtterance=null;
+function speakDhikr(i){
+ if(!("speechSynthesis" in window)){setVoiceStatus(i,"الصوت غير متاح في هذا المتصفح.");return;}
+ window.speechSynthesis.cancel();
+ const u=new SpeechSynthesisUtterance(items()[i].t);
+ u.lang="ar-SA";u.rate=0.82;u.pitch=1.03;
+ const voices=window.speechSynthesis.getVoices();
+ const arabic=voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith("ar"));
+ if(arabic)u.voice=arabic;
+ u.onstart=()=>setVoiceStatus(i,"🔊 استمع جيدًا ثم كرّر الذكر.");
+ u.onend=()=>setVoiceStatus(i,"🌟 دورك الآن! قل الذكر بصوتك.");
+ u.onerror=()=>setVoiceStatus(i,"تعذّر تشغيل الصوت. جرّب مرة أخرى.");
+ activeUtterance=u;window.speechSynthesis.speak(u);
+}
+function listenRepeat(i){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){setVoiceStatus(i,"🎤 ميزة الاستماع غير مدعومة هنا. يمكنك ترديد الذكر بنفسك بعد الاستماع.");return;}
+ const rec=new SR();rec.lang="ar-EG";rec.interimResults=false;rec.maxAlternatives=1;
+ setVoiceStatus(i,"🎤 أستمع إليك... قل الذكر الآن.");
+ rec.onresult=(event)=>{const said=event.results[0][0].transcript;setVoiceStatus(i,"🌟 أحسنت! سمعت: "+said);};
+ rec.onerror=()=>setVoiceStatus(i,"لم أتمكن من سماعك. تأكد من السماح باستخدام الميكروفون ثم حاول ثانية.");
+ rec.onend=()=>{};
+ try{rec.start();}catch(e){setVoiceStatus(i,"الميكروفون مشغول. حاول مرة أخرى.");}
+}
+function setVoiceStatus(i,msg){const el=document.getElementById("voiceStatus"+i);if(el)el.textContent=msg;}
+
 function increment(i){counts[mode][i]=Math.min((counts[mode][i]||0)+1,items()[i].n);render()}
 function resetOne(i){counts[mode][i]=0;render()}
 function resetAll(){counts[mode]={};render()}
