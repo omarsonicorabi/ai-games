@@ -52,12 +52,17 @@
     "title": "Tesla GT Race 3D",
     "description": "Race a Tesla-style GT car against five rivals on a 3D road course with hills, bends, braking and steering.",
     "path": "games/tesla-gt-race-3d/"
-  }
-,
+  },
   {
     "slug": "abc-friends",
     "title": "ABC Friends",
     "description": "Tap letters A to W to open colourful learning pages with pictures, simple explanations, and spoken letter sounds.",
     "path": "games/abc-friends/"
+  },
+  {
+    "slug": "arabic-friends",
+    "title": "أصدقاء الحروف العربية",
+    "description": "تعلّم الحروف العربية من الألف إلى الياء بالصور والكلمات والشرح والصوت.",
+    "path": "games/arabic-friends/"
   }
 ]
