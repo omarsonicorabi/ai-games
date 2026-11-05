@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#b8ecff"><title>أصدقاء الحروف – مغامرة الحروف العربية</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Tahoma,Arial,sans-serif;color:#29415d;background:linear-gradient(160deg,#b8ecff,#fff1c8)}header{text-align:center;padding:22px 12px 14px}h1{font-size:clamp(2rem,7vw,3rem);margin:0;color:#ff687d;text-shadow:2px 3px white}header p{margin:8px 0 0;font-size:1.05rem}main{max-width:900px;margin:auto;padding:12px 16px 30px}.home-intro{text-align:center;background:#fff;border-radius:22px;padding:13px;margin:0 auto 16px;max-width:600px;box-shadow:0 5px 0 #c4dce9;font-weight:bold}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:11px}.tile{border:0;border-radius:20px;background:white;min-height:100px;padding:9px 5px;box-shadow:0 5px 0 #c4dce9;cursor:pointer;color:#31435b}.tile:active,.action:active{transform:translateY(3px);box-shadow:0 2px 0 #c4dce9}.tile .letter{font-size:3.2rem;font-weight:900;line-height:1.1;color:var(--c)}.tile .emoji{display:block;font-size:1.6rem;margin-top:4px}.detail{display:none;background:#fff;border-radius:28px;padding:18px 16px;text-align:center;max-width:600px;margin:0 auto;box-shadow:0 7px 0 #c4dce9}.detail.show{display:block}.home.hidden{display:none}.back{display:block;margin:0 auto 12px;border:0;background:#e8f5ff;border-radius:24px;padding:10px 16px;font-weight:bold;color:#31516e;cursor:pointer}.bigletter{font-size:clamp(7rem,26vw,10rem);font-weight:1000;color:#ff7180;line-height:1.2}.bigemoji{font-size:clamp(4rem,17vw,6rem);margin:4px}h2{font-size:clamp(1.5rem,5vw,2rem);margin:7px 0;color:#37516d}.explain{font-size:1.2rem;line-height:1.8;margin:8px auto;max-width:440px}.sound{font-weight:bold;color:#6a68b5}.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:15px}.action{border:0;border-radius:30px;padding:12px 19px;background:#62d0ad;color:#174b48;font-weight:bold;font-size:1rem;cursor:pointer;box-shadow:0 4px 0 #b8d9d1}.action.alt{background:#ffd16e;color:#614719;box-shadow:0 4px 0 #e8d29c}footer{text-align:center;padding:0 12px 24px;color:#58718b;font-size:.9rem}@media(max-width:420px){.grid{grid-template-columns:repeat(3,1fr)}}
+</style></head><body><header><h1>🌈 أصدقاء الحروف العربية! 🌈</h1><p>اختر حرفًا لتتعلم عنه!</p></header><main><section class="home" id="home"><div class="home-intro">👆 اضغط على أي حرف لفتح صفحة التعلم الخاصة به!</div><div class="grid" id="grid"></div></section><section class="detail" id="detail" aria-live="polite"><button class="back" id="back">↩ العودة إلى كل الحروف</button><div class="bigletter" id="bigletter">أ</div><div class="bigemoji" id="bigemoji">🦁</div><h2 id="title">أ مثل أسد!</h2><p class="explain" id="explain">الأسد حيوان قوي يعيش في البرية.</p><p class="sound" id="sound">هذا هو حرف الألف: أ</p><div class="actions"><button class="action" id="hear">🔊 استمع إلى الحرف</button><button class="action alt" id="next">الحرف التالي ←</button></div></section></main><footer>خطوات صغيرة، وتعلّم كبير! ⭐</footer>
+<script>
+const data=[
+['أ','🦁','أسد','الأسد حيوان قوي يعيش في البرية.','ألف'],
+['ب','🦆','بطة','البطة طائر يحب السباحة في الماء.','باء'],
+['ت','🍎','تفاحة','التفاحة فاكهة لذيذة، وقد تكون حمراء أو خضراء.','تاء'],
+['ث','🦊','ثعلب','الثعلب حيوان له ذيل كثيف وأذنان منتصبتان.','ثاء'],
+['ج','🐪','جمل','الجمل حيوان يعيش في الصحراء ويستطيع تحمّل العطش.','جيم'],
+['ح','🐎','حصان','الحصان حيوان قوي وسريع ويحب الجري.','حاء'],
+['خ','🐑','خروف','الخروف حيوان أليف يغطي جسمه الصوف.','خاء'],
+['د','🐻','دب','الدب حيوان كبير وقوي وله فرو كثيف.','دال'],
+['ذ','🌽','ذرة','الذرة نبات نأكل حبوبه الصفراء.','ذال'],
+['ر','🦒','زرافة','الزرافة حيوان طويل الرقبة.','راء'],
+['ز','🌸','زهرة','الزهرة نبات جميل له ألوان ورائحة طيبة.','زاي'],
+['س','🐟','سمكة','السمكة تعيش في الماء وتسبح بزعانفها.','سين'],
+['ش','☀️','شمس','الشمس تمدّنا بالضوء والدفء.','شين'],
+['ص','🐥','صوص','الصوص صغير الدجاجة ويصدر صوتًا لطيفًا.','صاد'],
+['ض','🐸','ضفدع','الضفدع حيوان يقفز ويعيش قرب الماء.','ضاد'],
+['ط','🦆','طاووس','الطاووس طائر جميل وله ريش ملوّن.','طاء'],
+['ظ','🌳','ظل','الظل مكان بارد تصنعه الأجسام عندما تحجب الضوء.','ظاء'],
+['ع','🍇','عنب','العنب فاكهة تنمو في عناقيد.','عين'],
+['غ','☁️','غيمة','الغيمة تجمع قطرات الماء في السماء.','غين'],
+['ف','🦋','فراشة','الفراشة حشرة جميلة لها أجنحة ملوّنة.','فاء'],
+['ق','🐱','قطة','القطة حيوان أليف يحب اللعب والراحة.','قاف'],
+['ك','🐕','كلب','الكلب حيوان أليف ويمكنه تعلّم الحيل.','كاف'],
+['ل','🍋','ليمون','الليمون فاكهة صفراء طعمها حامض.','لام'],
+['م','🍌','موز','الموز فاكهة صفراء لذيذة.','ميم'],
+['ن','🐝','نحلة','النحلة تزور الأزهار وتساعد في صنع العسل.','نون'],
+['هـ','🎁','هدية','الهدية شيء نقدّمه لشخص نحبه.','هاء'],
+['و','🌹','وردة','الوردة زهرة جميلة وذات رائحة طيبة.','واو'],
+['ي','✋','يد','اليد تساعدنا على الإمساك بالأشياء والكتابة.','ياء']
+];
+let current=0;const grid=document.getElementById('grid'),home=document.getElementById('home'),detail=document.getElementById('detail');
+data.forEach((d,i)=>{const b=document.createElement('button');b.className='tile';b.style.setProperty('--c',['#ff7180','#48a9dc','#9b78dc','#f2a33c','#48b99a'][i%5]);b.innerHTML='<span class="letter">'+d[0]+'</span><span class="emoji">'+d[1]+'</span>';b.setAttribute('aria-label','تعلّم حرف '+d[0]);b.onclick=()=>openLetter(i);grid.appendChild(b)});
+function openLetter(i){current=(i+data.length)%data.length;const d=data[current];document.getElementById('bigletter').textContent=d[0];document.getElementById('bigemoji').textContent=d[1];document.getElementById('title').textContent=d[0]+' مثل '+d[2]+'!';document.getElementById('explain').textContent=d[3];document.getElementById('sound').textContent='اسم الحرف هو: '+d[4]+' ('+d[0]+')';home.classList.add('hidden');detail.classList.add('show');window.scrollTo(0,0)}
+function goHome(){detail.classList.remove('show');home.classList.remove('hidden');window.scrollTo(0,0)}
+function speak(){const d=data[current];if(!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance('حرف '+d[4]+'. '+d[0]+' مثل '+d[2]+'. '+d[3]);u.lang='ar-EG';u.rate=.82;u.pitch=1.08;speechSynthesis.speak(u)}
+document.getElementById('back').onclick=goHome;document.getElementById('hear').onclick=speak;document.getElementById('next').onclick=()=>{openLetter(current+1);speak()};
+</script></body></html>
