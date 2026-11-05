@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#145b45"><title>حصن المسلم – أذكاري</title>
+<style>
+:root{--g:#145b45;--g2:#23765a;--bg:#f0f6f1;--gold:#d7b66b;--ink:#18352b}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#f8faf6,#e5f0e9);font-family:Tahoma,Arial,sans-serif;color:var(--ink)}
+header{background:linear-gradient(135deg,#104b3b,#23765a);color:white;text-align:center;padding:28px 16px 34px;border-radius:0 0 28px 28px}
+header .symbol{font-size:34px}h1{margin:8px 0;font-size:26px}header p{margin:0;color:#e0eee6}
+main{max-width:760px;margin:18px auto;padding:0 14px 35px}.tabs{display:flex;gap:10px;margin-bottom:16px}
+.tabs button{flex:1;border:0;border-radius:15px;padding:15px 8px;font-size:17px;font-weight:bold;background:#dce9e1;color:var(--g);cursor:pointer}
+.tabs button.active{background:var(--g);color:white;box-shadow:0 5px 14px #145b4530}
+.progress{background:white;border-radius:16px;padding:13px 16px;margin-bottom:15px;box-shadow:0 3px 12px #173b2b0d}
+.progress-top{display:flex;justify-content:space-between;font-size:14px;margin-bottom:9px}
+.track{height:8px;background:#e8eee9;border-radius:10px;overflow:hidden}.bar{height:100%;width:0;background:var(--gold);transition:width .2s}
+.card{background:white;border:1px solid #e5eee7;border-radius:19px;padding:19px;margin:12px 0;box-shadow:0 5px 18px #173b2b0b}
+.card h2{font-size:16px;color:var(--g);margin:0 0 13px}.dhikr{font-size:21px;line-height:2.05;text-align:center;margin:8px 0 17px}
+.note{text-align:center;color:#6a8175;font-size:13px;margin-bottom:14px}.controls{display:flex;align-items:center;justify-content:center;gap:13px}
+.count{min-width:52px;text-align:center;font-size:20px;font-weight:bold;color:var(--g)}
+.counter{border:0;background:var(--g);color:white;border-radius:50px;padding:12px 22px;font-size:16px;cursor:pointer}
+.counter:disabled{background:#aabbb1;cursor:default}.reset-one{border:1px solid #d8e5dc;background:white;color:#547064;border-radius:50px;padding:10px 13px;cursor:pointer}
+.reset-all{display:block;margin:18px auto;border:1px solid #cbdacf;background:white;color:var(--g);border-radius:12px;padding:11px 18px;font-size:14px;cursor:pointer}
+footer{text-align:center;color:#789084;font-size:12px;padding:12px}
+</style></head>
+<body>
+<header><div class="symbol">🌙 📿</div><h1>حِصْنُ المُسْلِم – أَذْكَارِي</h1><p>أذكار الصباح والمساء</p></header>
+<main>
+<div class="tabs"><button id="morning" class="active" onclick="show('morning')">🌅 أذكار الصباح</button><button id="evening" onclick="show('evening')">🌙 أذكار المساء</button></div>
+<div class="progress"><div class="progress-top"><strong id="progressTitle">تقدّم أذكار الصباح</strong><span id="progressText">0 / 0</span></div><div class="track"><div class="bar" id="bar"></div></div></div>
+<section id="list"></section><button class="reset-all" onclick="resetAll()">إعادة جميع العدّادات</button>
+<footer>تقبّل الله منك 🌿 · اضغط على زر التسبيح بعد كل قراءة</footer>
+</main>
+<script>
+const morning=[
+{title:"آية الكرسي",n:1,t:"اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ."},
+{title:"سورة الإخلاص",n:3,t:"قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ."},
+{title:"سورة الفلق",n:3,t:"قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ مِنْ شَرِّ مَا خَلَقَ ۝ وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ ۝ وَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۝ وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ."},
+{title:"سورة الناس",n:3,t:"قُلْ أَعُوذُ بِرَبِّ النَّاسِ ۝ مَلِكِ النَّاسِ ۝ إِلَٰهِ النَّاسِ ۝ مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ۝ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ۝ مِنَ الْجِنَّةِ وَالنَّاسِ."},
+{title:"أصبحنا وأصبح الملك لله",n:1,t:"أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ. رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذَا الْيَوْمِ وَخَيْرَ مَا بَعْدَهُ، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذَا الْيَوْمِ وَشَرِّ مَا بَعْدَهُ."},
+{title:"اللهم بك أصبحنا",n:1,t:"اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ."},
+{title:"بسم الله الذي لا يضر",n:3,t:"بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ."},
+{title:"رضيت بالله ربًّا",n:3,t:"رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ ﷺ نَبِيًّا."},
+{title:"سيد الاستغفار",n:1,t:"اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَىٰ عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ."}
+];
+const evening=morning.map((x,i)=>({...x,t:i===4?"أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ. رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذِهِ اللَّيْلَةِ وَخَيْرَ مَا بَعْدَهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذِهِ اللَّيْلَةِ وَشَرِّ مَا بَعْدَهَا.":i===5?"اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ.":x.t}));
+let mode="morning",counts={morning:{},evening:{}};
+function items(){return mode==="morning"?morning:evening}
+function show(m){mode=m;document.getElementById("morning").classList.toggle("active",m==="morning");document.getElementById("evening").classList.toggle("active",m==="evening");render()}
+function render(){const a=items();let total=0,done=0;a.forEach((x,i)=>{total+=x.n;done+=Math.min(counts[mode][i]||0,x.n)});document.getElementById("progressTitle").textContent=mode==="morning"?"تقدّم أذكار الصباح":"تقدّم أذكار المساء";document.getElementById("progressText").textContent=done+" / "+total;document.getElementById("bar").style.width=(done/total*100)+"%";
+document.getElementById("list").innerHTML=a.map((x,i)=>{const n=counts[mode][i]||0;return '<article class="card"><h2>'+(i+1)+'. '+x.title+' <span style="float:left;color:#8a9e92;font-size:13px">('+x.n+' '+(x.n===1?'مرة':'مرات')+')</span></h2><div class="dhikr">'+x.t+'</div><div class="note">التكرار: '+n+' من '+x.n+'</div><div class="controls"><button class="reset-one" onclick="resetOne('+i+')">إعادة</button><span class="count">'+n+'/'+x.n+'</span><button class="counter" '+(n>=x.n?'disabled':'')+' onclick="increment('+i+')">'+(n>=x.n?'تم ✓':'سبّح +1')+'</button></div></article>'}).join("")}
+function increment(i){counts[mode][i]=Math.min((counts[mode][i]||0)+1,items()[i].n);render()}
+function resetOne(i){counts[mode][i]=0;render()}
+function resetAll(){counts[mode]={};render()}
+render();
+</script></body></html>
