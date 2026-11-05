@@ -101,27 +101,48 @@ function gantry(s,txt){pose(s,0);const g=new THREE.Group(),m=new THREE.MeshStand
  g.position.set(P.x,P.y,P.z);g.rotation.y=-P.h;scene.add(g)}
 gantry(45,'TESLA GT  ·  START');gantry(LEN,'FINISH');
 
-// Tesla Roadster-inspired player car and Tesla-style rival cars
+// Tesla Roadster-only player and rival car models
 function makeCar(col){
  const g=new THREE.Group(),paint=new THREE.MeshPhysicalMaterial({color:col,metalness:.45,roughness:.32,clearcoat:1,clearcoatRoughness:.08}),
  glass=new THREE.MeshPhysicalMaterial({color:0x0a0f16,metalness:.6,roughness:.06,clearcoat:1}),dark=new THREE.MeshStandardMaterial({color:0x101114,roughness:.6}),
  chrome=new THREE.MeshStandardMaterial({color:0xcfd3d8,metalness:.9,roughness:.3});
  const ex=(sh,d,b)=>{const m=new THREE.ExtrudeGeometry(sh,{depth:d,bevelEnabled:true,bevelThickness:b,bevelSize:b,bevelSegments:4,curveSegments:16});m.translate(0,0,-d/2);m.rotateY(Math.PI/2);return m};
- const bs=new THREE.Shape();bs.moveTo(-2.42,.34);bs.quadraticCurveTo(-2.5,.58,-2.22,.72);bs.bezierCurveTo(-1.65,.88,-.75,.91,.05,.91);bs.bezierCurveTo(1.25,.91,2.15,.78,2.42,.58);bs.lineTo(2.4,.34);bs.lineTo(-2.42,.34);
- const cs=new THREE.Shape();cs.moveTo(-1.78,.76);cs.bezierCurveTo(-1.42,1.02,-1.05,1.16,-.45,1.18);cs.bezierCurveTo(.35,1.2,.98,1.02,1.58,.76);cs.lineTo(-1.78,.76);
- g.add(new THREE.Mesh(ex(bs,1.7,.1),paint));
- const cab=new THREE.Mesh(ex(cs,1.3,.1),glass);g.add(cab);g.userData.cab=cab;
- const wh=[];[[-1,-1.48],[1,-1.48],[-1,1.48],[1,1.48]].forEach(([sx,z])=>{const w=new THREE.Group(),tg=new THREE.CylinderGeometry(.36,.36,.26,24),rg=new THREE.CylinderGeometry(.24,.24,.27,16);
-  tg.rotateZ(Math.PI/2);rg.rotateZ(Math.PI/2);w.add(new THREE.Mesh(tg,dark),new THREE.Mesh(rg,chrome));w.position.set(sx*.92,.36,z);g.add(w);wh.push(w)});
+ // Low, wide, two-seat Roadster-inspired hypercar silhouette: long pointed nose,
+ // compact teardrop cabin, sculpted rear haunches and a short tapered tail.
+ const bs=new THREE.Shape();
+ bs.moveTo(-2.62,.32);
+ bs.quadraticCurveTo(-2.72,.48,-2.38,.63);
+ bs.bezierCurveTo(-1.82,.82,-1.18,.88,-.52,.86);
+ bs.bezierCurveTo(.38,.84,1.55,.72,2.12,.55);
+ bs.quadraticCurveTo(2.58,.47,2.68,.34);
+ bs.lineTo(2.48,.28);bs.lineTo(-2.42,.28);bs.closePath();
+ const cs=new THREE.Shape();
+ cs.moveTo(-1.42,.79);
+ cs.bezierCurveTo(-1.12,1.03,-.82,1.22,-.34,1.25);
+ cs.bezierCurveTo(.34,1.27,.82,1.08,1.34,.76);
+ cs.quadraticCurveTo(.72,.91,.08,.94);
+ cs.bezierCurveTo(-.62,.96,-1.02,.87,-1.42,.79);cs.closePath();
+ g.add(new THREE.Mesh(ex(bs,1.9,.075),paint));
+ const cab=new THREE.Mesh(ex(cs,1.42,.055),glass);g.add(cab);g.userData.cab=cab;
+ const wh=[];[[-1,-1.52],[1,-1.52],[-1,1.52],[1,1.52]].forEach(([sx,z])=>{const w=new THREE.Group(),tg=new THREE.CylinderGeometry(.39,.39,.28,32),rg=new THREE.CylinderGeometry(.245,.245,.29,20);
+  tg.rotateZ(Math.PI/2);rg.rotateZ(Math.PI/2);w.add(new THREE.Mesh(tg,dark),new THREE.Mesh(rg,chrome));w.position.set(sx*.99,.39,z);g.add(w);wh.push(w)});
  g.userData.wh=wh;
  const bx=(w,h,d,m,x,y,z)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o};
- [-.62,.62].forEach(x=>bx(.55,.06,.05,new THREE.MeshBasicMaterial({color:0xf4fbff}),x,.8,-2.44));
- const tail=new THREE.MeshBasicMaterial({color:0xb01010});bx(1.75,.08,.05,tail,0,.84,2.44);g.userData.tail=tail;
- [-1,1].forEach(s=>bx(.22,.1,.14,paint,s*1.0,1.02,-.7));
- bx(1.9,.05,.35,dark,0,.3,-2.25);bx(1.9,.12,.3,dark,0,.34,2.2);
+ const light=new THREE.MeshBasicMaterial({color:0xf4fbff});
+ [-.66,.66].forEach(x=>bx(.46,.055,.055,light,x,.66,-2.65));
+ const tail=new THREE.MeshBasicMaterial({color:0xb01010});
+ bx(1.58,.065,.055,tail,0,.72,2.61);g.userData.tail=tail;
+ // Low side sills and rear diffuser emphasize the Roadster's wide stance.
+ bx(1.92,.12,.24,dark,0,.29,0);
+ bx(1.55,.10,.42,dark,0,.27,2.28);
+ // Subtle hood creases and mirrors.
+ [-1,1].forEach(s=>{
+   bx(.045,.018,1.35,chrome,s*.48,.655,-1.72);
+   bx(.19,.07,.18,paint,s*1.02,.91,-.72);
+ });
  g.rotation.order='YXZ';g.traverse(o=>{if(o.isMesh)o.castShadow=true});scene.add(g);return g}
 const mk=(c,vmax)=>({m:makeCar(c),s:0,lat:0,v:0,vl:0,vmax,fin:0,lane:0,t:0,cd:0});
-const me=mk(0xe82127,0); // Player drives the low, sleek red Tesla Roadster-style coupe
+const me=mk(0xe82127,0); // Player drives the low, sleek red Tesla Roadster
 const ais=[[0xf4f4f4,72],[0x2563eb,70],[0x1c1c20,68],[0x94a3b8,66],[0xf59e0b,64]].map(([c,v])=>mk(c,v));
 const all=[me,...ais],LANES=[-4.6,0,4.6];
 const key=e=>e.fin?1e6-e.fin:e.s;
