@@ -67,19 +67,6 @@ function render(){const a=items();let total=0,done=0;a.forEach((x,i)=>{total+=x.
 document.getElementById("list").innerHTML=a.map((x,i)=>{const n=counts[mode][i]||0;return '<article class="card"><h2>'+(i+1)+'. '+x.title+' <span style="float:left;color:#8a9e92;font-size:13px">('+x.n+' '+(x.n===1?'مرة':'مرات')+')</span></h2><div class="dhikr">'+x.t+'</div><div class="voice-row"><button class="voice-btn mic" onclick="listenRepeat('+i+')">🎤 ردّد معي</button></div><div class="voice-status" id="voiceStatus'+i+'"></div><div class="note">التكرار: '+n+' من '+x.n+' ⭐</div><div class="controls"><button class="reset-one" onclick="resetOne('+i+')">إعادة</button><span class="count">'+n+'/'+x.n+'</span><button class="counter" '+(n>=x.n?'disabled':'')+' onclick="increment('+i+')">'+(n>=x.n?'أحسنت! ✓':'سبّح +1')+'</button></div></article>'}).join("")}
 
 let activeUtterance=null;
-function speakDhikr(i){
- if(!("speechSynthesis" in window)){setVoiceStatus(i,"الصوت غير متاح في هذا المتصفح.");return;}
- window.speechSynthesis.cancel();
- const u=new SpeechSynthesisUtterance(items()[i].t);
- u.lang="ar-SA";u.rate=0.82;u.pitch=1.03;
- const voices=window.speechSynthesis.getVoices();
- const arabic=voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith("ar"));
- if(arabic)u.voice=arabic;
- u.onstart=()=>setVoiceStatus(i,"🔊 استمع جيدًا ثم كرّر الذكر.");
- u.onend=()=>setVoiceStatus(i,"🌟 دورك الآن! قل الذكر بصوتك.");
- u.onerror=()=>setVoiceStatus(i,"تعذّر تشغيل الصوت. جرّب مرة أخرى.");
- activeUtterance=u;window.speechSynthesis.speak(u);
-}
 function listenRepeat(i){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!SR){setVoiceStatus(i,"🎤 ميزة الاستماع غير مدعومة هنا. يمكنك ترديد الذكر بنفسك بعد الاستماع.");return;}
