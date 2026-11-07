@@ -88,5 +88,11 @@
     "title": "Dolphin Adventure",
     "description": "Swim through a bright ocean, collect shining pearls, and explore with simple touch controls.",
     "path": "games/dolphin-adventure/"
+  },
+  {
+    "slug": "omars-science-quest",
+    "title": "Omar's Science Quest",
+    "description": "Learn science with Pip the owl through interactive lessons on living things, matter, Earth and space, the human body, forces and energy. Earn XP and gems.",
+    "path": "games/omars-science-quest/"
   }
 ]
