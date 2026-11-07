@@ -100,5 +100,11 @@
     "title": "Omar's Math Quest",
     "description": "Learn mathematics with Pip the owl through interactive lessons, examples and quizzes in numbers, fractions, geometry, measurement and algebra. Earn XP and gems.",
     "path": "games/omars-math-quest/"
+  },
+  {
+    "slug": "midnight-tower-escape",
+    "title": "Midnight Tower Escape",
+    "description": "A cinematic skyscraper escape adventure: rescue trapped workers, collect access cards, avoid patrols and reach the rooftop.",
+    "path": "games/midnight-tower-escape/"
   }
 ]
