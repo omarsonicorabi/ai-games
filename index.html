@@ -122,7 +122,8 @@ main{width:min(1050px,calc(100% - 28px));margin:0 auto 48px}.choices{display:gri
   iframe.src=a.href;start();
  });
  document.getElementById('exitPlay').addEventListener('click',function(){frame.classList.remove('active');iframe.src='about:blank';});
- document.getElementById('proHome').addEventListener('click',function(){lock.classList.remove('active');});\n document.getElementById('buyProButton').addEventListener('click',function(){lock.classList.add('active');});
+ document.getElementById('proHome').addEventListener('click',function(){lock.classList.remove('active');});
+ document.getElementById('buyProButton').addEventListener('click',function(){lock.classList.add('active');});
  if(localStorage.getItem(KEY)&&remaining()<=0)showLock();
  window.addEventListener('storage',function(e){if(e.key===KEY&&remaining()<=0)showLock();});
 })();
