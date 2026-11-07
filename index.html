@@ -37,12 +37,12 @@ main{width:min(1050px,calc(100% - 28px));margin:0 auto 48px}.choices{display:gri
  const gamesButton=document.getElementById('gamesButton'),learningButton=document.getElementById('learningButton');
  const learningSlugs=new Set(['abc-friends','arabic-friends','azkar','omars-english-quest','omars-science-quest','omars-math-quest','computer-development-academy']);
  const icons={'pyramid-jumper':'🏜️','elemental-fighters':'🛡️','desert-drift-rally':'🏎️','monkey-tree-swing':'🐒','bike-rush':'🚴','super-cat-hero-dash':'🐱','robot-rescue':'🤖','wonderworld-3d':'🐻','tesla-gt-race-3d':'🏁','brick-builder':'🧱','dolphin-adventure':'🐬','color-clash-3d':'🎨','abc-friends':'🔤','arabic-friends':'🔠','azkar':'🌙','omars-english-quest':'🦉','omars-science-quest':'🔬','omars-math-quest':'➗'};
- let allItems=[],section='games';
+ let allGames=[],allLearning=[],section='games';
  function showSection(next){
   section=next;const learning=section==='learning';
   gamesButton.setAttribute('aria-pressed',String(!learning));learningButton.setAttribute('aria-pressed',String(learning));
   title.textContent=learning?'Your Learning Apps':'Your Games';
-  const items=allItems.filter(item=>learning?(item.category==='learning'||learningSlugs.has(item.slug)):(item.category!=='learning'&&!learningSlugs.has(item.slug)));
+  const items=learning?allLearning:allGames;
   count.textContent=items.length+(learning?' learning apps':' games');
   root.replaceChildren();
   if(!items.length){const empty=document.createElement('div');empty.className='message';empty.textContent=learning?'Your learning apps will appear here.':'Your games will appear here.';root.append(empty);return;}
@@ -57,7 +57,7 @@ main{width:min(1050px,calc(100% - 28px));margin:0 auto 48px}.choices{display:gri
  }
  gamesButton.addEventListener('click',()=>showSection('games'));
  learningButton.addEventListener('click',()=>showSection('learning'));
- try{const response=await fetch('./games.json',{cache:'no-store'});if(!response.ok)throw new Error('Could not load games.json');allItems=await response.json();showSection('games');}
+ try{const [gamesResponse,learningResponse]=await Promise.all([fetch('./games.json',{cache:'no-store'}),fetch('./learning.json',{cache:'no-store'})]);if(!gamesResponse.ok||!learningResponse.ok)throw new Error('Could not load the app catalogs');[allGames,allLearning]=await Promise.all([gamesResponse.json(),learningResponse.json()]);showSection('games');}
  catch(error){count.textContent='Library unavailable';root.innerHTML='<div class="message">Your library could not load. Please open the site through GitHub Pages or another web server.</div>';}
 })();
 </script>
