@@ -106,5 +106,11 @@
     "title": "Color Clash 3D",
     "description": "Join the blue team in a colorful 3D territory race, paint the arena floor, and capture towers against red and yellow computer teams.",
     "path": "games/color-clash-3d/"
+  },
+  {
+    "slug": "computer-development-academy",
+    "title": "Computer Development Academy",
+    "description": "Learn software first, then ICT and computer hardware through interactive lessons and quizzes.",
+    "path": "computer-development-academy/"
   }
 ]
