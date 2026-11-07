@@ -111,6 +111,7 @@
     "slug": "computer-development-academy",
     "title": "Computer Development Academy",
     "description": "Learn software first, then ICT and computer hardware through interactive lessons and quizzes.",
-    "path": "computer-development-academy/"
+    "path": "computer-development-academy/",
+    "category": "learning"
   }
 ]
