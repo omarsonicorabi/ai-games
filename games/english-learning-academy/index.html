@@ -75,11 +75,33 @@ function renderLessons(){
 }
 function advancedText(t,i){return ({vocabulary:['Explore words with similar meanings and opposite meanings.','Learn how words share roots and patterns.','Build a vocabulary for school subjects and formal writing.'],grammar:['Identify how each word works in a sentence.','Choose the correct tense to show when events happen.','Connect ideas using clauses and conjunctions.'],reading:['Identify what a passage is mostly about.','Use clues in a text to work out an unstated idea.','Notice similarities and differences between texts.'],writing:['Organise a clear topic sentence and supporting details.','Support your point with relevant facts and examples.','Check spelling, punctuation and sentence flow.'],speaking:['Organise an introduction, main points and conclusion.','Give reasons and examples for your point of view.','Listen carefully and respond respectfully.']})[t][i]}
 function advancedExample(t,i){return ({vocabulary:['big / large · hot / cold','help → helpful → helpless','The evidence supports the conclusion.'],grammar:['The bright stars shine.','Yesterday I walked; today I walk.','Although it rained, we continued playing.'],reading:['What is the author mainly explaining?','What can you infer from the character’s actions?','How are the two characters different?'],writing:['Topic: Reading helps us learn.','For example, books introduce new ideas.','Check: capitals, commas and full stops.'],speaking:['Today I will explain three important ideas.','I believe this because…','I agree with your point, and I would add…']})[t][i]}
-function openLesson(i){const data=units[tab],early=isEarly();const item=early?data.items[i]:[advanced[tab][i],advancedText(tab,i),advancedExample(tab,i)];$('lessonView').innerHTML='<div class="example"><div class="word">'+item[0]+'</div><p>'+item[1]+'</p><strong>'+item[2]+'</strong></div><button class="action" id="completeBtn">✓ Mark lesson complete</button>'; $('completeBtn').onclick=()=>{points+=10;done++;updateProgress();$('completeBtn').textContent='Completed! +10 points';$('completeBtn').disabled=true}}
+function openLesson(i){
+ const data=units[tab],early=isEarly(),item=early?data.items[i]:[advanced[tab][i],advancedText(tab,i),advancedExample(tab,i)];
+ let extra='';
+ if(tab==='reading'){
+  const questions=[
+   {q:'Where does Mia go?',a:['To the park','To the shop','To school'],c:0},
+   {q:'What does Adam read?',a:['A map','A story','A letter'],c:1},
+   {q:'What does the rabbit like?',a:['Carrots and soft grass','Fish','Apples only'],c:0}
+  ];
+  const q=questions[i]||questions[0];
+  extra='<div class="example"><strong>Check your understanding</strong><p>'+q.q+'</p>'+q.a.map((a,n)=>'<button class="quiz-option" data-read-answer="'+n+'">'+a+'</button>').join('')+'<div class="feedback" id="readFeedback"></div></div>';
+  window.currentReadAnswer=q.c;
+ } else if(tab==='writing'){
+  extra='<div class="example"><label for="writingAnswer"><strong>Your turn: write your own sentence</strong></label><textarea id="writingAnswer" rows="3" style="width:100%;margin-top:10px;padding:12px;border:1px solid #cbdbea;border-radius:10px;font:inherit" placeholder="Write your sentence here..."></textarea><div class="feedback" id="writeFeedback"></div><button class="action secondary" id="checkWriting">Check my sentence</button></div>';
+ } else if(tab==='speaking'){
+  extra='<div class="example"><strong>Speaking practice</strong><p>Say this sentence aloud:</p><p>'+item[2]+'</p><button class="action secondary" id="speakText">🔊 Hear the sentence</button><p class="small">Then repeat it slowly and clearly.</p></div>';
+ }
+ $('lessonView').innerHTML='<div class="example"><div class="word">'+item[0]+'</div><p>'+item[1]+'</p><strong>'+item[2]+'</strong></div>'+extra+'<button class="action" id="completeBtn">✓ Mark lesson complete</button>';
+ if(tab==='reading')document.querySelectorAll('[data-read-answer]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-read-answer]').forEach(x=>x.disabled=true);const ok=Number(b.dataset.readAnswer)===window.currentReadAnswer;b.classList.add(ok?'correct':'wrong');$('readFeedback').textContent=ok?'Correct! Well done.':'Good try. Read the passage again and try the next one.'});
+ if(tab==='writing')$('checkWriting').onclick=()=>{const v=$('writingAnswer').value.trim();$('writeFeedback').textContent=v.length<4?'Write a little more, then check again.':'Good start! Check your capital letter and full stop.'};
+ if(tab==='speaking')$('speakText').onclick=()=>{if('speechSynthesis' in window){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(item[2]))}else{$('speakText').textContent='Audio is not supported in this browser.'}};
+ $('completeBtn').onclick=()=>{points+=10;done++;updateProgress();$('completeBtn').textContent='Completed! +10 points';$('completeBtn').disabled=true};
+}
 function renderQuiz(){
  const qs=quizFor(level);let q=0,correct=0;
  function show(){const x=qs[q];$('lessonGrid').innerHTML='<article class="lesson" style="grid-column:1/-1"><div class="small">Question '+(q+1)+' of '+qs.length+'</div><h3>'+x.q+'</h3>'+x.a.map((a,i)=>'<button class="quiz-option" data-answer="'+i+'">'+a+'</button>').join('')+'<div class="feedback" id="feedback"></div><button class="action" id="nextBtn" style="display:none">Next</button></article>';$('lessonView').innerHTML='';document.querySelectorAll('[data-answer]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-answer]').forEach(z=>z.disabled=true);let ok=Number(b.dataset.answer)===x.correct;if(ok){correct++;b.classList.add('correct');$('feedback').textContent='Great job! ⭐'}else{b.classList.add('wrong');$('feedback').textContent='Good try! Correct answer: '+x.a[x.correct]}$('nextBtn').style.display='inline-block'});$('nextBtn').onclick=()=>{q++;if(q<qs.length)show();else finish()}}
- function finish(){$('lessonGrid').innerHTML='<article class="lesson" style="grid-column:1/-1;text-align:center"><div class="emoji">🏆</div><h3>Quiz complete!</h3><p>You got '+correct+' out of '+qs.length+' correct.</p><button class="action" id="again">Try again</button></article>';$('again').onclick=renderQuiz;points+=correct*5;done++;updateProgress()}
+ function finish(){const key='ela-quiz-'+level;let savedQuiz=false;try{savedQuiz=localStorage.getItem(key)==='done'}catch(e){}const earned=savedQuiz?0:correct*5;$('lessonGrid').innerHTML='<article class="lesson" style="grid-column:1/-1;text-align:center"><div class="emoji">🏆</div><h3>Quiz complete!</h3><p>You got '+correct+' out of '+qs.length+' correct.</p><p>'+(savedQuiz?'You already earned points for this level. Practise again to improve!':'You earned '+earned+' points!')+'</p><button class="action" id="again">Try again</button></article>';$('again').onclick=renderQuiz;if(!savedQuiz){points+=earned;done++;try{localStorage.setItem(key,'done')}catch(e){}updateProgress()}}
  show()
 }
 function quizFor(l){let base=[
