@@ -42,7 +42,7 @@ main{width:min(1050px,calc(100% - 28px));margin:0 auto 48px}.choices{display:gri
   section=next;const learning=section==='learning';
   gamesButton.setAttribute('aria-pressed',String(!learning));learningButton.setAttribute('aria-pressed',String(learning));
   title.textContent=learning?'Your Learning Apps':'Your Games';
-  const items=allItems.filter(item=>learning?learningSlugs.has(item.slug):!learningSlugs.has(item.slug));
+  const items=allItems.filter(item=>learning?(item.category==='learning'||learningSlugs.has(item.slug)):(item.category!=='learning'&&!learningSlugs.has(item.slug)));
   count.textContent=items.length+(learning?' learning apps':' games');
   root.replaceChildren();
   if(!items.length){const empty=document.createElement('div');empty.className='message';empty.textContent=learning?'Your learning apps will appear here.':'Your games will appear here.';root.append(empty);return;}
