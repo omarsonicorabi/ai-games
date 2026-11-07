@@ -4,48 +4,59 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b1224">
-<title>Omar's Game Arcade</title>
+<title>Omar's Games Arcade</title>
 <style>
-:root{color-scheme:dark;--bg:#080f20;--panel:#121d35;--line:#263858;--text:#f4f7ff;--muted:#a9b8d3;--accent:#64d8ff}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#182b50 0,#080f20 58%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-header{padding:52px 20px 32px;text-align:center}header .eyebrow{color:var(--accent);font-weight:800;letter-spacing:.18em;text-transform:uppercase;font-size:.78rem}h1{font-size:clamp(2.1rem,7vw,4rem);margin:12px 0}header p{max-width:640px;margin:0 auto;color:var(--muted);line-height:1.6}
-main{width:min(1100px,calc(100% - 32px));margin:0 auto 54px}.toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:0 0 18px;flex-wrap:wrap}.toolbar h2{font-size:1.1rem;margin:0}.count{color:var(--muted);font-size:.9rem}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px}.card{display:flex;flex-direction:column;min-height:218px;padding:22px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,#172541,#10192d);box-shadow:0 12px 35px #0002;transition:transform .18s,border-color .18s}.card:hover{transform:translateY(-4px);border-color:var(--accent)}.emoji{font-size:2.3rem}.card h3{margin:14px 0 8px;font-size:1.2rem}.card p{margin:0 0 20px;color:var(--muted);line-height:1.5;flex:1}.play{display:inline-flex;justify-content:center;align-items:center;padding:12px 16px;border-radius:12px;background:var(--accent);color:#07111f;font-weight:850;text-decoration:none}.play:focus-visible{outline:3px solid white;outline-offset:3px}.message{color:var(--muted);padding:24px;border:1px dashed var(--line);border-radius:16px}footer{text-align:center;color:#8192b0;padding:0 16px 30px;font-size:.85rem}
+:root{color-scheme:dark;--bg:#080f20;--panel:#14213b;--line:#2b4166;--text:#f4f7ff;--muted:#a9b8d3;--blue:#64d8ff;--gold:#ffd166}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#1b3158 0,#080f20 60%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:42px 18px 25px;text-align:center}.eyebrow{color:var(--blue);font-weight:800;letter-spacing:.16em;text-transform:uppercase;font-size:.78rem}h1{font-size:clamp(2rem,7vw,3.7rem);margin:10px 0}header p{max-width:620px;margin:0 auto;color:var(--muted);line-height:1.6}
+main{width:min(1050px,calc(100% - 28px));margin:0 auto 48px}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0 28px}.choice{min-height:112px;border:2px solid var(--line);border-radius:20px;background:linear-gradient(145deg,#192b4b,#111c32);color:var(--text);font:inherit;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;transition:.18s}.choice .big{font-size:2rem}.choice[aria-pressed=true]{border-color:var(--blue);background:linear-gradient(145deg,#214568,#142945);box-shadow:0 0 0 3px #64d8ff22}.choice.learning[aria-pressed=true]{border-color:var(--gold);background:linear-gradient(145deg,#514324,#2c261b);box-shadow:0 0 0 3px #ffd16622}.choice:focus-visible,.open:focus-visible{outline:3px solid white;outline-offset:3px}
+.toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:0 0 16px;flex-wrap:wrap}.toolbar h2{font-size:1.15rem;margin:0}.count{color:var(--muted);font-size:.9rem}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,245px),1fr));gap:15px}.card{display:flex;flex-direction:column;min-height:210px;padding:20px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,#172541,#10192d);box-shadow:0 12px 35px #0002}.emoji{font-size:2.25rem}.card h3{margin:12px 0 7px;font-size:1.13rem}.card p{margin:0 0 18px;color:var(--muted);line-height:1.5;flex:1}.open{display:inline-flex;justify-content:center;align-items:center;padding:12px 15px;border-radius:12px;background:var(--blue);color:#07111f;font-weight:850;text-decoration:none}.learning-card .open{background:var(--gold)}.message{color:var(--muted);padding:22px;border:1px dashed var(--line);border-radius:16px;grid-column:1/-1}footer{text-align:center;color:#8192b0;padding:0 16px 28px;font-size:.85rem}
+@media(max-width:420px){.choice{flex-direction:column;gap:4px;min-height:104px}}
 </style>
-
-
 <!-- Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-0FXD7H5Z7D"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-0FXD7H5Z7D');
-</script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-0FXD7H5Z7D');</script>
 </head>
 <body>
-<header><div class="eyebrow">Independent mini-games</div><h1>🎮 Omar's Game Arcade</h1><p>Pick a game and jump straight into its own page. Each game lives in its own folder, so future updates can be made independently.</p></header>
-<main><div class="toolbar"><h2>Choose your game</h2><div id="count" class="count">Loading games…</div></div><section id="games" class="grid" aria-live="polite"><div class="message">Loading the game library…</div></section></main>
-<footer>More games can be added by creating a new folder under <code>games/</code> and adding one entry to <code>games.json</code>.</footer>
+<header><div class="eyebrow">Welcome to your arcade</div><h1>🎮 Omar's Games Arcade</h1><p>Choose what you want to do today!</p></header>
+<main>
+<nav class="choices" aria-label="Choose a section">
+<button class="choice" id="gamesButton" type="button" aria-pressed="true"><span class="big">🎮</span><span>Games</span></button>
+<button class="choice learning" id="learningButton" type="button" aria-pressed="false"><span class="big">📚</span><span>Learning</span></button>
+</nav>
+<div class="toolbar"><h2 id="sectionTitle">Your Games</h2><div id="count" class="count">Loading…</div></div>
+<section id="library" class="grid" aria-live="polite"><div class="message">Loading your library…</div></section>
+</main>
+<footer>Your games and learning apps are kept in separate sections.</footer>
 <script>
 (async function(){
- const root=document.getElementById('games'),count=document.getElementById('count');
- const icons={'pyramid-jumper':'🏜️','mountain-climber':'🧗','elemental-fighters':'🛡️','the-high-sky':'✈️','azkar':'🌙','sky-panic-money-rush':'🌩️'};
- try{
-  const response=await fetch('./games.json',{cache:'no-store'});
-  if(!response.ok)throw new Error('Could not load games.json');
-  const games=await response.json();
-  root.replaceChildren();count.textContent=games.length+' games';
-  for(const game of games){
-   const card=document.createElement('article');card.className='card';
-   const icon=document.createElement('div');icon.className='emoji';icon.setAttribute('aria-hidden','true');icon.textContent=icons[game.slug]||'🎮';
-   const title=document.createElement('h3');title.textContent=game.title;
-   const desc=document.createElement('p');desc.textContent=game.description;
-   const link=document.createElement('a');link.className='play';link.href=game.path;link.textContent=game.slug==='azkar'?'🌙 افتح تطبيق الأذكار':'Play game →';link.setAttribute('aria-label','Play '+game.title);
-   card.append(icon,title,desc,link);root.append(card);
+ const root=document.getElementById('library'),count=document.getElementById('count'),title=document.getElementById('sectionTitle');
+ const gamesButton=document.getElementById('gamesButton'),learningButton=document.getElementById('learningButton');
+ const learningSlugs=new Set(['abc-friends','arabic-friends','azkar','omars-english-quest','omars-science-quest','omars-math-quest']);
+ const icons={'pyramid-jumper':'🏜️','elemental-fighters':'🛡️','desert-drift-rally':'🏎️','monkey-tree-swing':'🐒','bike-rush':'🚴','super-cat-hero-dash':'🐱','robot-rescue':'🤖','wonderworld-3d':'🐻','tesla-gt-race-3d':'🏁','brick-builder':'🧱','dolphin-adventure':'🐬','color-clash-3d':'🎨','abc-friends':'🔤','arabic-friends':'🔠','azkar':'🌙','omars-english-quest':'🦉','omars-science-quest':'🔬','omars-math-quest':'➗'};
+ let allItems=[],section='games';
+ function showSection(next){
+  section=next;const learning=section==='learning';
+  gamesButton.setAttribute('aria-pressed',String(!learning));learningButton.setAttribute('aria-pressed',String(learning));
+  title.textContent=learning?'Your Learning Apps':'Your Games';
+  const items=allItems.filter(item=>learning?learningSlugs.has(item.slug):!learningSlugs.has(item.slug));
+  count.textContent=items.length+(learning?' learning apps':' games');
+  root.replaceChildren();
+  if(!items.length){const empty=document.createElement('div');empty.className='message';empty.textContent=learning?'Your learning apps will appear here.':'Your games will appear here.';root.append(empty);return;}
+  for(const item of items){
+   const card=document.createElement('article');card.className='card'+(learning?' learning-card':'');
+   const icon=document.createElement('div');icon.className='emoji';icon.setAttribute('aria-hidden','true');icon.textContent=icons[item.slug]|| (learning?'📚':'🎮');
+   const heading=document.createElement('h3');heading.textContent=item.title;
+   const desc=document.createElement('p');desc.textContent=item.description||'';
+   const link=document.createElement('a');link.className='open';link.href=item.path;link.textContent=learning?'Open learning app →':'Play game →';link.setAttribute('aria-label',(learning?'Open ':'Play ')+item.title);
+   card.append(icon,heading,desc,link);root.append(card);
   }
-  if(!games.length)root.innerHTML='<div class="message">No games have been added yet.</div>';
- }catch(error){count.textContent='Library unavailable';root.innerHTML='<div class="message">The game list could not load. Run this website through GitHub Pages or another web server so games.json can be fetched.</div>';}
+ }
+ gamesButton.addEventListener('click',()=>showSection('games'));
+ learningButton.addEventListener('click',()=>showSection('learning'));
+ try{const response=await fetch('./games.json',{cache:'no-store'});if(!response.ok)throw new Error('Could not load games.json');allItems=await response.json();showSection('games');}
+ catch(error){count.textContent='Library unavailable';root.innerHTML='<div class="message">Your library could not load. Please open the site through GitHub Pages or another web server.</div>';}
 })();
 </script>
-</body></html>
+</body>
+</html>
