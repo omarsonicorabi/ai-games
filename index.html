@@ -4,11 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b1224">
+<link rel="icon" type="image/svg+xml" href="./logo.svg">
+<link rel="manifest" href="./site.webmanifest">
 <title>Play and Learn</title>
 <style>
 :root{color-scheme:dark;--bg:#080f20;--panel:#14213b;--line:#2b4166;--text:#f4f7ff;--muted:#a9b8d3;--blue:#64d8ff;--gold:#ffd166}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#1b3158 0,#080f20 60%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-header{padding:24px 18px 25px;text-align:center}.brand-logo{display:block;width:min(230px,58vw);height:auto;margin:0 auto 14px;border-radius:28px;box-shadow:0 12px 32px #0005}.eyebrow{color:var(--blue);font-weight:800;letter-spacing:.16em;text-transform:uppercase;font-size:.78rem}h1{font-size:clamp(2rem,7vw,3.7rem);margin:10px 0}header p{max-width:620px;margin:0 auto;color:var(--muted);line-height:1.6}
+header{padding:24px 18px 25px;text-align:center}.eyebrow{color:var(--blue);font-weight:800;letter-spacing:.16em;text-transform:uppercase;font-size:.78rem}h1{font-size:clamp(2rem,7vw,3.7rem);margin:10px 0}header p{max-width:620px;margin:0 auto;color:var(--muted);line-height:1.6}
 main{width:min(1050px,calc(100% - 28px));margin:0 auto 48px}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0 28px}.choice{min-height:112px;border:2px solid var(--line);border-radius:20px;background:linear-gradient(145deg,#192b4b,#111c32);color:var(--text);font:inherit;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;transition:.18s}.choice .big{font-size:2rem}.choice[aria-pressed=true]{border-color:var(--blue);background:linear-gradient(145deg,#214568,#142945);box-shadow:0 0 0 3px #64d8ff22}.choice.learning[aria-pressed=true]{border-color:var(--gold);background:linear-gradient(145deg,#514324,#2c261b);box-shadow:0 0 0 3px #ffd16622}.choice:focus-visible,.open:focus-visible{outline:3px solid white;outline-offset:3px}
 .toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:0 0 16px;flex-wrap:wrap}.toolbar h2{font-size:1.15rem;margin:0}.count{color:var(--muted);font-size:.9rem}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,245px),1fr));gap:15px}.card{display:flex;flex-direction:column;min-height:210px;padding:20px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,#172541,#10192d);box-shadow:0 12px 35px #0002}.emoji{font-size:2.25rem}.card h3{margin:12px 0 7px;font-size:1.13rem}.card p{margin:0 0 18px;color:var(--muted);line-height:1.5;flex:1}.open{display:inline-flex;justify-content:center;align-items:center;padding:12px 15px;border-radius:12px;background:var(--blue);color:#07111f;font-weight:850;text-decoration:none}.learning-card .open{background:var(--gold)}.message{color:var(--muted);padding:22px;border:1px dashed var(--line);border-radius:16px;grid-column:1/-1}footer{text-align:center;color:#8192b0;padding:0 16px 28px;font-size:.85rem}
 @media(max-width:420px){.choice{flex-direction:column;gap:4px;min-height:104px}}
@@ -18,7 +20,7 @@ main{width:min(1050px,calc(100% - 28px));margin:0 auto 48px}.choices{display:gri
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-0FXD7H5Z7D');</script>
 </head>
 <body>
-<header><img class="brand-logo" src="./logo.svg" alt="Play and Learn logo"><div class="eyebrow">Welcome to your arcade</div><h1>Play and Learn</h1><p>Choose what you want to do today!</p></header>
+<header><div class="eyebrow">Welcome to your arcade</div><h1>Play and Learn</h1><p>Choose what you want to do today!</p></header>
 <main>
 <nav class="choices" aria-label="Choose a section">
 <button class="choice" id="gamesButton" type="button" aria-pressed="true"><span class="big">🎮</span><span>Games</span></button>
