@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Color Clash 3D</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#10192b;font-family:system-ui,Arial;color:#fff;touch-action:none}#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%}
+#hud{position:fixed;inset:0;pointer-events:none}.top{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.panel{background:#101a2ddd;border:1px solid #ffffff22;border-radius:14px;padding:8px 11px;box-shadow:0 5px 18px #0005}.brand{font-weight:900;letter-spacing:.5px;font-size:15px}.sub{font-size:11px;color:#cbd5e1}.stat{font-weight:800;font-size:14px;text-align:center}.teams{display:flex;gap:8px;font-size:12px;font-weight:800}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}.bottom{position:absolute;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-between;align-items:end}.hint{max-width:48%;font-size:11px;line-height:1.35;color:#e2e8f0;background:#101a2dcc;padding:8px 10px;border-radius:12px}.action{pointer-events:auto;border:0;border-radius:18px;background:linear-gradient(135deg,#5eead4,#22c55e);color:#09251f;font-weight:900;font-size:14px;padding:14px 18px;box-shadow:0 5px 0 #087f5b;min-width:112px}.action:active{transform:translateY(3px);box-shadow:0 2px 0 #087f5b}.joystick{pointer-events:auto;width:112px;height:112px;border-radius:50%;border:2px solid #ffffff55;background:#17243caa;position:relative;touch-action:none}.knob{position:absolute;width:44px;height:44px;border-radius:50%;background:#e2e8f0dd;left:32px;top:32px;box-shadow:0 3px 10px #0007}.overlay{position:fixed;inset:0;display:grid;place-items:center;background:linear-gradient(145deg,#0b1223ee,#182c46ee);z-index:5;padding:22px}.card{width:min(440px,100%);border:1px solid #ffffff25;border-radius:24px;background:#15243a;padding:24px;text-align:center;box-shadow:0 18px 50px #0008}.logo{font-size:32px;font-weight:1000;line-height:1.05;background:linear-gradient(90deg,#fb7185,#facc15,#60a5fa);background-clip:text;color:transparent}.card p{color:#d5deec;font-size:14px;line-height:1.5}.start{border:0;border-radius:14px;padding:14px 26px;font-size:17px;font-weight:900;background:#facc15;color:#20202a}.small{font-size:11px;color:#9fb0c7;margin-top:12px}.progress{height:6px;background:#ffffff20;border-radius:9px;overflow:hidden;margin-top:6px}.fill{height:100%;width:0;background:#facc15}.towerlabel{font-size:10px;color:white;text-shadow:0 1px 4px #000}
+@media(min-width:800px){.joystick{width:126px;height:126px}.knob{width:48px;height:48px;left:37px;top:37px}.brand{font-size:18px}.panel{padding:10px 14px}}
+</style>
+</head>
+<body>
+<div id="game"></div>
+<div id="hud">
+ <div class="top">
+  <div class="panel"><div class="brand">🎨 COLOR CLASH 3D</div><div class="sub">Paint the arena • Claim the towers</div></div>
+  <div class="panel stat"><span id="time">02:00</span><div class="sub">TIME LEFT</div></div>
+  <div class="panel"><div class="teams"><span><i class="dot" style="background:#fb5252"></i><b id="red">0%</b></span><span><i class="dot" style="background:#4b9cff"></i><b id="blue">0%</b></span><span><i class="dot" style="background:#ffd447"></i><b id="yellow">0%</b></span></div><div class="sub">TERRITORY</div></div>
+ </div>
+ <div class="bottom">
+  <div class="joystick" id="stick"><div class="knob" id="knob"></div></div>
+  <div class="hint" id="hint">Move with the pad. Tap PAINT BURST to splash nearby floor tiles. Your blue paint gives you a speed boost!</div>
+  <button class="action" id="paint">PAINT BURST ✦</button>
+ </div>
+</div>
+<div class="overlay" id="menu"><div class="card"><div class="logo">COLOR<br>CLASH 3D</div><p>A bright 3D territory race! Join the blue team, paint the arena floor, and claim the three towers before red and yellow teams do.</p><p>🕹️ Move around • 🎨 Splash the ground • 🏆 Capture towers</p><button class="start" id="start">START GAME</button><div class="small">Original color-control game • Play against computer teams</div></div></div>
+<div class="overlay" id="result" style="display:none"><div class="card"><div class="logo" id="resultTitle">BLUE TEAM WINS!</div><p id="resultText"></p><button class="start" id="again">PLAY AGAIN</button></div></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+(()=>{
+const root=document.getElementById('game');let scene,camera,renderer,clock,player,started=false,ended=false,elapsed=120,lastBurst=0,tiles=[],bots=[],towers=[],teamScore={red:0,blue:0,yellow:0},keys={},joy={x:0,y:0},objects=[];
+const colors={red:0xfb5252,blue:0x4b9cff,yellow:0xffd447,neutral:0x9aa7b7};
+const TEAM=['red','blue','yellow'];
+function init(){
+ scene=new THREE.Scene();scene.background=new THREE.Color(0x9abbd0);scene.fog=new THREE.Fog(0x9abbd0,28,62);
+ camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,120);camera.position.set(0,17,22);camera.lookAt(0,0,0);
+ renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;root.appendChild(renderer.domElement);
+ scene.add(new THREE.HemisphereLight(0xffffff,0x516079,2));
+ const sun=new THREE.DirectionalLight(0xffffff,2.2);sun.position.set(-8,18,10);sun.castShadow=true;scene.add(sun);
+ const floor=new THREE.Mesh(new THREE.PlaneGeometry(34,34),new THREE.MeshStandardMaterial({color:0xe9edf2,roughness:1}));floor.rotation.x=-Math.PI/2;floor.position.y=-.16;floor.receiveShadow=true;scene.add(floor);
+ const grid=new THREE.GridHelper(34,17,0x94a3b8,0xcbd5e1);grid.position.y=-.14;scene.add(grid);
+ for(let x=-8;x<8;x++)for(let z=-8;z<8;z++){const geo=new THREE.BoxGeometry(1.96,.07,1.96);const mat=new THREE.MeshStandardMaterial({color:0xdfe6ee,roughness:.9});const m=new THREE.Mesh(geo,mat);m.position.set(x*2+.0,-.06,z*2+.0);m.receiveShadow=true;scene.add(m);tiles.push({mesh:m,team:'neutral',x:x*2,z:z*2});}
+ // Low walls and decorative trees around the arena
+ for(let i=-9;i<=9;i+=3){for(const z of [-9,9])makeWall(i,z);for(const x of [-9,9])makeWall(x,i);}
+ function makeWall(x,z){let b=new THREE.Mesh(new THREE.BoxGeometry(2,.65,.45),new THREE.MeshStandardMaterial({color:0x64748b}));b.position.set(x,.18,z);b.castShadow=true;scene.add(b);}
+ player=makeCharacter('blue',0,0,true);scene.add(player.group);
+ bots.push(makeCharacter('red',-10,8,false),makeCharacter('red',-8,9,false),makeCharacter('yellow',10,-8,false),makeCharacter('yellow',8,-9,false));
+ towers.push(makeTower(-10,-10,'red'),makeTower(10,10,'yellow'),makeTower(0,0,'neutral'));
+ for(const b of bots)scene.add(b.group);
+ clock=new THREE.Clock();window.addEventListener('resize',resize);animate();
+}
+function makeCharacter(team,x,z,isPlayer){const g=new THREE.Group();const body=new THREE.Mesh(new THREE.CapsuleGeometry(.42,.75,4,8),new THREE.MeshStandardMaterial({color:colors[team],roughness:.55}));body.position.y=.78;body.castShadow=true;g.add(body);const head=new THREE.Mesh(new THREE.SphereGeometry(.32,16,12),new THREE.MeshStandardMaterial({color:0xffd6b5}));head.position.y=1.48;head.castShadow=true;g.add(head);const cap=new THREE.Mesh(new THREE.SphereGeometry(.35,16,8,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:colors[team]}));cap.position.y=1.67;g.add(cap);const badge=new THREE.Mesh(new THREE.SphereGeometry(.12,10,8),new THREE.MeshStandardMaterial({color:0xffffff,emissive:0x223344}));badge.position.set(0,.8,.39);g.add(badge);g.position.set(x,0,z);return{group:g,team,isPlayer,burst:0,target:new THREE.Vector3(x,0,z),cool:Math.random()*1.5};}
+function makeTower(x,z,team){const g=new THREE.Group();const base=new THREE.Mesh(new THREE.CylinderGeometry(.9,.9,.35,16),new THREE.MeshStandardMaterial({color:0x64748b}));base.position.y=.18;g.add(base);const stem=new THREE.Mesh(new THREE.CylinderGeometry(.18,.25,1.5,12),new THREE.MeshStandardMaterial({color:0xe2e8f0,metalness:.35,roughness:.4}));stem.position.y=1;g.add(stem);const orb=new THREE.Mesh(new THREE.SphereGeometry(.48,18,14),new THREE.MeshStandardMaterial({color:colors[team]||0xaab4c3,emissive:colors[team]||0x334455,emissiveIntensity:.25}));orb.position.y=2;g.add(orb);g.position.set(x,0,z);scene.add(g);return{x,z,team,mesh:orb,progress:{red:0,blue:0,yellow:0}};}
+function paintAt(x,z,team,r=2.7){for(const t of tiles){const d=Math.hypot(t.x-x,t.z-z);if(d<r){const strength=1-d/r;if(Math.random()<.55+strength*.35){t.team=team;t.mesh.material.color.setHex(colors[team]);t.mesh.material.emissive.setHex(colors[team]);t.mesh.material.emissiveIntensity=.035;}}}}
+function doBurst(ch){paintAt(ch.group.position.x,ch.group.position.z,ch.team,2.9);ch.burst=.25;const ring=new THREE.Mesh(new THREE.RingGeometry(.35,2.8,48),new THREE.MeshBasicMaterial({color:colors[ch.team],transparent:true,opacity:.55,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.set(ch.group.position.x,.08,ch.group.position.z);scene.add(ring);let s=0;const grow=()=>{s+=.08;ring.scale.setScalar(1+s);ring.material.opacity=Math.max(0,.55-s*.12);if(s<3)requestAnimationFrame(grow);else scene.remove(ring)};grow();}
+function updateTowers(dt){for(const t of towers){const nearby=TEAM.map(team=>({team,n:tiles.filter(q=>Math.hypot(q.x-t.x,q.z-t.z)<4.1&&q.team===team).length})).sort((a,b)=>b.n-a.n);const lead=nearby[0];if(lead.n>2){t.progress[lead.team]=Math.min(100,t.progress[lead.team]+dt*14);for(const tm of TEAM)if(tm!==lead.team)t.progress[tm]=Math.max(0,t.progress[tm]-dt*8);if(t.progress[lead.team]>=100)t.team=lead.team;}else for(const tm of TEAM)t.progress[tm]=Math.max(0,t.progress[tm]-dt*3);t.mesh.material.color.setHex(colors[t.team]||0xaab4c3);t.mesh.material.emissive.setHex(colors[t.team]||0x334455);}}
+function updateBots(dt){for(const b of bots){b.cool-=dt;if(b.cool<=0){b.cool=1.1+Math.random()*1.3;let target=towers[Math.floor(Math.random()*towers.length)];b.target.set(target.x+(Math.random()-.5)*3,0,target.z+(Math.random()-.5)*3);doBurst(b);}const dx=b.target.x-b.group.position.x,dz=b.target.z-b.group.position.z,d=Math.hypot(dx,dz);if(d>.5){b.group.position.x+=dx/d*dt*2.1;b.group.position.z+=dz/d*dt*2.1;b.group.rotation.y=Math.atan2(dx,dz);}else{b.target.set((Math.random()-.5)*25,0,(Math.random()-.5)*25);}}}
+function updatePlayer(dt){let x=joy.x+(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);let z=joy.y+(keys.KeyS||keys.ArrowDown?1:0)-(keys.KeyW||keys.ArrowUp?1:0);const len=Math.hypot(x,z);if(len>1){x/=len;z/=len;}let speed=5.2;if(tiles.some(t=>t.team==='blue'&&Math.hypot(t.x-player.group.position.x,t.z-player.group.position.z)<1.1))speed=7.4;player.group.position.x=THREE.MathUtils.clamp(player.group.position.x+x*speed*dt,-15,15);player.group.position.z=THREE.MathUtils.clamp(player.group.position.z+z*speed*dt,-15,15);if(len>.1)player.group.rotation.y=Math.atan2(x,z);camera.position.x+=(player.group.position.x-camera.position.x)*dt*1.8;camera.position.z+=(player.group.position.z+18-camera.position.z)*dt*1.8;camera.lookAt(player.group.position.x,0,player.group.position.z);}
+function updateHUD(){for(const tm of TEAM){const n=tiles.filter(t=>t.team===tm).length;document.getElementById(tm).textContent=Math.round(n/tiles.length*100)+'%';}const sec=Math.max(0,Math.ceil(elapsed));document.getElementById('time').textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');}
+function finish(){ended=true;const count=TEAM.map(tm=>({team:tm,n:tiles.filter(t=>t.team===tm).length+towers.filter(t=>t.team===tm).length*20})).sort((a,b)=>b.n-a.n);document.getElementById('resultTitle').textContent=count[0].team.toUpperCase()+' TEAM WINS!';document.getElementById('resultText').textContent='The '+count[0].team+' team claimed the most painted territory and towers. Great color strategy!';document.getElementById('result').style.display='grid';}
+function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);if(started&&!ended){elapsed-=dt;updatePlayer(dt);updateBots(dt);updateTowers(dt);updateHUD();if(elapsed<=0)finish();}renderer.render(scene,camera);}
+function resize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);}
+document.addEventListener('keydown',e=>{keys[e.code]=true;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();});document.addEventListener('keyup',e=>keys[e.code]=false);
+const stick=document.getElementById('stick'),knob=document.getElementById('knob');let pointer=null;function moveStick(e){const r=stick.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let dx=e.clientX-cx,dy=e.clientY-cy,m=Math.min(34,Math.hypot(dx,dy));const a=Math.atan2(dy,dx);dx=Math.cos(a)*m;dy=Math.sin(a)*m;joy.x=dx/34;joy.y=dy/34;knob.style.transform='translate('+dx+'px,'+dy+'px)';}
+stick.addEventListener('pointerdown',e=>{pointer=e.pointerId;stick.setPointerCapture(pointer);moveStick(e)});stick.addEventListener('pointermove',e=>{if(pointer===e.pointerId)moveStick(e)});function release(){pointer=null;joy.x=joy.y=0;knob.style.transform='translate(0,0)';}stick.addEventListener('pointerup',release);stick.addEventListener('pointercancel',release);
+document.getElementById('paint').addEventListener('click',()=>{if(started&&!ended&&performance.now()-lastBurst>450){doBurst(player);lastBurst=performance.now();}});
+document.getElementById('start').onclick=()=>{document.getElementById('menu').style.display='none';started=true;};document.getElementById('again').onclick=()=>location.reload();
+init();
+})();
+</script>
+</body></html>
