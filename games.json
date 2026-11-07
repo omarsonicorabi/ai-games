@@ -70,5 +70,11 @@
     "title": "حصن المسلم – أذكاري",
     "description": "تعلّم أذكار الصباح والمساء، وردّدها وسجّل تقدّمك بطريقة ممتعة.",
     "path": "games/azkar/"
+  },
+  {
+    "slug": "omars-english-quest",
+    "title": "Omar's English Quest",
+    "description": "Learn English with Pip the green owl through vocabulary, grammar, reading, writing and review lessons, with XP and rewards.",
+    "path": "games/omars-english-quest/"
   }
 ]
