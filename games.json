@@ -102,12 +102,6 @@
     "path": "games/omars-math-quest/"
   },
   {
-    "slug": "midnight-tower-escape",
-    "title": "Midnight Tower Escape",
-    "description": "A cinematic skyscraper escape adventure: rescue trapped workers, collect access cards, avoid patrols and reach the rooftop.",
-    "path": "games/midnight-tower-escape/"
-  },
-  {
     "slug": "color-clash-3d",
     "title": "Color Clash 3D",
     "description": "Join the blue team in a colorful 3D territory race, paint the arena floor, and capture towers against red and yellow computer teams.",
