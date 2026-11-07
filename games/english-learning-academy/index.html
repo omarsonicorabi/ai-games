@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#123b68">
+<title>English Learning Academy</title>
+<style>
+:root{--navy:#123b68;--blue:#2479c9;--sky:#eaf5ff;--ink:#172b45;--muted:#62758c;--gold:#ffc857;--green:#16875d;--card:#fff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#eaf5ff,#f7fbff 45%,#fff);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+header{background:linear-gradient(120deg,#123b68,#2479c9);color:white;padding:24px 18px 30px;border-radius:0 0 28px 28px}
+.top{max-width:1000px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:12px}.logo{width:52px;height:52px;border-radius:16px;background:#fff;color:#2479c9;display:grid;place-items:center;font-size:28px;font-weight:900}.brand h1{font-size:clamp(1.35rem,4vw,2rem);margin:0}.brand p{margin:4px 0 0;color:#d9edff;font-size:.9rem}.lang{border:1px solid #ffffff80;background:#ffffff18;color:white;border-radius:12px;padding:10px 12px;font-weight:700}
+.hero{max-width:1000px;margin:22px auto 0}.hero h2{font-size:clamp(1.5rem,5vw,2.4rem);margin:0 0 8px}.hero p{margin:0;color:#e2f1ff;line-height:1.5;max-width:650px}
+main{max-width:1000px;margin:22px auto 40px;padding:0 14px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:22px 2px 12px}.section-head h2{font-size:1.2rem;margin:0}.small{color:var(--muted);font-size:.85rem}
+.levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:9px}.level{border:1px solid #d5e6f5;background:white;border-radius:14px;padding:13px 6px;color:var(--navy);font-weight:800;cursor:pointer;box-shadow:0 3px 10px #16436a0b}.level.active{background:var(--blue);color:white;border-color:var(--blue);box-shadow:0 6px 15px #2479c944}.panel{background:var(--card);border:1px solid #dceaf6;border-radius:20px;padding:18px;box-shadow:0 8px 24px #123b680c}
+.track{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.tab{border:0;border-radius:999px;padding:10px 14px;background:#edf5fc;color:var(--navy);font-weight:750;cursor:pointer}.tab.active{background:#123b68;color:white}
+.lesson-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.lesson{border:1px solid #dceaf6;border-radius:16px;padding:15px;background:#fbfdff}.lesson .emoji{font-size:1.7rem}.lesson h3{margin:7px 0 5px}.lesson p{color:var(--muted);font-size:.9rem;line-height:1.45;margin:0 0 12px}.action{border:0;border-radius:11px;padding:10px 13px;background:var(--blue);color:white;font-weight:800;cursor:pointer}.action.secondary{background:#eaf3fb;color:var(--navy)}button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+#lessonView{margin-top:14px}.example{background:#f0f7ff;border-left:4px solid var(--blue);padding:13px;border-radius:10px;margin:10px 0;line-height:1.6}.word{font-size:1.4rem;font-weight:850;color:var(--navy)}.quiz-option{display:block;width:100%;text-align:left;background:#fff;border:1px solid #d4e4f2;border-radius:12px;padding:12px;margin:8px 0;color:var(--ink);font-weight:650;cursor:pointer}.quiz-option.correct{border-color:#16875d;background:#e8f8f1}.quiz-option.wrong{border-color:#c54b4b;background:#fff0f0}.feedback{font-weight:800;margin:10px 0;min-height:24px}.score{background:#fff8e5;border:1px solid #ffe3a1;padding:12px;border-radius:12px;margin-top:12px}.progress{height:9px;background:#e4eef7;border-radius:99px;overflow:hidden;margin-top:10px}.progress span{display:block;height:100%;background:#24a477;width:0%}
+footer{text-align:center;color:var(--muted);font-size:.82rem;padding:0 16px 28px}
+@media(max-width:520px){.top{align-items:flex-start}.brand p{max-width:210px}.lang{padding:8px}.panel{padding:14px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="top"><div class="brand"><div class="logo">Aa</div><div><h1>English Learning Academy</h1><p>Learn • Practise • Grow</p></div></div><button class="lang" id="langBtn" type="button">العربية help</button></div>
+ <div class="hero"><h2>Every step makes you stronger! ⭐</h2><p>Choose your school level, explore short lessons, practise English and earn points with quick quizzes.</p></div>
+</header>
+<main>
+ <div class="section-head"><h2>1. Choose your level</h2><span class="small" id="levelLabel">FS1 selected</span></div>
+ <div class="levels" id="levels"></div>
+ <div class="section-head"><h2>2. Choose what to learn</h2><span class="small">Your learning space</span></div>
+ <div class="panel">
+  <div class="track" id="tabs">
+   <button class="tab active" data-tab="vocabulary">🔤 Vocabulary</button><button class="tab" data-tab="grammar">🧩 Grammar</button><button class="tab" data-tab="reading">📖 Reading</button><button class="tab" data-tab="writing">✍️ Writing</button><button class="tab" data-tab="speaking">🗣️ Speaking</button><button class="tab" data-tab="quiz">🏆 Quiz</button>
+  </div>
+  <div id="lessonGrid" class="lesson-grid"></div>
+  <div id="lessonView"></div>
+ </div>
+ <div class="section-head"><h2>My learning progress</h2><span class="small" id="points">0 points</span></div>
+ <div class="panel"><strong id="progressText">Start your first lesson!</strong><div class="progress"><span id="progressBar"></span></div><p class="small">Your points are saved on this device.</p></div>
+</main>
+<footer>English Learning Academy · FS1 to Year 11 · Keep practising every day!</footer>
+<script>
+const levels=['FS1','FS2',...Array.from({length:11},(_,i)=>'Year '+(i+1))];
+const units={
+vocabulary:{icon:'🔤',title:'Word Explorer',desc:'Learn useful words with examples.',items:[
+['Colours','red, blue, yellow','The sky is blue.'],['Animals','cat, dog, bird','A bird can fly.'],['Everyday words','happy, school, friend','My friend is happy.']]},
+grammar:{icon:'🧩',title:'Grammar Time',desc:'Build clear and correct sentences.',items:[
+['Naming words','A noun names a person, place, animal or thing.','The cat sleeps.'],['Action words','A verb tells us what someone or something does.','Birds sing.'],['Simple sentences','A sentence begins with a capital letter and ends with punctuation.','I like reading.']]},
+reading:{icon:'📖',title:'Little Reading',desc:'Read a short passage and understand it.',items:[
+['A sunny day','Mia goes to the park. She sees a yellow bird. The bird sings in a tree.','Where does Mia go?'],['At school','Adam opens his book. He reads a story with his class.','What does Adam read?'],['My pet','I have a small rabbit. It likes carrots and soft grass.','What does the rabbit like?']]},
+writing:{icon:'✍️',title:'Writing Workshop',desc:'Practise making your own sentences.',items:[
+['Write a sentence','Use a capital letter at the beginning.','Example: I love English.'],['Describe something','Use describing words (adjectives).','Example: The little brown dog is friendly.'],['Join your ideas','Use and, but or because to connect ideas.','Example: I read because I enjoy stories.']]},
+speaking:{icon:'🗣️',title:'Speak with Confidence',desc:'Say the phrase aloud and practise clearly.',items:[
+['Say hello','Hello! How are you today?','I am fine, thank you.'],['Introduce yourself','My name is ____. I am learning English.','Speak slowly and clearly.'],['Ask a question','Could you please help me?','Remember your question voice.']]}}
+};
+const advanced={
+vocabulary:['Synonyms and antonyms','Word families','Academic vocabulary'],
+grammar:['Parts of speech','Verb tenses','Complex sentences'],
+reading:['Find the main idea','Make an inference','Compare two texts'],
+writing:['Plan a paragraph','Use evidence and examples','Edit for clarity'],
+speaking:['Give a short presentation','Explain your opinion','Join a discussion']
+};
+let level='FS1',tab='vocabulary',points=0,done=0,arabic=false;
+const $=id=>document.getElementById(id);
+function renderLevels(){ $('levels').innerHTML=levels.map(x=>'<button class="level '+(x===level?'active':'')+'" data-level="'+x+'">'+x+'</button>').join('');$('levelLabel').textContent=level+' selected';document.querySelectorAll('.level').forEach(b=>b.onclick=()=>{level=b.dataset.level;renderLevels();renderLessons()})}
+function isEarly(){return level==='FS1'||level==='FS2'||level==='Year 1'||level==='Year 2'}
+function renderLessons(){
+ $('lessonView').innerHTML='';
+ if(tab==='quiz'){renderQuiz();return}
+ const data=units[tab],early=isEarly();
+ const names=early?data.items.map(x=>x[0]):advanced[tab];
+ $('lessonGrid').innerHTML=names.map((name,i)=>{let item=early?data.items[i]:[name,advancedText(tab,i),advancedExample(tab,i)];return '<article class="lesson"><div class="emoji">'+data.icon+'</div><h3>'+name+'</h3><p>'+data.desc+'</p><button class="action" data-item="'+i+'">Open lesson</button></article>'}).join('');
+ document.querySelectorAll('[data-item]').forEach(b=>b.onclick=()=>openLesson(Number(b.dataset.item)));
+}
+function advancedText(t,i){return ({vocabulary:['Explore words with similar meanings and opposite meanings.','Learn how words share roots and patterns.','Build a vocabulary for school subjects and formal writing.'],grammar:['Identify how each word works in a sentence.','Choose the correct tense to show when events happen.','Connect ideas using clauses and conjunctions.'],reading:['Identify what a passage is mostly about.','Use clues in a text to work out an unstated idea.','Notice similarities and differences between texts.'],writing:['Organise a clear topic sentence and supporting details.','Support your point with relevant facts and examples.','Check spelling, punctuation and sentence flow.'],speaking:['Organise an introduction, main points and conclusion.','Give reasons and examples for your point of view.','Listen carefully and respond respectfully.']})[t][i]}
+function advancedExample(t,i){return ({vocabulary:['big / large · hot / cold','help → helpful → helpless','The evidence supports the conclusion.'],grammar:['The bright stars shine.','Yesterday I walked; today I walk.','Although it rained, we continued playing.'],reading:['What is the author mainly explaining?','What can you infer from the character’s actions?','How are the two characters different?'],writing:['Topic: Reading helps us learn.','For example, books introduce new ideas.','Check: capitals, commas and full stops.'],speaking:['Today I will explain three important ideas.','I believe this because…','I agree with your point, and I would add…']})[t][i]}
+function openLesson(i){const data=units[tab],early=isEarly();const item=early?data.items[i]:[advanced[tab][i],advancedText(tab,i),advancedExample(tab,i)];$('lessonView').innerHTML='<div class="example"><div class="word">'+item[0]+'</div><p>'+item[1]+'</p><strong>'+item[2]+'</strong></div><button class="action" id="completeBtn">✓ Mark lesson complete</button>'; $('completeBtn').onclick=()=>{points+=10;done++;updateProgress();$('completeBtn').textContent='Completed! +10 points';$('completeBtn').disabled=true}}
+function renderQuiz(){
+ const qs=quizFor(level);let q=0,correct=0;
+ function show(){const x=qs[q];$('lessonGrid').innerHTML='<article class="lesson" style="grid-column:1/-1"><div class="small">Question '+(q+1)+' of '+qs.length+'</div><h3>'+x.q+'</h3>'+x.a.map((a,i)=>'<button class="quiz-option" data-answer="'+i+'">'+a+'</button>').join('')+'<div class="feedback" id="feedback"></div><button class="action" id="nextBtn" style="display:none">Next</button></article>';$('lessonView').innerHTML='';document.querySelectorAll('[data-answer]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-answer]').forEach(z=>z.disabled=true);let ok=Number(b.dataset.answer)===x.correct;if(ok){correct++;b.classList.add('correct');$('feedback').textContent='Great job! ⭐'}else{b.classList.add('wrong');$('feedback').textContent='Good try! Correct answer: '+x.a[x.correct]}$('nextBtn').style.display='inline-block'});$('nextBtn').onclick=()=>{q++;if(q<qs.length)show();else finish()}}
+ function finish(){$('lessonGrid').innerHTML='<article class="lesson" style="grid-column:1/-1;text-align:center"><div class="emoji">🏆</div><h3>Quiz complete!</h3><p>You got '+correct+' out of '+qs.length+' correct.</p><button class="action" id="again">Try again</button></article>';$('again').onclick=renderQuiz;points+=correct*5;done++;updateProgress()}
+ show()
+}
+function quizFor(l){let base=[
+{q:'Which word is a colour?',a:['Blue','Run','Chair'],correct:0},
+{q:'Choose the correct sentence.',a:['the dog runs','The dog runs.','the Dog runs'],correct:1},
+{q:'What is the opposite of hot?',a:['Warm','Cold','Bright'],correct:1}
+];if(l==='FS1'||l==='FS2'||l==='Year 1'||l==='Year 2')return base;
+return [
+{q:'Which word is closest in meaning to “careful”?',a:['Cautious','Noisy','Ancient'],correct:0},
+{q:'Choose the correct past-tense sentence.',a:['Yesterday I walk home.','Yesterday I walked home.','Yesterday I walking home.'],correct:1},
+{q:'What is an inference?',a:['A guess with no clues','An idea worked out using clues','The title of a text'],correct:1}
+]}
+function updateProgress(){$('points').textContent=points+' points';$('progressText').textContent=done?done+' learning activities completed. Keep going!':'Start your first lesson!';$('progressBar').style.width=Math.min(100,done*10)+'%';try{localStorage.setItem('ela-progress',JSON.stringify({points,done}))}catch(e){}}
+function setTab(t){tab=t;document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));renderLessons()}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+$('langBtn').onclick=()=>{arabic=!arabic;$('langBtn').textContent=arabic?'English':'العربية help';document.documentElement.lang=arabic?'ar':'en';document.querySelector('.hero p').textContent=arabic?'اختر صفك الدراسي، وتعلّم كلمات جديدة، واقرأ، واكتب، وتدرّب على اللغة الإنجليزية.':'Choose your school level, explore short lessons, practise English and earn points with quick quizzes.';};
+try{const saved=JSON.parse(localStorage.getItem('ela-progress')||'{}');points=saved.points||0;done=saved.done||0}catch(e){}
+renderLevels();renderLessons();updateProgress();
+</script>
+</body></html>
