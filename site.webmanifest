@@ -1,0 +1,17 @@
+{
+  "name": "Play and Learn",
+  "short_name": "Play and Learn",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#080f20",
+  "theme_color": "#0b1224",
+  "icons": [
+    {
+      "src": "./logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
