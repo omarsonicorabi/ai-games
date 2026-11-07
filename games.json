@@ -76,5 +76,17 @@
     "title": "Omar's English Quest",
     "description": "Learn English with Pip the green owl through vocabulary, grammar, reading, writing and review lessons, with XP and rewards.",
     "path": "games/omars-english-quest/"
+  },
+  {
+    "slug": "brick-builder",
+    "title": "Brick Builder",
+    "description": "Build colorful creations, choose brick colors, and try the house and castle starter builds.",
+    "path": "games/brick-builder/"
+  },
+  {
+    "slug": "dolphin-adventure",
+    "title": "Dolphin Adventure",
+    "description": "Swim through a bright ocean, collect shining pearls, and explore with simple touch controls.",
+    "path": "games/dolphin-adventure/"
   }
 ]
