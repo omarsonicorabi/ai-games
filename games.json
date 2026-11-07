@@ -70,5 +70,11 @@
     "title": "حصن المسلم – أذكاري",
     "description": "تعلّم أذكار الصباح والمساء، وردّدها وسجّل تقدّمك بطريقة ممتعة.",
     "path": "games/azkar/"
+  },
+  {
+    "slug": "english-learning-academy",
+    "title": "English Learning Academy",
+    "description": "Learn English from FS1 to Year 11 with vocabulary, grammar, reading, writing, speaking practice and quizzes.",
+    "path": "games/english-learning-academy/"
   }
 ]
