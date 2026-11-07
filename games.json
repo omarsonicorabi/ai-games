@@ -54,30 +54,6 @@
     "path": "games/tesla-gt-race-3d/"
   },
   {
-    "slug": "abc-friends",
-    "title": "ABC Friends",
-    "description": "Tap letters A to W to open colourful learning pages with pictures, simple explanations, and spoken letter sounds.",
-    "path": "games/abc-friends/"
-  },
-  {
-    "slug": "arabic-friends",
-    "title": "أصدقاء الحروف العربية",
-    "description": "تعلّم الحروف العربية من الألف إلى الياء بالصور والكلمات والشرح والصوت.",
-    "path": "games/arabic-friends/"
-  },
-  {
-    "slug": "azkar",
-    "title": "حصن المسلم – أذكاري",
-    "description": "تعلّم أذكار الصباح والمساء، وردّدها وسجّل تقدّمك بطريقة ممتعة.",
-    "path": "games/azkar/"
-  },
-  {
-    "slug": "omars-english-quest",
-    "title": "Omar's English Quest",
-    "description": "Learn English with Pip the green owl through vocabulary, grammar, reading, writing and review lessons, with XP and rewards.",
-    "path": "games/omars-english-quest/"
-  },
-  {
     "slug": "brick-builder",
     "title": "Brick Builder",
     "description": "Build colorful creations, choose brick colors, and try the house and castle starter builds.",
@@ -90,28 +66,9 @@
     "path": "games/dolphin-adventure/"
   },
   {
-    "slug": "omars-science-quest",
-    "title": "Omar's Science Quest",
-    "description": "Learn science with Pip the owl through interactive lessons on living things, matter, Earth and space, the human body, forces and energy. Earn XP and gems.",
-    "path": "games/omars-science-quest/"
-  },
-  {
-    "slug": "omars-math-quest",
-    "title": "Omar's Math Quest",
-    "description": "Learn mathematics with Pip the owl through interactive lessons, examples and quizzes in numbers, fractions, geometry, measurement and algebra. Earn XP and gems.",
-    "path": "games/omars-math-quest/"
-  },
-  {
     "slug": "color-clash-3d",
     "title": "Color Clash 3D",
     "description": "Join the blue team in a colorful 3D territory race, paint the arena floor, and capture towers against red and yellow computer teams.",
     "path": "games/color-clash-3d/"
-  },
-  {
-    "slug": "computer-development-academy",
-    "title": "Computer Development Academy",
-    "description": "Learn software first, then ICT and computer hardware through interactive lessons and quizzes.",
-    "path": "computer-development-academy/",
-    "category": "learning"
   }
 ]
