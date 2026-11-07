@@ -14,6 +14,27 @@ header{padding:24px 18px 25px;text-align:center}.eyebrow{color:var(--blue);font-
 main{width:min(1050px,calc(100% - 28px));margin:0 auto 48px}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0 28px}.choice{min-height:112px;border:2px solid var(--line);border-radius:20px;background:linear-gradient(145deg,#192b4b,#111c32);color:var(--text);font:inherit;font-size:clamp(1.1rem,4vw,1.5rem);font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;transition:.18s}.choice .big{font-size:2rem}.choice[aria-pressed=true]{border-color:var(--blue);background:linear-gradient(145deg,#214568,#142945);box-shadow:0 0 0 3px #64d8ff22}.choice.learning[aria-pressed=true]{border-color:var(--gold);background:linear-gradient(145deg,#514324,#2c261b);box-shadow:0 0 0 3px #ffd16622}.choice:focus-visible,.open:focus-visible{outline:3px solid white;outline-offset:3px}
 .toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:0 0 16px;flex-wrap:wrap}.toolbar h2{font-size:1.15rem;margin:0}.count{color:var(--muted);font-size:.9rem}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,245px),1fr));gap:15px}.card{display:flex;flex-direction:column;min-height:210px;padding:20px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,#172541,#10192d);box-shadow:0 12px 35px #0002}.emoji{font-size:2.25rem}.card h3{margin:12px 0 7px;font-size:1.13rem}.card p{margin:0 0 18px;color:var(--muted);line-height:1.5;flex:1}.open{display:inline-flex;justify-content:center;align-items:center;padding:12px 15px;border-radius:12px;background:var(--blue);color:#07111f;font-weight:850;text-decoration:none}.learning-card .open{background:var(--gold)}.message{color:var(--muted);padding:22px;border:1px dashed var(--line);border-radius:16px;grid-column:1/-1}footer{text-align:center;color:#8192b0;padding:0 16px 28px;font-size:.85rem}
 @media(max-width:420px){.choice{flex-direction:column;gap:4px;min-height:104px}}
+
+/* Timed Play & Learn session */
+#playFrame{position:fixed;inset:0;z-index:1000;background:#080f20;display:none;flex-direction:column}
+#playFrame.active{display:flex}
+#playFrame .framebar{height:54px;flex:none;display:flex;align-items:center;gap:12px;padding:8px 12px;background:#101d34;border-bottom:1px solid #2b4166}
+#playFrame .framebar button{border:0;border-radius:10px;padding:8px 12px;font-weight:800;background:#64d8ff;color:#07111f}
+#playFrame .timer{margin-left:auto;font-weight:900;color:#ffd166;font-variant-numeric:tabular-nums}
+#playFrame iframe{border:0;width:100%;height:calc(100% - 54px);background:white}
+#proLock{position:fixed;inset:0;z-index:2000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(4,9,20,.97);overflow:auto}
+#proLock.active{display:flex}
+#proLock .probox{width:min(620px,100%);max-height:100%;overflow:auto;background:#14213b;border:1px solid #48638c;border-radius:24px;padding:24px;box-shadow:0 24px 80px #0009;text-align:center}
+#proLock h2{font-size:clamp(2rem,7vw,3rem);margin:8px 0;color:#ffd166}
+#proLock p{color:#d0daeb;line-height:1.55}
+#proLock .plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
+#proLock .plan{padding:14px 8px;border:1px solid #48638c;border-radius:14px;background:#0d1830}
+#proLock .plan b{display:block;margin-bottom:6px;color:#fff}
+#proLock .plan small{color:#b8c7df}
+#proLock .secure-note{font-size:.88rem;color:#b8c7df;background:#0c172b;border-radius:12px;padding:12px}
+#proLock .return{border:0;border-radius:12px;padding:12px 18px;font-weight:900;background:#64d8ff;color:#07111f}
+@media(max-width:480px){#proLock .plans{grid-template-columns:1fr}}
+
 </style>
 <!-- Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-0FXD7H5Z7D"></script>
@@ -60,5 +81,51 @@ main{width:min(1050px,calc(100% - 28px));margin:0 auto 48px}.choices{display:gri
  catch(error){count.textContent='Library unavailable';root.innerHTML='<div class="message">Your library could not load. Please open the site through GitHub Pages or another web server.</div>';}
 })();
 </script>
+
+<div id="playFrame" aria-label="Play and Learn session">
+ <div class="framebar"><button type="button" id="exitPlay">← Home</button><span>Play and Learn</span><span class="timer" id="playCountdown">10:00</span></div>
+ <iframe id="appFrame" title="Selected Play and Learn app" allow="fullscreen; autoplay"></iframe>
+</div>
+<div id="proLock" role="dialog" aria-modal="true" aria-labelledby="proHeading">
+ <div class="probox">
+  <div style="font-size:3rem">⭐</div>
+  <h2 id="proHeading">Time's Up!</h2>
+  <p>You've used your 10 minutes of free play and learning time. Thanks for exploring!</p>
+  <h3 style="margin:20px 0 8px">Play and Learn Pro</h3>
+  <p>Choose a plan with a parent or guardian:</p>
+  <div class="plans">
+   <div class="plan"><b>Monthly</b><small>Pro access · monthly plan</small></div>
+   <div class="plan"><b>Yearly</b><small>Pro access · yearly plan</small></div>
+   <div class="plan"><b>One-time</b><small>Pro access · lifetime plan</small></div>
+  </div>
+  <p class="secure-note">Real-money purchases are not enabled yet. A parent or guardian must set up a secure payment provider before any card payment can be accepted. Never enter card details into this app.</p>
+  <button class="return" type="button" id="proHome">Return to home</button>
+ </div>
+</div>
+<script>
+(function(){
+ const LIMIT=10*60*1000, KEY='playLearnFreeStartedAt';
+ const frame=document.getElementById('playFrame'), iframe=document.getElementById('appFrame');
+ const countdown=document.getElementById('playCountdown'), lock=document.getElementById('proLock');
+ let interval=null;
+ function remaining(){const start=Number(localStorage.getItem(KEY)||0);return start?Math.max(0,LIMIT-(Date.now()-start)):LIMIT;}
+ function fmt(ms){const s=Math.ceil(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+ function showLock(){clearInterval(interval);iframe.src='about:blank';frame.classList.remove('active');lock.classList.add('active');}
+ function tick(){const left=remaining();countdown.textContent=fmt(left);if(left<=0)showLock();}
+ function start(){if(!localStorage.getItem(KEY))localStorage.setItem(KEY,String(Date.now()));frame.classList.add('active');tick();if(remaining()<=0)return;clearInterval(interval);interval=setInterval(tick,250);}
+ document.addEventListener('click',function(e){
+  const a=e.target.closest('a.open');
+  if(!a)return;
+  e.preventDefault();
+  if(remaining()<=0){showLock();return;}
+  iframe.src=a.href;start();
+ });
+ document.getElementById('exitPlay').addEventListener('click',function(){frame.classList.remove('active');iframe.src='about:blank';});
+ document.getElementById('proHome').addEventListener('click',function(){lock.classList.remove('active');});
+ if(localStorage.getItem(KEY)&&remaining()<=0)showLock();
+ window.addEventListener('storage',function(e){if(e.key===KEY&&remaining()<=0)showLock();});
+})();
+</script>
+
 </body>
 </html>
