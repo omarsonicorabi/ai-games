@@ -31,7 +31,7 @@ let running=false,won=false,gameOver=false,last=0,world,player,score=0,rescued=0
 const floors=5;
 function reset(){floor=1;score=0;rescued=0;alertLevel=0;frame=0;world=makeFloor(1);player={x:70,y:430,w:30,h:48,vx:0,vy:0,onGround:false,inv:0};updateUI();}
 function makeFloor(n){
- const platforms=[{x:0,y:490,w:960,h:50},{x:180,y:395,w:220,h:16},{x:520,y:315,w:230,h:16},{x:80,y:235,w:190,h:16},{x:410,y:155,w:220,h:16}];
+ const platforms=[{x:0,y:490,w:960,h:50},{x:180,y:395,w:220,h:16},{x:520,y:315,w:230,h:16},{x:80,y:235,w:190,h:16},{x:410,y:155,w:220,h:16},{x:650,y:155,w:260,h:16}];
  const startY=440;
  return {platforms,exit:{x:850,y:96,w:58,h:58},card:{x:720,y:275,r:12,got:false},worker:{x:120+n*105,y:445,w:24,h:34,saved:false},patrols:[{x:280+n*22,y:357,min:190,max:380,v:1.1+n*.12},{x:590,y:277,min:530,max:730,v:-1.2-n*.1},{x:470,y:117,min:420,max:610,v:1.3}],hazards:[{x:445,y:478,w:58,h:12},{x:760,y:478,w:48,h:12}],doorOpen:false};
 }
