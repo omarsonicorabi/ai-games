@@ -43,7 +43,7 @@ main{padding:16px 15px}.screen{display:none}.screen.active{display:block}.banner
  <p class="tiny">Book descriptions here are short summaries written for this academy. The books themselves remain the work of their authors. Always check the edition and Python version before following an example.</p>
  <button class="action secondary" onclick="show('home')">BACK TO ACADEMY</button>
 </section>
-\n<section id="course" class="screen"><div class="lesson-top"><button class="back" onclick="show('home')">‹</button><div><b id="courseTitle">Course</b><div class="muted" id="courseSub"></div></div></div><div class="unit-head"><div><h3 id="unitTitle">Unit 1</h3><span id="unitSub">Complete lessons to earn stars</span></div><span id="unitCount">0/0</span></div><div class="path" id="path"></div></section>
+\n<section id="course" class="screen"><button class="action secondary" onclick="showBooks()">📚 PYTHON BOOKS</button><div class="lesson-top"><button class="back" onclick="show('home')">‹</button><div><b id="courseTitle">Course</b><div class="muted" id="courseSub"></div></div></div><div class="unit-head"><div><h3 id="unitTitle">Unit 1</h3><span id="unitSub">Complete lessons to earn stars</span></div><span id="unitCount">0/0</span></div><div class="path" id="path"></div></section>
 <section id="lesson" class="screen">
  <div class="lesson-top"><button class="back" onclick="leaveLesson()">×</button><div class="lessonbar"><i id="lessonProgress"></i></div><b class="heart">❤️ <span id="lessonLives">5</span></b></div>
  <div class="tag" id="lessonTag">LESSON</div><h2 class="prompt" id="lessonTitle"></h2><p class="hint" id="lessonBody"></p>
