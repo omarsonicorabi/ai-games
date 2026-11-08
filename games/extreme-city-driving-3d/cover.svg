@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+<defs>
+ <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#0877c9"/><stop offset="1" stop-color="#b9eaff"/></linearGradient>
+ <linearGradient id="road" x2="0" y2="1"><stop stop-color="#303d50"/><stop offset="1" stop-color="#101722"/></linearGradient>
+ <linearGradient id="paint" x2="0" y2="1"><stop stop-color="#ff5963"/><stop offset=".45" stop-color="#e3182b"/><stop offset="1" stop-color="#700b1b"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="12"/></filter>
+</defs>
+<rect width="1200" height="675" fill="url(#sky)"/>
+<circle cx="960" cy="115" r="62" fill="#fff4c7" opacity=".8"/>
+<g fill="#173d60" opacity=".95">
+ <path d="M0 345V240h70v105h28V180h68v165h35V215h58v130h38V130h82v215h36V205h76v140h36V165h90v180h45V230h64v115h43V145h80v200h37V205h70v140h45V175h73v170h35V245h70v100z"/>
+</g>
+<g fill="#8fd5f4" opacity=".75">
+ <path d="M111 201h13v20h-13zm35 0h13v20h-13zm92 38h12v20h-12zm152-78h14v20h-14zm31 0h14v20h-14zm106 63h14v20h-14zm120-34h14v20h-14zm210-25h14v20h-14zm40 0h14v20h-14z"/>
+</g>
+<path d="M0 390L1200 390 1200 675 0 675Z" fill="url(#road)"/>
+<path d="M0 425H1200" stroke="#cbd5e1" stroke-width="8" opacity=".8"/>
+<path d="M560 430l-35 245h40l35-245zm100 0 35 245h40l-35-245z" fill="#f7f7ed" opacity=".9"/>
+<g stroke="#70dfff" stroke-width="9" opacity=".8" filter="url(#glow)"><path d="M40 520h350M20 570h300M850 510h300M900 575h260"/></g>
+<g transform="translate(0 8)">
+ <ellipse cx="610" cy="550" rx="300" ry="50" fill="#03070d" opacity=".65"/>
+ <path d="M330 500Q360 448 450 430L520 365Q570 330 700 342Q780 350 835 430L900 455Q935 472 925 510L890 535H360Q315 530 330 500Z" fill="url(#paint)" stroke="#ff9ba3" stroke-width="7"/>
+ <path d="M490 421Q550 350 690 363Q770 370 815 432Z" fill="#0a1d34" stroke="#8edbff" stroke-width="7"/>
+ <path d="M635 365L630 426" stroke="#8edbff" stroke-width="5"/>
+ <path d="M370 480Q420 455 470 462L465 480H365zm470-1q45-23 70 8h-70z" fill="#fff6dc"/>
+ <path d="M340 510h580l-40 35H390z" fill="#151923"/>
+ <path d="M390 538h70m420 0h50" stroke="#dce7f4" stroke-width="10"/>
+ <g fill="#080d14" stroke="#8b9aa9" stroke-width="9"><circle cx="455" cy="535" r="53"/><circle cx="810" cy="535" r="53"/></g>
+ <g fill="#d7e7f2"><circle cx="455" cy="535" r="23"/><circle cx="810" cy="535" r="23"/></g>
+ <path d="M500 562Q460 580 415 573M750 565Q820 585 870 570" stroke="#00cfff" stroke-width="15" opacity=".95" filter="url(#glow)"/>
+ <path d="M510 565l-120 82m385-82 140 82" stroke="#16d8ff" stroke-width="13" opacity=".9"/>
+</g>
+<g font-family="Arial,sans-serif" font-weight="900" text-anchor="middle">
+ <text x="600" y="95" font-size="64" fill="#fff" stroke="#0b2340" stroke-width="9" paint-order="stroke">EXTREME CAR</text>
+ <text x="600" y="165" font-size="78" fill="#ff273d" stroke="#fff" stroke-width="5" paint-order="stroke">DRIVING</text>
+ <text x="600" y="220" font-size="24" letter-spacing="8" fill="#f8fdff">CITY • SPEED • SUPER BOOST</text>
+</g>
+</svg>
