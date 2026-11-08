@@ -91,7 +91,7 @@ car.scale.setScalar(boosting?1.75:1.65);thrusters.forEach(t=>{t.scale.y=boosting
 camera.position.x+=(carX*.32-camera.position.x)*Math.min(1,dt*4);camera.position.y+=(2.5+carY*.10-camera.position.y)*Math.min(1,dt*4);camera.position.z+=(12-camera.position.z)*Math.min(1,dt*4);camera.lookAt(carX*.32,.55+carY*.12,-12);
 const travel=speed*dt*.06;for(const d of dashes){d.position.z+=travel;if(d.position.z>25)d.position.z-=540}
 for(const b of buildings){b.g.position.z+=travel;if(b.g.position.z>40)b.g.position.z-=640}
-for(const a of arches){a.position.z+=travel;if(a.position.z>35)a.position.z-=525}for(const t of traffic){t.position.z+=travel;if(t.position.z>18){t.position.z=-390-THREE.MathUtils.randFloat(0,90);t.position.x=THREE.MathUtils.pick([-8,-4,0,4,8])}}
+for(const a of arches){a.position.z+=travel;if(a.position.z>35)a.position.z-=525}for(const t of traffic){t.position.z+=travel;if(t.position.z>18){t.position.z=-390-THREE.MathUtils.randFloat(0,90);t.position.x=([-8,-4,0,4,8])[Math.floor(Math.random()*5)]}}
 if(!flyMode&&elapsed-lastCrash>1.2){for(const obstacle of traffic){if(Math.abs(obstacle.position.z-2)<2.3&&Math.abs(obstacle.position.x-carX)<2.35){lastCrash=elapsed;speed=Math.max(0,speed*.42);obstacle.position.z=-430;toast.textContent='IMPACT · WATCH THE ROAD';break}}}speedEl.textContent=Math.round(speed).toString().padStart(3,'0');distanceEl.textContent=dist.toFixed(2);nitroEl.textContent=Math.round(nitro);nitroBar.style.width=nitro+'%';modeEl.textContent=flyMode?'FLIGHT MODE':boosting?'NITRO ACTIVE':'ROAD MODE';
 }
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta()||.016,.04);update(dt);renderer.render(scene,camera)}animate();
