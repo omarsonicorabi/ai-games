@@ -16,6 +16,15 @@ main{padding:16px 15px}.screen{display:none}.screen.active{display:block}.banner
 .editor{width:100%;min-height:135px;resize:vertical;border:2px solid #263d61;border-radius:13px;background:#101b30;color:#e9f4ff;padding:13px;font:14px/1.6 ui-monospace,Consolas,monospace;tab-size:4}.editor:focus{outline:3px solid #1cb0f644;border-color:var(--blue)}
 .answers{display:grid;gap:10px;margin-top:12px}.answer{background:white;border:2px solid #e5e5e5;border-bottom-width:4px;border-radius:14px;padding:13px;text-align:left;color:var(--ink);font-size:15px}.answer.chosen{border-color:var(--blue);background:#eaf8ff}.answer.right{border-color:var(--green);background:#eaffdc}.answer.wrong{border-color:var(--red);background:#fff0f0}
 .action{width:100%;background:var(--green);border:0;border-radius:15px;padding:14px;color:white;font-size:15px;font-weight:1000;box-shadow:0 4px 0 var(--green2);margin-top:13px}.action:disabled{background:#ddd;box-shadow:0 4px 0 #c8c8c8;color:#999}.secondary{background:#eaf8ff;color:#1478a8;box-shadow:0 4px 0 #c8eafa}.feedback{display:none;padding:12px 2px 0;font-size:14px;line-height:1.5}.feedback.show{display:block}.feedback.good{color:#389b00}.feedback.bad{color:#d33}.tiny{font-size:11px;color:#888;line-height:1.5}.reward{background:linear-gradient(#fff9d9,#fff);border:3px solid #f2c94c;border-radius:20px;padding:20px;text-align:center}.reward h2{color:#926600}.reward p{color:#77633a;font-size:14px}.muted{color:#888;font-size:12px}.source-links a{color:#1685bc;display:block;margin:8px 0;font-size:13px}
+.learn-panel{border:2px solid #bfe8fb;background:#f2fbff;border-radius:18px;padding:15px;margin:14px 0}
+.learn-panel h3{margin:0 0 9px;color:#1478a8;font-size:18px}
+.learn-intro{font-size:13px;line-height:1.6;color:#45616f;margin:0 0 12px}
+.learn-step{background:#fff;border:1px solid #d9edf7;border-radius:12px;padding:11px;margin:9px 0}
+.learn-step b{display:block;font-size:13px;margin-bottom:5px;color:#24647f}
+.learn-step p{font-size:12px;line-height:1.55;color:#52636c;margin:0}
+.learn-code-line{background:#17233b;color:#e8f3ff;border-radius:9px;padding:9px;margin:7px 0;font:12px/1.5 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.learn-answer{display:none;background:#eaffdc;border:1px solid #b8e99a;border-radius:10px;padding:10px;margin-top:9px;font-size:12px;line-height:1.5;color:#356c1c}
+.learn-answer.show{display:block}
 .book-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:12px 0 20px}.book-card{display:flex;flex-direction:column;gap:7px;border:2px solid #e5e5e5;border-bottom:5px solid #c8eafa;border-radius:16px;padding:13px;background:#fff;min-width:0}.book-cover{height:76px;border-radius:11px;background:linear-gradient(135deg,#e5f7ff,#f4f0ff);display:grid;place-items:center;font-size:42px}.book-card b{font-size:14px;line-height:1.35}.book-card .hint{font-size:12px;margin:0;flex:1}.book-card a{color:#1478a8;background:#eaf8ff;padding:10px 8px;border-radius:10px;text-decoration:none;text-align:center;font-size:11px;font-weight:1000}
 @media(max-width:360px){.book-grid{grid-template-columns:1fr}}
 @media(max-width:380px){.stats{gap:6px;font-size:12px}.logo{font-size:15px}.course-grid{grid-template-columns:1fr}.mascot{font-size:52px}}
@@ -50,6 +59,12 @@ main{padding:16px 15px}.screen{display:none}.screen.active{display:block}.banner
  <div class="lesson-top"><button class="back" onclick="leaveLesson()">×</button><div class="lessonbar"><i id="lessonProgress"></i></div><b class="heart">❤️ <span id="lessonLives">5</span></b></div>
  <div class="tag" id="lessonTag">LESSON</div><h2 class="prompt" id="lessonTitle"></h2><p class="hint" id="lessonBody"></p>
  <pre class="code" id="lessonCode" hidden></pre>
+ <section class="learn-panel" id="learnPanel">
+  <h3>📘 Learn About This Lesson</h3>
+  <p class="learn-intro" id="learnIntro"></p>
+  <div id="learnSteps"></div>
+  <div class="learn-step"><b>🧠 Check what you learned</b><p id="learnQuestion"></p><button class="action secondary" style="margin-top:9px" onclick="showLessonAnswer()">SHOW THE ANSWER & EXPLANATION</button><div class="learn-answer" id="learnAnswer"></div></div>
+ </section>
  <div id="practicePanel" class="panel" hidden><b>⌨️ Your coding challenge</b><p class="hint" id="practiceTask"></p><textarea id="codeEditor" class="editor" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea><p class="tiny">Write the code in the box. Then tap Check my code. This practice checker checks the required Python structure; it does not run a full Python interpreter.</p><button class="action secondary" onclick="showHint()">SHOW HINT</button><div id="hintText" class="tiny" hidden></div><button class="action" id="checkCodeButton" onclick="checkCode()">CHECK MY CODE</button><div class="feedback" id="codeFeedback"></div></div>
  <div class="panel" id="quizPanel"><b>📖 Understand the example, then continue</b><p class="hint">There is no compulsory multiple-choice question in every lesson. Read the explanation, study the code, and try the coding activity when one is provided.</p><button class="action" id="lessonButton" onclick="lessonAction()">MARK LESSON COMPLETE</button></div>
 </section>
@@ -162,7 +177,68 @@ function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.to
 function updateStats(){$('xp').textContent=xp;$('lives').textContent=lives;$('totalXP').textContent=xp;$('progressText').textContent=Object.keys(done).length+' lessons completed';$('progressBar').style.width=Math.min(100,Object.keys(done).length/50*100)+'%';localStorage.cdaXP=xp;localStorage.cdaGems=gems;localStorage.cdaDone=JSON.stringify(done)}
 function openCourse(key){currentKey=key;const c=courses[key];$('courseTitle').textContent=c.title;$('courseSub').textContent=c.sub;$('unitTitle').textContent='Learning path · '+c.title;$('unitSub').textContent='Complete lessons and earn stars';renderPath();show('course')}
 function renderPath(){const c=courses[currentKey];$('unitCount').textContent=c.lessons.filter((_,i)=>done[currentKey+'-'+i]).length+'/'+c.lessons.length;$('path').innerHTML=c.lessons.map((l,i)=>'<div class="node-wrap"><button class="lesson-node '+(done[currentKey+'-'+i]?'done':'')+'" onclick="startLesson('+i+')">'+(done[currentKey+'-'+i]?'⭐':['📘','🧩','💡','✍️','🏆'][i%5])+'</button><div class="node-label">Lesson '+(i+1)+' · '+l.title+'</div></div>').join('')}
-function startLesson(i){lessonIndex=i;selected=-1;checked=false;codePassed=false;lives=5;$('lessonLives').textContent=lives;const l=courses[currentKey].lessons[i];$('lessonTag').textContent=courses[currentKey].title.toUpperCase()+' · LESSON '+(i+1);$('lessonTitle').textContent=l.title;$('lessonBody').textContent=l.body;$('lessonCode').hidden=!l.code;$('lessonCode').textContent=l.code||'';$('lessonProgress').style.width='0%';$('practicePanel').hidden=!l.practice;$('quizPanel').hidden=false;$('lessonButton').textContent='MARK LESSON COMPLETE';$('lessonButton').disabled=false;$('lessonButton').onclick=lessonAction;if(l.practice){$('practiceTask').textContent=l.practice.task;$('codeEditor').value=l.practice.starter;$('hintText').hidden=true;$('hintText').textContent='Hint: '+l.practice.hint;$('codeFeedback').className='feedback';$('codeFeedback').textContent='';$('checkCodeButton').disabled=false}show('lesson')}
+function explainCodeLine(line){
+ const t=line.trim();
+ if(!t||t.startsWith('#'))return 'This is a comment or blank line. A comment is a note for people reading the code; Python does not run it.';
+ if(/^print\s*\(/.test(t))return 'print() displays information on the screen. The value or text inside the parentheses is what Python displays.';
+ if(/^input\s*\(/.test(t)||/=\s*input\s*\(/.test(t))return 'input() asks the person using the program to type something. The typed response can be stored in a variable.';
+ if(/^if\b/.test(t))return 'if checks a condition. The indented lines underneath run only when that condition is true. The colon starts the block.';
+ if(/^elif\b/.test(t))return 'elif checks another condition when the earlier if/elif conditions were false.';
+ if(/^else\s*:/.test(t))return 'else is the alternative path. Its indented lines run when the matching if condition was false.';
+ if(/^for\b/.test(t))return 'for starts a loop. Python repeats the indented block for each item in the sequence.';
+ if(/^while\b/.test(t))return 'while repeats the indented block as long as its condition stays true.';
+ if(/^def\b/.test(t))return 'def creates a reusable function. The name identifies the function, and the parentheses can contain inputs called parameters.';
+ if(/^return\b/.test(t))return 'return sends a result back from a function and finishes that function call.';
+ if(/^import\b/.test(t))return 'import makes a module available so the program can use its tools and functions.';
+ if(/^class\b/.test(t))return 'class defines a new kind of object, grouping data and behaviours together.';
+ if(/^with\b/.test(t))return 'with starts a managed block. Python handles setup and cleanup for the resource used in this block.';
+ if(/^try\s*:/.test(t))return 'try marks code that might raise an error, so the program can handle that error in an except block.';
+ if(/^except\b/.test(t))return 'except describes what the program should do if a matching error happens in the try block.';
+ if(/^async\s+def\b/.test(t))return 'async def defines an asynchronous function, which can pause while waiting for other work.';
+ if(/^await\b/.test(t))return 'await waits for an asynchronous operation to finish before continuing.';
+ if(/^from\b/.test(t))return 'from ... import brings a selected tool or name from a module into this program.';
+ if(/^raise\b/.test(t))return 'raise deliberately reports an error so the program or caller knows something went wrong.';
+ if(/^assert\b/.test(t))return 'assert checks that a condition is true. If it is false, Python raises an AssertionError.';
+ if(/^break\b/.test(t))return 'break exits the current loop early.';
+ if(/^continue\b/.test(t))return 'continue skips to the next repeat of the current loop.';
+ if(/^pass\b/.test(t))return 'pass is a placeholder statement. It does nothing, but it gives Python a valid block.';
+ if(/^[A-Za-z_][\w]*\s*=/.test(t))return 'This line assigns a value to a variable. The name on the left stores or refers to the value on the right.';
+ if(/^\s*\w+\s*\(/.test(line))return 'This line calls a function. The name tells Python which action to perform, and the parentheses contain any inputs.';
+ return 'Read this line as one instruction in the example. Notice its spelling, punctuation and indentation, because Python uses all three.';
+}
+function renderLessonGuide(l){
+ $('learnIntro').textContent='Start with the main idea, follow the steps, then check your understanding. You can return to this guide whenever you need help.';
+ const root=$('learnSteps');root.innerHTML='';
+ const sentences=(l.body||'').match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[l.body||'Read the lesson carefully.'];
+ sentences.map(x=>x.trim()).filter(Boolean).forEach((sentence,index)=>{
+  const card=document.createElement('div');card.className='learn-step';
+  const head=document.createElement('b');head.textContent=['1. Understand the idea','2. Notice how it works','3. Connect it to the lesson'][index]||('Step '+(index+1));
+  const p=document.createElement('p');p.textContent=sentence;card.append(head,p);root.append(card);
+ });
+ if(l.code){
+  const card=document.createElement('div');card.className='learn-step';
+  const head=document.createElement('b');head.textContent='💻 Study the example one line at a time';card.append(head);
+  l.code.split('\n').forEach((line,index)=>{
+   const sample=document.createElement('div');sample.className='learn-code-line';sample.textContent=line||' ';
+   const explain=document.createElement('p');explain.textContent=(index+1)+'. '+explainCodeLine(line);explain.style.margin='0 0 8px';
+   card.append(sample,explain);
+  });
+  root.append(card);
+ }else{
+  const card=document.createElement('div');card.className='learn-step';
+  const head=document.createElement('b');head.textContent='🌍 Connect it to real life';
+  const p=document.createElement('p');p.textContent='Look around your computer or device and find one real example of the idea you just learned. Explain why it belongs to this lesson.';
+  card.append(head,p);root.append(card);
+ }
+ $('learnQuestion').textContent=l.q||'Can you explain the main idea in your own words?';
+ $('learnAnswer').className='learn-answer';$('learnAnswer').textContent='';
+}
+function showLessonAnswer(){
+ const l=courses[currentKey].lessons[lessonIndex];const box=$('learnAnswer');
+ box.textContent=(l.a&&l.c!==undefined?'Answer: '+l.a[l.c]+'. ':'')+(l.why||'Try explaining the main idea in your own words, then revisit the steps above.');
+ box.className='learn-answer show';
+}
+function startLesson(i){lessonIndex=i;selected=-1;checked=false;codePassed=false;lives=5;$('lessonLives').textContent=lives;const l=courses[currentKey].lessons[i];$('lessonTag').textContent=courses[currentKey].title.toUpperCase()+' · LESSON '+(i+1);$('lessonTitle').textContent=l.title;$('lessonBody').textContent=l.body;renderLessonGuide(l);$('lessonCode').hidden=!l.code;$('lessonCode').textContent=l.code||'';$('lessonProgress').style.width='0%';$('practicePanel').hidden=!l.practice;$('quizPanel').hidden=false;$('lessonButton').textContent='MARK LESSON COMPLETE';$('lessonButton').disabled=false;$('lessonButton').onclick=lessonAction;if(l.practice){$('practiceTask').textContent=l.practice.task;$('codeEditor').value=l.practice.starter;$('hintText').hidden=true;$('hintText').textContent='Hint: '+l.practice.hint;$('codeFeedback').className='feedback';$('codeFeedback').textContent='';$('checkCodeButton').disabled=false}show('lesson')}
 function showHint(){$('hintText').hidden=!$('hintText').hidden}
 function checkCode(){const p=courses[currentKey].lessons[lessonIndex].practice;const code=$('codeEditor').value.replace(/\r/g,'');const missing=p.must.filter(part=>!code.includes(part));const feedback=$('codeFeedback');if(missing.length===0){codePassed=true;feedback.textContent='🎉 Nice work! Your code contains the required Python structure. You can now mark this lesson complete.';feedback.className='feedback show good';$('checkCodeButton').disabled=true;$('lessonProgress').style.width='70%'}else{feedback.textContent='Not quite yet. Check the example and hint, then try again. Missing part: '+missing[0];feedback.className='feedback show bad'}}
 function pick(n){if(checked)return;selected=n;document.querySelectorAll('.answer').forEach((b,i)=>b.classList.toggle('chosen',i===n));$('lessonButton').disabled=false}
