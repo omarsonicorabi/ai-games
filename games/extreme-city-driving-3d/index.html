@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#091321"><title>Extreme City Driving 3D</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#091321"><title>Extreme Car Driving</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#091321;color:#fff;font-family:system-ui,Arial}canvas{display:block;width:100%;height:100%;touch-action:none}
 #hud{position:fixed;inset:12px 12px auto;display:flex;justify-content:space-between;gap:8px;pointer-events:none}.panel{background:#081525dc;border:1px solid #ffffff30;border-radius:14px;padding:9px 13px;backdrop-filter:blur(8px)}#speed{font-size:30px;font-weight:950;line-height:1}small{font-size:10px;letter-spacing:.12em;color:#b9cce0}
@@ -10,7 +10,7 @@
 <div id="hud"><div class="panel"><div id="speed">0</div><small>KM/H</small></div><div class="panel" style="text-align:right"><b id="mode">ROAD MODE</b><br><small>SECOND-GEN ROADSTER</small></div></div>
 <div id="help">WASD / ARROWS · SHIFT = SUPER BOOST · SPACE = FLY</div>
 <div id="controls"><div class="cluster"><button class="btn" data-key="left">◀</button><button class="btn" data-key="right">▶</button></div><div class="cluster"><button class="btn wide" data-key="brake">BRAKE</button><button class="btn wide" data-key="gas">GAS</button><button class="btn boost" data-key="boost">⚡ BOOST</button><button class="btn fly" data-key="fly">✈ FLY</button></div></div>
-<div id="menu"><div class="card"><small style="color:#66d8ff">OPEN-WORLD 3D DRIVING</small><h1>EXTREME CITY<br><span style="color:#e82127">DRIVING 3D</span></h1><p>Drive a red, second-generation Tesla Roadster-inspired hypercar. Race through the city, use a extreme super boost capable of speeds above 6,000 km/h, and lift off into flight mode.</p><p>Mobile buttons and keyboard controls · Third-person camera</p><button class="start" id="start">START DRIVING</button></div></div>
+<div id="menu"><div class="card"><small style="color:#66d8ff">OPEN-WORLD 3D DRIVING</small><h1>EXTREME CAR<br><span style="color:#e82127">DRIVING</span></h1><p>Drive a red, second-generation Tesla Roadster-inspired hypercar. Race through the city, use a extreme super boost capable of speeds above 10,000 km/h, and lift off into flight mode.</p><p>Mobile buttons and keyboard controls · Third-person camera</p><button class="start" id="start">START DRIVING</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><script>
 (()=>{
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x8ec4e5);scene.fog=new THREE.Fog(0x8ec4e5,110,430);
@@ -18,11 +18,11 @@ const camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,900);
 const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;document.body.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xd9efff,0x65734d,1.4));const sun=new THREE.DirectionalLight(0xffedcf,2.1);sun.position.set(-55,90,30);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);scene.add(sun);
 const M=(c,r=.7,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
-const ground=new THREE.Mesh(new THREE.PlaneGeometry(1200,1200),M(0x557a4e));ground.rotation.x=-Math.PI/2;ground.position.y=-.2;ground.receiveShadow=true;scene.add(ground);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(2200,2200),M(0x557a4e));ground.rotation.x=-Math.PI/2;ground.position.y=-.2;ground.receiveShadow=true;scene.add(ground);
 const roadMat=M(0x343941,.95),white=M(0xf4f0d9),buildM=[0x879bad,0xb9a994,0x9eafb9,0xd1c9b9,0x718b9c].map(c=>M(c));
 function road(x,z,w,d){const r=new THREE.Mesh(new THREE.BoxGeometry(w,.14,d),roadMat);r.position.set(x,-.08,z);r.receiveShadow=true;scene.add(r);if(w>d){for(let p=x-w/2+5;p<x+w/2;p+=13){const q=new THREE.Mesh(new THREE.BoxGeometry(5,.025,.18),white);q.position.set(p,.01,z);scene.add(q)}}else{for(let p=z-d/2+5;p<z+d/2;p+=13){const q=new THREE.Mesh(new THREE.BoxGeometry(.18,.025,5),white);q.position.set(x,.01,p);scene.add(q)}}}
-for(let i=-3;i<=3;i++){road(i*60,0,20,760);road(0,i*60,760,20)}
-for(let x=-330;x<=330;x+=60)for(let z=-330;z<=330;z+=60){if(Math.abs(x)<18||Math.abs(z)<18)continue;const w=18+Math.random()*22,d=18+Math.random()*22,h=12+Math.random()*55;const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),buildM[Math.random()*buildM.length|0]);b.position.set(x+(Math.random()-.5)*12,h/2,z+(Math.random()-.5)*12);b.castShadow=true;b.receiveShadow=true;scene.add(b);for(let yy=4;yy<h-3;yy+=6)for(let xx=-w/2+3;xx<w/2-1;xx+=5){const win=new THREE.Mesh(new THREE.PlaneGeometry(1.8,2.4),new THREE.MeshBasicMaterial({color:0xa9d9ec}));win.position.set(b.position.x+xx,yy,b.position.z-d/2-.03);scene.add(win)}}
+for(let i=-6;i<=6;i++){road(i*60,0,20,1600);road(0,i*60,1600,20)}
+for(let x=-720;x<=720;x+=60)for(let z=-720;z<=720;z+=60){if(Math.abs(x)<18||Math.abs(z)<18)continue;const w=18+Math.random()*22,d=18+Math.random()*22,h=12+Math.random()*55;const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),buildM[Math.random()*buildM.length|0]);b.position.set(x+(Math.random()-.5)*12,h/2,z+(Math.random()-.5)*12);b.castShadow=true;b.receiveShadow=true;scene.add(b);for(let yy=4;yy<h-3;yy+=6)for(let xx=-w/2+3;xx<w/2-1;xx+=5){const win=new THREE.Mesh(new THREE.PlaneGeometry(1.8,2.4),new THREE.MeshBasicMaterial({color:0xa9d9ec}));win.position.set(b.position.x+xx,yy,b.position.z-d/2-.03);scene.add(win)}}
 const car=new THREE.Group();scene.add(car);
 const red=new THREE.MeshPhysicalMaterial({color:0xd71928,metalness:.55,roughness:.24,clearcoat:1}),glass=new THREE.MeshPhysicalMaterial({color:0x101c2a,metalness:.55,roughness:.08,clearcoat:1}),black=M(0x101318,.55),silver=M(0xd2d8dc,.25,.85);
 function add(geo,mat,x,y,z){const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.castShadow=true;car.add(o);return o}
@@ -61,15 +61,15 @@ const head=M(0xf3ffff,.2),rear=new THREE.MeshBasicMaterial({color:0xff2020});for
 const flame=new THREE.Mesh(new THREE.ConeGeometry(.5,2.5,16),new THREE.MeshBasicMaterial({color:0x21caff,transparent:true,opacity:.9}));flame.rotation.x=-Math.PI/2;flame.position.set(0,.5,3.5);flame.visible=false;car.add(flame);
 const keys={},$=id=>document.getElementById(id);let started=false,speed=0,heading=0,alt=0,vy=0,boost=0,boostLock=0,flight=false;
 $('start').onclick=()=>{$('menu').classList.add('hide');started=true};
-addEventListener('keydown',e=>{let k=e.key.toLowerCase();keys[k]=true;if(k===' '){e.preventDefault();flight=!flight}if(k==='shift'&&started&&boostLock<=0){boost=7;boostLock=3;speed=Math.min(1600,speed+700)}});
+addEventListener('keydown',e=>{let k=e.key.toLowerCase();keys[k]=true;if(k===' '){e.preventDefault();flight=!flight}if(k==='shift'&&started&&boostLock<=0){boost=10;boostLock=2;speed=Math.min(2600,speed+1500)}});
 addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 document.querySelectorAll('[data-key]').forEach(b=>{const k=b.dataset.key;const down=e=>{e.preventDefault();keys[k]=true;b.classList.add('down');if(k==='boost'&&boostLock<=0){boost=7;boostLock=3;speed=Math.min(1600,speed+700)}if(k==='fly')flight=!flight};const up=()=>{keys[k]=false;b.classList.remove('down')};b.addEventListener('pointerdown',down);['pointerup','pointercancel','pointerleave'].forEach(ev=>b.addEventListener(ev,up))});
 const clock=new THREE.Clock();function update(dt){if(!started)return;const gas=keys.gas||keys.w||keys.arrowup,br=keys.brake||keys.s||keys.arrowdown,left=keys.left||keys.a||keys.arrowleft,right=keys.right||keys.d||keys.arrowright;
 boost=Math.max(0,boost-dt);boostLock=Math.max(0,boostLock-dt);flame.visible=boost>0;
-const max=boost>0?1800:450;speed+=((gas?max*1.65:0)-(br?520:gas?0:65)-speed*.12)*dt;if(boost>0)speed+=2400*dt;speed=THREE.MathUtils.clamp(speed,0,max);
+const max=boost>0?3000:800;speed+=((gas?max*1.8:0)-(br?900:gas?0:80)-speed*.10)*dt;if(boost>0)speed+=4200*dt;speed=THREE.MathUtils.clamp(speed,0,max);
 const turn=(right?1:0)-(left?1:0);heading-=turn*dt*(.7+speed/85);
 if(flight){if(alt<2)vy=8;vy-=1.9*dt;alt+=vy*dt;if(alt<1.8){alt=1.8;vy=0}}else{alt=Math.max(0,alt-5*dt);vy=0}
-const fwd=new THREE.Vector3(-Math.sin(heading),0,-Math.cos(heading));car.position.addScaledVector(fwd,speed*dt*.045);car.position.x=THREE.MathUtils.clamp(car.position.x,-340,340);car.position.z=THREE.MathUtils.clamp(car.position.z,-340,340);car.position.y=alt;car.rotation.set(flight?-.07:0,heading,turn*.13);wheels.forEach(w=>w.rotation.x-=speed*dt*.08);
+const fwd=new THREE.Vector3(-Math.sin(heading),0,-Math.cos(heading));car.position.addScaledVector(fwd,speed*dt*.012);car.position.x=THREE.MathUtils.clamp(car.position.x,-740,740);car.position.z=THREE.MathUtils.clamp(car.position.z,-740,740);car.position.y=alt;car.rotation.set(flight?-.07:0,heading,turn*.13);wheels.forEach(w=>w.rotation.x-=speed*dt*.08);
 $('speed').textContent=Math.round(speed*3.6);$('mode').textContent=flight?'FLIGHT MODE':boost>0?'BOOST ACTIVE':'ROAD MODE';
 }
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);update(dt);const back=new THREE.Vector3(Math.sin(heading)*10,5+alt*.35,Math.cos(heading)*10);camera.position.lerp(car.position.clone().add(back),.09);camera.lookAt(car.position.x,1.1+alt,car.position.z-7);renderer.render(scene,camera)}animate();
