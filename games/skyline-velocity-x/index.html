@@ -42,7 +42,7 @@
 (()=>{const THREE=window.THREE;if(!THREE){document.getElementById("menu").innerHTML="<div class=\"menu\"><h2>3D ENGINE LOADING</h2><p>Please reload the game when the 3D engine is available.</p></div>";return;}
 const mount=document.getElementById('game');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x071326);scene.fog=new THREE.Fog(0x071326,85,420);
-const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,1000);camera.position.set(0,5.2,11.5);
+const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,1000);camera.position.set(0,5.2,11.5);camera.lookAt(0,.3,-9);
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;mount.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0x9edfff,0x11172b,1.5));
 const key=new THREE.DirectionalLight(0xffe4c1,2.1);key.position.set(-15,35,12);key.castShadow=true;key.shadow.mapSize.set(1024,1024);scene.add(key);
