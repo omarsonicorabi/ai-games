@@ -49,7 +49,7 @@ const key=new THREE.DirectionalLight(0xffe4c1,2.1);key.position.set(-15,35,12);k
 const cyanLight=new THREE.PointLight(0x20cfff,32,90);cyanLight.position.set(0,8,-25);scene.add(cyanLight);
 const pinkLight=new THREE.PointLight(0xff318d,22,80);pinkLight.position.set(22,7,-65);scene.add(pinkLight);
 const mat=(color,metalness=0,roughness=.5,emissive=0)=>new THREE.MeshStandardMaterial({color,metalness,roughness,emissive:color,emissiveIntensity:emissive});
-const roadMat=mat(0x35485a,.12,.96),lineMat=mat(0x57eaff,.3,.35,1.3),dark=mat(0x101827,.6,.3),glass= new THREE.MeshPhysicalMaterial({color:0x5ce5ff,metalness:.65,roughness:.12,transparent:true,opacity:.68,clearcoat:1});
+const roadMat=mat(0x35485a,.12,.96),lineMat=mat(0x57eaff,.3,.35,1.3),dark=mat(0x101827,.6,.3),carbon=mat(0x090e19,.65,.26),glass= new THREE.MeshPhysicalMaterial({color:0x5ce5ff,metalness:.65,roughness:.12,transparent:true,opacity:.68,clearcoat:1});
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(1000,1000),mat(0x263344,.08,.98));ground.rotation.x=-Math.PI/2;ground.position.y=-.5;scene.add(ground);
 const road=new THREE.Mesh(new THREE.PlaneGeometry(48,1000),roadMat);road.rotation.x=-Math.PI/2;road.position.set(0,-.46,-250);scene.add(road);
 // Smooth, wide asphalt road: no distracting lane stripes or neon edge rails.
@@ -60,7 +60,7 @@ const traffic=[];const trafficPaint=[0x20b7ff,0xffa52f,0x8c65ff,0xe9edf5];for(le
 const arches=[];for(let z=-25;z>-470;z-=75){const group=new THREE.Group();const archMat=mat(0x34dfff,.35,.3,1.6);for(let x of [-10.8,10.8]){const post=new THREE.Mesh(new THREE.BoxGeometry(.45,8,.5),archMat);post.position.set(x,4,0);group.add(post)}const top=new THREE.Mesh(new THREE.BoxGeometry(22,.35,.55),archMat);top.position.y=8;group.add(top);group.position.z=z;scene.add(group);arches.push(group)}
 // Original low, wide electric hyper-roadster model.
 const car=new THREE.Group();scene.add(car);
-const bodyMat=mat(0xb91446,.8,.22,.25),carbon=mat(0x090e19,.65,.26),rimMat=mat(0x9cefff,.85,.18,.8);
+const bodyMat=mat(0xb91446,.8,.22,.25),rimMat=mat(0x9cefff,.85,.18,.8);
 function box(parent,geo,material,pos){const m=new THREE.Mesh(geo,material);m.position.set(...pos);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m}
 box(car,new THREE.BoxGeometry(2.5,.48,4.7),bodyMat,[0,.65,0]);
 const hood=box(car,new THREE.BoxGeometry(2.2,.24,1.25),bodyMat,[0,.89,-1.45]);hood.rotation.x=-.035;
