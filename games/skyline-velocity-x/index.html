@@ -42,7 +42,7 @@
 (()=>{const THREE=window.THREE;if(!THREE){document.getElementById("menu").innerHTML="<div class=\"menu\"><h2>3D ENGINE LOADING</h2><p>Please reload the game when the 3D engine is available.</p></div>";return;}
 const mount=document.getElementById('game');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x071326);scene.fog=new THREE.Fog(0x071326,85,420);
-const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.1,1000);camera.position.set(0,7.5,14);camera.lookAt(0,.5,-8);
+const camera=new THREE.PerspectiveCamera(68,innerWidth/innerHeight,.1,1000);camera.position.set(0,2.2,9.5);camera.lookAt(0,.3,-10);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.setSize(innerWidth,innerHeight);renderer.domElement.style.position='absolute';renderer.domElement.style.inset='0';renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;mount.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0x9edfff,0x11172b,1.5));
 const key=new THREE.DirectionalLight(0xffe4c1,2.1);key.position.set(-15,35,12);key.castShadow=true;key.shadow.mapSize.set(1024,1024);scene.add(key);
@@ -87,7 +87,7 @@ const target=boosting?1900:flyMode?820:560;speed+=(target-speed)*Math.min(1,dt*(
 if(flyMode){vy+=(keys.Space||keys.ArrowUp?18:keys.ArrowDown?-20:-4)*dt;carY=THREE.MathUtils.clamp(carY+vy*dt,2,22);if(carY===2&&vy<0)vy=0;if(carY===22&&vy>0)vy=0}else{carY+=(.75-carY)*Math.min(1,dt*5);vy=0}
 car.position.set(carX,carY,2);car.rotation.z=-steer*.17;car.rotation.x=flyMode?-vy*.018:0;car.rotation.y=-steer*.08;
 car.scale.setScalar(boosting?1.75:1.65);thrusters.forEach(t=>{t.scale.y=boosting?1.9:flyMode?1.35:.7;t.material.opacity=boosting?.98:.55});exhaustGlow.intensity=boosting?18:flyMode?8:3;
-camera.position.x+=(carX*.32-camera.position.x)*Math.min(1,dt*4);camera.position.y+=(7.5+carY*.12-camera.position.y)*Math.min(1,dt*4);camera.position.z+=(14-camera.position.z)*Math.min(1,dt*4);camera.lookAt(carX*.32,.5+carY*.12,-8);
+camera.position.x+=(carX*.32-camera.position.x)*Math.min(1,dt*4);camera.position.y+=(2.2+carY*.10-camera.position.y)*Math.min(1,dt*4);camera.position.z+=(9.5-camera.position.z)*Math.min(1,dt*4);camera.lookAt(carX*.32,.3+carY*.12,-10);
 const travel=speed*dt*.06;for(const d of dashes){d.position.z+=travel;if(d.position.z>25)d.position.z-=540}
 for(const b of buildings){b.g.position.z+=travel;if(b.g.position.z>40)b.g.position.z-=640}
 for(const a of arches){a.position.z+=travel;if(a.position.z>35)a.position.z-=525}
