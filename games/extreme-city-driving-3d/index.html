@@ -8,9 +8,9 @@
 #menu{position:fixed;inset:0;display:grid;place-items:center;background:#06111ddd;padding:20px}.card{width:min(440px,100%);text-align:center;background:linear-gradient(145deg,#18314b,#091827);border:1px solid #ffffff35;border-radius:24px;padding:25px}.card h1{font-size:clamp(27px,8vw,43px);line-height:1.03;margin:10px 0}.card p{color:#c1d0df;font-size:14px;line-height:1.5}.start{border:0;border-radius:30px;background:#e82127;color:#fff;padding:14px 28px;font-size:16px;font-weight:950;width:100%}.hide{display:none!important}
 </style></head><body>
 <div id="hud"><div class="panel"><div id="speed">0</div><small>KM/H</small></div><div class="panel" style="text-align:right"><b id="mode">ROAD MODE</b><br><small>SECOND-GEN ROADSTER</small></div></div>
-<div id="help">WASD / ARROWS · SHIFT = BOOST · SPACE = FLY</div>
+<div id="help">WASD / ARROWS · SHIFT = SUPER BOOST · SPACE = FLY</div>
 <div id="controls"><div class="cluster"><button class="btn" data-key="left">◀</button><button class="btn" data-key="right">▶</button></div><div class="cluster"><button class="btn wide" data-key="brake">BRAKE</button><button class="btn wide" data-key="gas">GAS</button><button class="btn boost" data-key="boost">⚡ BOOST</button><button class="btn fly" data-key="fly">✈ FLY</button></div></div>
-<div id="menu"><div class="card"><small style="color:#66d8ff">OPEN-WORLD 3D DRIVING</small><h1>EXTREME CITY<br><span style="color:#e82127">DRIVING 3D</span></h1><p>Drive a red, second-generation Tesla Roadster-inspired hypercar. Race through the city, use a powerful turbo boost, and lift off into flight mode.</p><p>Mobile buttons and keyboard controls · Third-person camera</p><button class="start" id="start">START DRIVING</button></div></div>
+<div id="menu"><div class="card"><small style="color:#66d8ff">OPEN-WORLD 3D DRIVING</small><h1>EXTREME CITY<br><span style="color:#e82127">DRIVING 3D</span></h1><p>Drive a red, second-generation Tesla Roadster-inspired hypercar. Race through the city, use a extreme super boost capable of speeds above 6,000 km/h, and lift off into flight mode.</p><p>Mobile buttons and keyboard controls · Third-person camera</p><button class="start" id="start">START DRIVING</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><script>
 (()=>{
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x8ec4e5);scene.fog=new THREE.Fog(0x8ec4e5,110,430);
@@ -61,15 +61,15 @@ const head=M(0xf3ffff,.2),rear=new THREE.MeshBasicMaterial({color:0xff2020});for
 const flame=new THREE.Mesh(new THREE.ConeGeometry(.5,2.5,16),new THREE.MeshBasicMaterial({color:0x21caff,transparent:true,opacity:.9}));flame.rotation.x=-Math.PI/2;flame.position.set(0,.5,3.5);flame.visible=false;car.add(flame);
 const keys={},$=id=>document.getElementById(id);let started=false,speed=0,heading=0,alt=0,vy=0,boost=0,boostLock=0,flight=false;
 $('start').onclick=()=>{$('menu').classList.add('hide');started=true};
-addEventListener('keydown',e=>{let k=e.key.toLowerCase();keys[k]=true;if(k===' '){e.preventDefault();flight=!flight}if(k==='shift'&&started&&boostLock<=0){boost=4.5;boostLock=5;speed=Math.min(210,speed+48)}});
+addEventListener('keydown',e=>{let k=e.key.toLowerCase();keys[k]=true;if(k===' '){e.preventDefault();flight=!flight}if(k==='shift'&&started&&boostLock<=0){boost=7;boostLock=3;speed=Math.min(1600,speed+700)}});
 addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
-document.querySelectorAll('[data-key]').forEach(b=>{const k=b.dataset.key;const down=e=>{e.preventDefault();keys[k]=true;b.classList.add('down');if(k==='boost'&&boostLock<=0){boost=4.5;boostLock=5;speed=Math.min(210,speed+48)}if(k==='fly')flight=!flight};const up=()=>{keys[k]=false;b.classList.remove('down')};b.addEventListener('pointerdown',down);['pointerup','pointercancel','pointerleave'].forEach(ev=>b.addEventListener(ev,up))});
+document.querySelectorAll('[data-key]').forEach(b=>{const k=b.dataset.key;const down=e=>{e.preventDefault();keys[k]=true;b.classList.add('down');if(k==='boost'&&boostLock<=0){boost=7;boostLock=3;speed=Math.min(1600,speed+700)}if(k==='fly')flight=!flight};const up=()=>{keys[k]=false;b.classList.remove('down')};b.addEventListener('pointerdown',down);['pointerup','pointercancel','pointerleave'].forEach(ev=>b.addEventListener(ev,up))});
 const clock=new THREE.Clock();function update(dt){if(!started)return;const gas=keys.gas||keys.w||keys.arrowup,br=keys.brake||keys.s||keys.arrowdown,left=keys.left||keys.a||keys.arrowleft,right=keys.right||keys.d||keys.arrowright;
 boost=Math.max(0,boost-dt);boostLock=Math.max(0,boostLock-dt);flame.visible=boost>0;
-const max=boost>0?220:105;speed+=((gas?max*1.65:0)-(br?145:gas?0:20)-speed*.16)*dt;if(boost>0)speed+=95*dt;speed=THREE.MathUtils.clamp(speed,0,max);
+const max=boost>0?1800:450;speed+=((gas?max*1.65:0)-(br?520:gas?0:65)-speed*.12)*dt;if(boost>0)speed+=2400*dt;speed=THREE.MathUtils.clamp(speed,0,max);
 const turn=(right?1:0)-(left?1:0);heading-=turn*dt*(.7+speed/85);
 if(flight){if(alt<2)vy=8;vy-=1.9*dt;alt+=vy*dt;if(alt<1.8){alt=1.8;vy=0}}else{alt=Math.max(0,alt-5*dt);vy=0}
-const fwd=new THREE.Vector3(-Math.sin(heading),0,-Math.cos(heading));car.position.addScaledVector(fwd,speed*dt*.3);car.position.x=THREE.MathUtils.clamp(car.position.x,-340,340);car.position.z=THREE.MathUtils.clamp(car.position.z,-340,340);car.position.y=alt;car.rotation.set(flight?-.07:0,heading,turn*.13);wheels.forEach(w=>w.rotation.x-=speed*dt*.08);
+const fwd=new THREE.Vector3(-Math.sin(heading),0,-Math.cos(heading));car.position.addScaledVector(fwd,speed*dt*.045);car.position.x=THREE.MathUtils.clamp(car.position.x,-340,340);car.position.z=THREE.MathUtils.clamp(car.position.z,-340,340);car.position.y=alt;car.rotation.set(flight?-.07:0,heading,turn*.13);wheels.forEach(w=>w.rotation.x-=speed*dt*.08);
 $('speed').textContent=Math.round(speed*3.6);$('mode').textContent=flight?'FLIGHT MODE':boost>0?'BOOST ACTIVE':'ROAD MODE';
 }
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);update(dt);const back=new THREE.Vector3(Math.sin(heading)*10,5+alt*.35,Math.cos(heading)*10);camera.position.lerp(car.position.clone().add(back),.09);camera.lookAt(car.position.x,1.1+alt,car.position.z-7);renderer.render(scene,camera)}animate();
