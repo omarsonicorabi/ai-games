@@ -37,11 +37,12 @@
   <p class="hint">Steer with ◀ ▶ or A / D. Hold NITRO for a speed burst. Tap FLY to lift off and glide above the skyline. Tap again to land.</p>
  </div>
 </div>
-<script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+<script src="../wonderworld-3d/three.min.js"></script>
+<script>
+(()=>{const THREE=window.THREE;if(!THREE){document.getElementById("menu").innerHTML="<div class=\"menu\"><h2>3D ENGINE LOADING</h2><p>Please reload the game when the 3D engine is available.</p></div>";return;}
 const mount=document.getElementById('game');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x071326);scene.fog=new THREE.Fog(0x071326,85,420);
-const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,1000);camera.position.set(0,7,16);
+const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,1000);camera.position.set(0,5.2,11.5);
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;mount.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0x9edfff,0x11172b,1.5));
 const key=new THREE.DirectionalLight(0xffe4c1,2.1);key.position.set(-15,35,12);key.castShadow=true;key.shadow.mapSize.set(1024,1024);scene.add(key);
@@ -50,9 +51,9 @@ const pinkLight=new THREE.PointLight(0xff318d,22,80);pinkLight.position.set(22,7
 const mat=(color,metalness=0,roughness=.5,emissive=0)=>new THREE.MeshStandardMaterial({color,metalness,roughness,emissive:color,emissiveIntensity:emissive});
 const roadMat=mat(0x111b2b,.25,.8),lineMat=mat(0x57eaff,.3,.35,1.3),dark=mat(0x101827,.6,.3),glass= new THREE.MeshPhysicalMaterial({color:0x5ce5ff,metalness:.65,roughness:.12,transparent:true,opacity:.68,clearcoat:1});
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(1000,1000),mat(0x07101f,.1,.95));ground.rotation.x=-Math.PI/2;ground.position.y=-.5;scene.add(ground);
-const road=new THREE.Mesh(new THREE.PlaneGeometry(22,1000),roadMat);road.rotation.x=-Math.PI/2;road.position.set(0,-.46,-250);scene.add(road);
-for(let x of [-11,11]){const rail=new THREE.Mesh(new THREE.BoxGeometry(.22,.55,1000),lineMat);rail.position.set(x,-.1,-250);scene.add(rail)}
-const dashes=[];for(let z=20;z>-500;z-=18){const d=new THREE.Mesh(new THREE.BoxGeometry(.18,.035,7),mat(0xb3efff,.1,.4,.7));d.position.set(0,-.43,z);scene.add(d);dashes.push(d)}
+const road=new THREE.Mesh(new THREE.PlaneGeometry(30,1000),roadMat);road.rotation.x=-Math.PI/2;road.position.set(0,-.46,-250);scene.add(road);
+// Smooth, wide asphalt road: no distracting lane stripes or neon edge rails.
+const dashes=[];
 const buildings=[];
 for(let side of [-1,1])for(let i=0;i<52;i++){const h=THREE.MathUtils.randFloat(9,52),w=THREE.MathUtils.randFloat(7,15),dep=THREE.MathUtils.randFloat(8,17),z=-i*12-15;const g=new THREE.Group();const body=new THREE.Mesh(new THREE.BoxGeometry(w,h,dep),mat([0x142b49,0x1b2440,0x172d3b,0x252542][i%4],.35,.65));body.position.y=h/2-0.5;g.add(body);const strip=new THREE.Mesh(new THREE.BoxGeometry(w*.86,.12,.16),i%2?lineMat:mat(0xff4e9b,.3,.3,1.4));strip.position.set(0,h*.7,dep/2+.1);g.add(strip);for(let row=0;row<Math.min(9,Math.floor(h/5));row++)for(let col=0;col<3;col++){const win=new THREE.Mesh(new THREE.BoxGeometry(.65,.9,.06),mat((row+col+i)%3?0x2d8aaa:0xffb65e,.2,.4,.8));win.position.set((col-1)*w*.27,1.6+row*3.7,dep/2+.12);g.add(win)}g.position.set(side*(22+w/2),0,z);scene.add(g);buildings.push({g,side,w,dep,h});}
 const arches=[];for(let z=-25;z>-470;z-=75){const group=new THREE.Group();const archMat=mat(0x34dfff,.35,.3,1.6);for(let x of [-10.8,10.8]){const post=new THREE.Mesh(new THREE.BoxGeometry(.45,8,.5),archMat);post.position.set(x,4,0);group.add(post)}const top=new THREE.Mesh(new THREE.BoxGeometry(22,.35,.55),archMat);top.position.y=8;group.add(top);group.position.z=z;scene.add(group);arches.push(group)}
@@ -85,8 +86,8 @@ boosting=(keys.ShiftLeft||keys.ShiftRight||keys.KeyX)&&nitro>0;if(boosting)nitro
 const target=boosting?1900:flyMode?820:560;speed+=(target-speed)*Math.min(1,dt*(boosting?4:1.7));dist+=speed*dt/3600;
 if(flyMode){vy+=(keys.Space||keys.ArrowUp?18:keys.ArrowDown?-20:-4)*dt;carY=THREE.MathUtils.clamp(carY+vy*dt,2,22);if(carY===2&&vy<0)vy=0;if(carY===22&&vy>0)vy=0}else{carY+=(.75-carY)*Math.min(1,dt*5);vy=0}
 car.position.set(carX,carY,2);car.rotation.z=-steer*.17;car.rotation.x=flyMode?-vy*.018:0;car.rotation.y=-steer*.08;
-car.scale.setScalar(boosting?1.025:1);thrusters.forEach(t=>{t.scale.y=boosting?1.9:flyMode?1.35:.7;t.material.opacity=boosting?.98:.55});exhaustGlow.intensity=boosting?18:flyMode?8:3;
-camera.position.x+=(carX*.42-camera.position.x)*dt*2.5;camera.position.y+=(7+carY*.22-camera.position.y)*dt*2;camera.lookAt(carX*.5,carY*.5,-13);
+car.scale.setScalar(boosting?1.29:1.25);thrusters.forEach(t=>{t.scale.y=boosting?1.9:flyMode?1.35:.7;t.material.opacity=boosting?.98:.55});exhaustGlow.intensity=boosting?18:flyMode?8:3;
+camera.position.x+=(carX*.42-camera.position.x)*dt*2.5;camera.position.y+=(5.3+carY*.18-camera.position.y)*dt*2.4;camera.lookAt(carX*.55,carY*.35,-9);
 const travel=speed*dt*.06;for(const d of dashes){d.position.z+=travel;if(d.position.z>25)d.position.z-=540}
 for(const b of buildings){b.g.position.z+=travel;if(b.g.position.z>40)b.g.position.z-=640}
 for(const a of arches){a.position.z+=travel;if(a.position.z>35)a.position.z-=525}
@@ -95,5 +96,6 @@ speedEl.textContent=Math.round(speed).toString().padStart(3,'0');distanceEl.text
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta()||.016,.04);update(dt);renderer.render(scene,camera)}animate();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7))});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){keys.ArrowLeft=keys.ArrowRight=keys.ShiftLeft=false}});
+})();
 </script>
 </body></html>
