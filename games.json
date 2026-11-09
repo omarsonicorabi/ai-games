@@ -70,5 +70,11 @@
     "title": "Color Clash 3D",
     "description": "Join the blue team in a colorful 3D territory race, paint the arena floor, and capture towers against red and yellow computer teams.",
     "path": "games/color-clash-3d/"
+  },
+  {
+    "slug": "claude-artifact-qk7pzua",
+    "title": "New Game",
+    "description": "Open and play the newly added game.",
+    "path": "https://claude.ai/artifact/Qk7pzuaPSocGFqmef9a1qm"
   }
 ]
