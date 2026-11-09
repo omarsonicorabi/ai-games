@@ -70,11 +70,5 @@
     "title": "Color Clash 3D",
     "description": "Join the blue team in a colorful 3D territory race, paint the arena floor, and capture towers against red and yellow computer teams.",
     "path": "games/color-clash-3d/"
-  },
-  {
-    "slug": "skyline-velocity-x",
-    "title": "Skyline Velocity X",
-    "description": "Race a futuristic Roadster-inspired supercar through a glowing 3D city, unleash hyper nitro, and take flight above the skyline.",
-    "path": "games/skyline-velocity-x/"
   }
 ]
