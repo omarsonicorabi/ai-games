@@ -36,7 +36,7 @@ main{width:min(1050px,calc(100% - 28px));margin:0 auto 48px}.choices{display:gri
  const root=document.getElementById('library'),count=document.getElementById('count'),title=document.getElementById('sectionTitle');
  const gamesButton=document.getElementById('gamesButton'),learningButton=document.getElementById('learningButton');
  const learningSlugs=new Set(['abc-friends','arabic-friends','azkar','omars-english-quest','omars-science-quest','omars-math-quest','computer-development-academy']);
- const icons={'pyramid-jumper':'🏜️','elemental-fighters':'🛡️','desert-drift-rally':'🏎️','monkey-tree-swing':'🐒','bike-rush':'🚴','super-cat-hero-dash':'🐱','robot-rescue':'🤖','wonderworld-3d':'🐻','tesla-gt-race-3d':'🏁','brick-builder':'🧱','dolphin-adventure':'🐬','color-clash-3d':'🎨','abc-friends':'🔤','arabic-friends':'🔠','azkar':'🌙','omars-english-quest':'🦉','omars-science-quest':'🔬','omars-math-quest':'➗'};
+ const icons={'pyramid-jumper':'🏜️','elemental-fighters':'🛡️','desert-drift-rally':'🏎️','monkey-tree-swing':'🐒','bike-rush':'🚴','super-cat-hero-dash':'🐱','robot-rescue':'🤖','wonderworld-3d':'🐻','tesla-gt-race-3d':'🏁','brick-builder':'🧱','dolphin-adventure':'🐬','color-clash-3d':'🎨','skyline-velocity-x':'🏎️','abc-friends':'🔤','arabic-friends':'🔠','azkar':'🌙','omars-english-quest':'🦉','omars-science-quest':'🔬','omars-math-quest':'➗'};
  let allGames=[],allLearning=[],section='games';
  function showSection(next){
   section=next;const learning=section==='learning';
