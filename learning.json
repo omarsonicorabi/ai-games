@@ -40,5 +40,11 @@
     "title": "Computer Development Academy",
     "description": "Learn software, computer hardware and Python through colourful interactive lessons, code examples, quizzes, XP and rewards.",
     "path": "computer-development-academy/"
+  },
+  {
+    "slug": "ultimate-learning-academy",
+    "title": "Open Ultimate Learning Academy",
+    "description": "Explore a growing global course library with in-app lessons, explanations, examples, quizzes and learning paths across many subjects.",
+    "path": "ultimate-learning-academy/"
   }
 ]
