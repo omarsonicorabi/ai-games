@@ -220,6 +220,59 @@ for (const c of authoredCurriculum) {
   courses.push({id:c.id,title:c.title,ar:c.title,cat:c.cat,emoji:c.emoji,colors:["#9bbbdc","#d3d9ef"],desc:c.desc,arDesc:c.desc,video:"",lessons:c.units.map((u,i)=>({title:u[0],ar:u[0],time:"",body:"<p>"+u[1]+"</p><div class='callout'><b>Study tip:</b> Explain the idea in your own words, then make one example of your own.</div>",arBody:"<p>"+u[1]+"</p><div class='callout'><b>نصيحة للتعلم:</b> اشرح الفكرة بكلماتك ثم أنشئ مثالاً من عندك.</div>",q:u[2],arQ:u[2],a:u[3],arA:u[3],c:u[4],why:u[5],arWhy:u[5]}))});
 }
 
+
+/* Turn every worldwide-provider entry into a real multi-lesson course in the academy.
+   The notes and practice below are original learning material; publisher links remain optional extensions. */
+const providerCoursePaths = {
+"Khan Academy — Mathematics":["algebra-foundations","geometry","statistics"],
+"Khan Academy — Science":["biology-cells","chemistry-foundations","physics-mechanics","earth-climate"],
+"Khan Academy — Computing":["computer-science","python","web-development"],
+"MIT OpenCourseWare — Computer Science":["computer-science","python","ai-literacy"],
+"MIT OpenCourseWare — Mathematics":["algebra-foundations","geometry","statistics"],
+"MIT OpenCourseWare — Physics":["physics-mechanics","astronomy","engineering"],
+"Harvard CS50 — Introduction to Computer Science":["computer-science","python","web-development"],
+"freeCodeCamp — Web Development":["web-development","computer-science","design-thinking"],
+"freeCodeCamp — Data Analysis with Python":["python","statistics","computer-science"],
+"The Odin Project — Full Stack Web Development":["web-development","computer-science","design-thinking"],
+"Google Skillshop — Digital Skills":["research-skills","project-management","financial-literacy"],
+"Google — Machine Learning Crash Course":["ai-literacy","statistics","python"],
+"Microsoft Learn — AI":["ai-literacy","computer-science","python"],
+"Microsoft Learn — Python":["python","computer-science","statistics"],
+"Cisco Skills for All — Cybersecurity":["cybersecurity","computer-science","research-skills"],
+"IBM SkillsBuild — Technology":["computer-science","ai-literacy","project-management"],
+"OpenLearn — Free Courses":["research-skills","psychology","world-history","environmental-science"],
+"OpenStax — Biology":["biology-cells","health-science","environmental-science"],
+"OpenStax — Physics":["physics-mechanics","astronomy","engineering"],
+"OpenStax — Economics":["economics","financial-literacy","statistics"],
+"BBC Bitesize — School Subjects":["algebra-foundations","biology-cells","world-history","geography"],
+"Duolingo — Language Learning":["language-learning","english-writing","research-skills"],
+"National Geographic Education":["geography","earth-climate","environmental-science"],
+"NASA STEM — Space and Science":["astronomy","physics-mechanics","engineering","mathematics"],
+"The Metropolitan Museum — Art Learning":["design-thinking","world-history","research-skills"],
+"Coursera — Explore Courses":["project-management","ai-literacy","financial-literacy","research-skills"],
+"edX — Explore Courses":["computer-science","economics","physics-mechanics","research-skills"],
+"FutureLearn — Explore Courses":["psychology","health-science","project-management","environmental-science"],
+"YouTube Learning — Educational Videos":["research-skills","computer-science","biology-cells","english-writing"]
+};
+const curriculumById = Object.fromEntries(authoredCurriculum.map(c=>[c.id,c]));
+for (const [providerTitle, pathIds] of Object.entries(providerCoursePaths)) {
+  const provider = courses.find(c=>c.title===providerTitle);
+  if (!provider) continue;
+  const sourceLink = globalCourseLinks.find(row=>row[0]===providerTitle)?.[5];
+  const lessons = pathIds.flatMap(id=>(curriculumById[id]?.units||[]).map(unit=>({
+    title:unit[0],ar:unit[0],time:"",body:"<p>"+unit[1]+"</p><div class='callout'><b>Learn by doing:</b> Write a short explanation in your own words and create a new example.</div>",
+    arBody:"<p>"+unit[1]+"</p><div class='callout'><b>تعلم بالتطبيق:</b> اكتب شرحاً قصيراً بكلماتك وأنشئ مثالاً جديداً.</div>",
+    q:unit[2],arQ:unit[2],a:unit[3],arA:unit[3],c:unit[4],why:unit[5],arWhy:unit[5]
+  })));
+  if (lessons.length) {
+    lessons[0].body += "<div class='callout'><b>Explore the publisher's full collection:</b><br><a href='"+sourceLink+"' target='_blank' rel='noopener noreferrer' style='color:#f6c17d;font-weight:800'>Open official course materials ↗</a></div>";
+    lessons[0].arBody += "<div class='callout'><b>استكشف مجموعة الدروس الكاملة لدى الناشر:</b><br><a href='"+sourceLink+"' target='_blank' rel='noopener noreferrer' style='color:#f6c17d;font-weight:800'>افتح المواد الرسمية ↗</a></div>";
+    provider.lessons = lessons;
+    provider.desc += " Includes "+lessons.length+" in-app lessons, explanations and knowledge checks, with the original publisher's collection for further study.";
+    provider.arDesc = provider.desc;
+  }
+}
+
 const $=id=>document.getElementById(id);let lang="en",active=null,lessonIndex=0,filter="All",answersDone={};
 const worldSubjects=["All","Programming","Web Development","Data","Artificial Intelligence","Cybersecurity","Business","Finance","Marketing","Design","Engineering","Mathematics","Physics","Chemistry","Biology","Medicine & Health","Languages","History","Geography","Writing","Photography","Video & Animation","Music","Architecture","Psychology","Education","Environment","Agriculture","Hospitality","Personal Development"];const categories=["All",...new Set(courses.map(c=>c.cat))];
 function tr(en,ar){return lang==="ar"?ar:en}
